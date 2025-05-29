@@ -3,10 +3,12 @@
 <head>
   <title>Map App</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 </head>
 <body>
-  <div id="map-container">
-    <div id="map-placeholder">Map Area</div>
+  <div id="map-container"> 
+    <!-- The map-placeholder div will be directly used by Leaflet -->
+    <div id="map-placeholder"></div> 
   </div>
   <div id="controls-container"></div>
   <div id="client-menu-container">
@@ -21,20 +23,63 @@
         <input type="text" id="pickup-name">
       </div>
       <div>
-        <label for="pickup-address">Pick-up Address:</label>
-        <input type="text" id="pickup-address">
+        <label>Pick-up Addresses:</label> <!-- Changed label -->
+        <div id="pickup-addresses-container">
+          <div> <!-- Initial address field -->
+            <input type="text" class="pickup-address" placeholder="Pick-up Address 1">
+            <!-- No remove button for the first one initially, or add one disabled/hidden -->
+          </div>
+        </div>
+        <button type="button" id="add-pickup-address-btn">Add Another Pick-up Address</button>
       </div>
+      
+      <!-- Pick-up Contact Numbers -->
+      <div>
+        <label>Pick-up Contact Numbers:</label>
+        <div id="pickup-contacts-container">
+          <div>
+            <input type="text" class="pickup-contact" placeholder="Pick-up Contact 1">
+          </div>
+        </div>
+        <button type="button" id="add-pickup-contact-btn">Add Another Pick-up Contact</button>
+      </div>
+
       <div>
         <label for="delivery-name">Delivery Name:</label>
         <input type="text" id="delivery-name">
       </div>
+
+      <!-- Delivery Addresses -->
       <div>
-        <label for="delivery-address">Delivery Address:</label>
-        <input type="text" id="delivery-address">
+        <label>Delivery Addresses:</label>
+        <div id="delivery-addresses-container">
+          <div>
+            <input type="text" class="delivery-address" placeholder="Delivery Address 1">
+          </div>
+        </div>
+        <button type="button" id="add-delivery-address-btn">Add Another Delivery Address</button>
       </div>
+
+      <!-- Delivery Contact Numbers -->
       <div>
-        <label for="item-description">Item Description:</label>
-        <textarea id="item-description"></textarea>
+        <label>Delivery Contact Numbers:</label>
+        <div id="delivery-contacts-container">
+          <div>
+            <input type="text" class="delivery-contact" placeholder="Delivery Contact 1">
+          </div>
+        </div>
+        <button type="button" id="add-delivery-contact-btn">Add Another Delivery Contact</button>
+      </div>
+
+      <!-- Item Descriptions -->
+      <div>
+        <label>Item Descriptions:</label>
+        <div id="item-descriptions-container">
+          <div>
+            <textarea class="item-description" placeholder="Item Description 1"></textarea>
+          </div>
+        </div>
+        <button type="button" id="add-item-description-btn">Add Another Item Description</button>
       </div>
       <button type="submit" id="create-order-btn">Create Order</button>
     </form>
@@ -42,18 +87,55 @@
   <div id="driver-menu-container">
     <h3>Driver Profile Menu</h3>
     <form id="driver-profile-form">
+      <!-- Driver Name (static for now, could be part of a non-dynamic section) -->
       <div>
-        <label for="driver-name">Driver Name:</label>
-        <input type="text" id="driver-name">
+        <label for="driver-name-static">Driver Name:</label>
+        <input type="text" id="driver-name-static" placeholder="Enter driver's full name">
       </div>
-      <div>
-        <label for="vehicle-plate">Vehicle Plate Number:</label>
-        <input type="text" id="vehicle-plate">
+
+      <!-- Dynamic Vehicle Information -->
+      <h4>Vehicles</h4>
+      <div id="driver-vehicles-container">
+        <div class="vehicle-entry">
+          <h5>Vehicle 1</h5>
+          <div><label>Type:</label><input type="text" class="vehicle-type" placeholder="e.g., Sedan, Truck"></div>
+          <div><label>Make:</label><input type="text" class="vehicle-make" placeholder="e.g., Toyota"></div>
+          <div><label>Model:</label><input type="text" class="vehicle-model" placeholder="e.g., Camry"></div>
+          <div><label>Plate Number:</label><input type="text" class="vehicle-plate" placeholder="e.g., ABC-123"></div>
+          <!-- No remove button for the first entry by default or it's hidden/disabled -->
+        </div>
       </div>
+      <button type="button" id="add-vehicle-btn">Add Another Vehicle</button>
+      <hr>
+
+      <!-- Dynamic Certifications/Licenses -->
+      <h4>Certifications/Licenses</h4>
+      <div id="driver-certifications-container">
+        <div class="certification-entry">
+          <h5>Certification/License 1</h5>
+          <div><label>Name:</label><input type="text" class="certification-name" placeholder="e.g., Driver's License, Forklift"></div>
+          <div><label>License Number:</label><input type="text" class="license-number" placeholder="e.g., DL12345"></div>
+          <div><label>Expiration Date:</label><input type="date" class="expiration-date"></div>
+        </div>
+      </div>
+      <button type="button" id="add-certification-btn">Add Another Certification/License</button>
+      <hr>
+
+      <!-- Dynamic Driver Contact Numbers -->
+      <h4>Contact Numbers</h4>
+      <div id="driver-contacts-container">
+        <div class="driver-contact-entry"> <!-- Initial entry wrapper -->
+          <div><label>Contact Number 1:</label><input type="tel" class="driver-contact" placeholder="e.g., 555-1234"></div>
+        </div>
+      </div>
+      <button type="button" id="add-driver-contact-btn">Add Another Contact Number</button>
+      <hr>
+
       <button type="submit" id="update-profile-btn">Update Profile</button>
     </form>
   </div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="app.js"></script>
 </body>
 </html>
