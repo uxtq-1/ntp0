@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const container = document.getElementById(containerId);
     if (container) {
-      container.addEventListener('click', (event) => handleDynamicFieldRemove(event, fieldClass, entryClass, placeholderPrefix));
+      container.addEventListener('click', (event) => handleDynamicFieldRemove(event, entryClass, removeButtonClassPrefix, sectionTitlePrefix));
     } else {
       console.warn(`Container ${containerId} not found for event delegation.`);
     }
@@ -460,6 +460,15 @@ document.addEventListener('DOMContentLoaded', () => {
   initMap(); // Initialize the map
   populateOrderNumber(); // Populate initial order number on load
   initMenuToggles(); // Initialize menu toggle functionality
+
+  // Expose functions for testing purposes
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
+    console.log('TEST MODE: Exposing functions to window object');
+    window.setupDynamicFieldSectionListeners = setupDynamicFieldSectionListeners;
+    window.handleDynamicFieldRemove = handleDynamicFieldRemove;
+    // initMenuToggles is already global
+    // addDynamicFieldEntry and other helpers could also be exposed if direct unit tests are needed
+  }
 });
 
 // Function to initialize menu toggle buttons
@@ -477,14 +486,18 @@ function initMenuToggles() {
   }
 
   clientMenuToggleBtn.addEventListener('click', () => {
-    const isClientMenuVisible = clientMenuPanel.style.display === 'block'; // Or check class if using classes
+    const isClientMenuVisible = clientMenuPanel.style.display === 'block';
     
     // Toggle client menu
     clientMenuPanel.style.display = isClientMenuVisible ? 'none' : 'block';
+    clientMenuPanel.hidden = isClientMenuVisible;
+    clientMenuToggleBtn.setAttribute('aria-expanded', !isClientMenuVisible);
     
     // If opening client menu, ensure driver menu is closed
     if (!isClientMenuVisible) { // i.e., if client menu was hidden and is now being shown
       driverMenuPanel.style.display = 'none';
+      driverMenuPanel.hidden = true;
+      driverMenuToggleBtn.setAttribute('aria-expanded', 'false');
     }
   });
 
@@ -493,10 +506,14 @@ function initMenuToggles() {
     
     // Toggle driver menu
     driverMenuPanel.style.display = isDriverMenuVisible ? 'none' : 'block';
+    driverMenuPanel.hidden = isDriverMenuVisible;
+    driverMenuToggleBtn.setAttribute('aria-expanded', !isDriverMenuVisible);
     
     // If opening driver menu, ensure client menu is closed
     if (!isDriverMenuVisible) { // i.e., if driver menu was hidden and is now being shown
       clientMenuPanel.style.display = 'none';
+      clientMenuPanel.hidden = true;
+      clientMenuToggleBtn.setAttribute('aria-expanded', 'false');
     }
   });
 
@@ -508,12 +525,16 @@ function initMenuToggles() {
   closeClientMenuBtn.addEventListener('click', () => {
     if (clientMenuPanel) {
       clientMenuPanel.style.display = 'none';
+      clientMenuPanel.hidden = true;
+      clientMenuToggleBtn.setAttribute('aria-expanded', 'false');
     }
   });
 
   closeDriverMenuBtn.addEventListener('click', () => {
     if (driverMenuPanel) {
       driverMenuPanel.style.display = 'none';
+      driverMenuPanel.hidden = true;
+      driverMenuToggleBtn.setAttribute('aria-expanded', 'false');
     }
   });
 }
