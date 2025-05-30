@@ -7,8 +7,8 @@
     content="
       default-src 'self';
       script-src 'self' https://unpkg.com 'nonce-abc123';
-      style-src 'self' https://unpkg.com 'nonce-abc123';
-      img-src 'self' data:;
+      style-src 'self' https://unpkg.com 'nonce-abc123' 'unsafe-inline';
+      img-src 'self' data: https://*.tile.openstreetmap.org;
       connect-src 'self';
       font-src 'self';
       object-src 'none';
