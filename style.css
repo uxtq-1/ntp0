@@ -4,6 +4,61 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f4f4f4; /* Light gray background for the page */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Menu Toggle Buttons Styling */
+#client-menu-toggle-btn,
+#driver-menu-toggle-btn {
+  position: absolute;
+  top: 20px; /* Adjusted from 10px to account for app-container padding */
+  z-index: 1000;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 1.2em; /* For hamburger icon */
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+#client-menu-toggle-btn:hover,
+#driver-menu-toggle-btn:hover {
+  background-color: #f0f0f0;
+}
+
+#client-menu-toggle-btn {
+  left: 20px; /* Adjusted from 10px */
+}
+
+#driver-menu-toggle-btn {
+  right: 20px; /* Adjusted from 10px */
+}
+
+
+#app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center children like map-container horizontally */
+  width: 100%;
+  flex-grow: 1;
+  position: relative; /* For positioning menus and buttons later */
+  padding: 10px; /* Add some padding around the app content */
+  box-sizing: border-box;
+}
+
+/* map-container will hold the map-placeholder and define its max-width for centering */
+#map-container {
+  width: 100%;
+  max-width: 1200px; /* Adjust as needed for desired max map width */
+  /* margin: 0 auto; is not strictly needed if app-container uses align-items: center */
+  /* The existing margin from the generic #map-container rule will apply if not overridden */
+  /* Let's ensure it doesn't conflict with flex centering */
+  margin-top: 0; /* Reset top/bottom margin if coming from generic rule */
+  margin-bottom: 0; /* Reset top/bottom margin if coming from generic rule */
+  /* The existing border, box-shadow, and padding from generic #map-container are fine. */
 }
 
 #map-placeholder {
@@ -16,16 +71,100 @@ body {
 }
 
 /* Container Styling */
-#map-container,
-#controls-container,
+/* Generic rule for major panel containers. Specifics for map-container are above/below. */
 #client-menu-container,
 #driver-menu-container {
-  margin: 10px;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+  /* display: none; is set by default. JS will change to 'block' or other visible style. */
+  /* Common styles for DEPLOYED (visible) menu panels */
+  position: absolute;
+  top: 70px; /* Below toggle buttons (button height ~40px + padding) */
+  background-color: #ffffff;
+  /* border: 1px solid #ccc; // Already has a similar border from generic rule */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Enhanced shadow for pop-out effect */
+  z-index: 1001; /* Above map and toggle buttons */
+  padding: 20px; /* Overriding generic panel padding for more content space */
+  border-radius: 5px; /* Consistent with other elements */
+  max-height: calc(100vh - 90px); /* Viewport height minus top offset and some bottom margin */
+  overflow-y: auto; /* Enable scrolling for long content */
+  box-sizing: border-box;
+
+  /* Default to hidden, JS will override this to show */
+  display: none; 
+  
+  /* Retain specific background colors from their individual rules if not overridden by this common one */
+  /* The generic rule already provides: margin, padding, border, border-radius, box-shadow */
+  /* We are enhancing/overriding some of these here for the deployed state */
 }
+
+/* Specific positioning and width for each panel */
+#client-menu-container {
+  left: 20px; /* Align with left toggle button's spacing */
+  width: 350px; 
+  /* background-color: #e6f7ff; /* Retained from specific rule */
+}
+
+#driver-menu-container {
+  right: 20px; /* Align with right toggle button's spacing */
+  width: 350px;
+  /* background-color: #e6ffe6; /* Retained from specific rule */
+}
+
+
+/* Media Query for smaller screens */
+@media (max-width: 768px) {
+  #client-menu-container,
+  #driver-menu-container {
+    width: calc(100% - 40px); /* Full width with some margin */
+    left: 20px;
+    right: 20px; /* This effectively centers it with the left: 20px */
+    /* top: 60px; /* Keep top position or adjust if header height changes */
+    /* max-height can remain the same or be adjusted */
+  }
+}
+
+
+/* Retain specific background for client/driver menus */
+/* These are applied on top of the common deployed styles if not conflicting */
+#client-menu-container { /* This will add/override background-color if JS sets display:block */
+  background-color: #e6f7ff; /* Light blue */
+}
+
+#driver-menu-container { /* This will add/override background-color if JS sets display:block */
+  background-color: #e6ffe6; /* Light green */
+}
+
+/* Close Button Styling for Menus */
+.close-menu-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 1.8em; /* Made slightly larger for easier clicking */
+  font-weight: bold; /* Make X more prominent */
+  color: #555; /* Subtle color, not too aggressive */
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+  z-index: 1002; /* Ensure it's above other content within the panel but respects panel's z-index */
+}
+
+.close-menu-btn:hover {
+  color: #000; /* Darken on hover */
+  /* background-color: #f0f0f0; /* Optional: subtle background on hover */
+}
+
+
+#map-container { /* This rule is from before, let's ensure it's still sensible */
+  /* margin: 10px; /* This was part of the old generic rule. Now handled by app-container padding and specific map-container centering */
+  padding: 0; /* Map placeholder should fill map-container without its own padding */
+  border: 1px solid #ddd; /* Border around the map area */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  /* Ensure map-container itself doesn't get a conflicting background if map-placeholder is the map */
+  background-color: transparent; /* Or remove if map-placeholder is the actual map */
+}
+
 
 /* Specific Container Styling */
 #client-menu-container {
