@@ -33,27 +33,23 @@
 </head>
 <body>
   <div id="app-container" role="main">
-    <button
-      id="client-menu-toggle-btn"
-      aria-label="Toggle Client Menu"
-      aria-expanded="false"
-      aria-controls="client-menu-container"
-    >&#9776;</button>
-    <button
-      id="driver-menu-toggle-btn"
-      aria-label="Toggle Driver Menu"
-      aria-expanded="false"
-      aria-controls="driver-menu-container"
-    >&#9776;</button>
+    <header id="app-header">
+      <h1 id="app-title">Dispatch Management Logistics App</h1>
+      <button
+        id="client-menu-toggle-btn"
+        aria-label="Toggle Client Menu"
+        aria-expanded="false"
+        aria-controls="client-menu-container"
+      >&#9776;</button>
+      <button
+        id="driver-menu-toggle-btn"
+        aria-label="Toggle Driver Menu"
+        aria-expanded="false"
+        aria-controls="driver-menu-container"
+      >&#9776;</button>
+    </header>
 
-    <section
-      id="map-container"
-      aria-label="Delivery and Driver Map"
-      role="region"
-    >
-      <div id="map-placeholder" tabindex="0" aria-live="polite" aria-atomic="true"></div>
-    </section>
-
+    <!-- Menu panels remain direct children of app-container for positioning context -->
     <aside
       id="client-menu-container"
       aria-label="Client Order Menu"
@@ -562,6 +558,49 @@
         <button type="submit" id="update-profile-btn">Update Profile</button>
       </form>
     </aside>
+
+    <div id="main-content-area">
+      <section
+        id="map-container" 
+        aria-label="Delivery and Driver Map"
+        role="region"
+      >
+        <div id="map-placeholder" tabindex="0" aria-live="polite" aria-atomic="true"></div>
+      </section>
+      <aside id="heatmap-sidebar-placeholder">
+        <h2>Heatmap Insights</h2>
+        <p>Performance percentages will be shown here. Clickable for details. (Placeholder)</p>
+      </aside>
+    </div>
+
+    <section id="performance-insights-section">
+      <h3>Performance Insights</h3>
+      <div id="performance-filters-placeholder">
+        <button>Yesterday</button>
+        <button>Weekly</button>
+        <button>Monthly</button>
+        <button>Quarterly</button>
+        <button>Yearly</button>
+      </div>
+      <div class="insight-group">
+        <h4>Week 23 Tuesday Performance (vs. Last Year)</h4>
+        <div class="insight-metrics">
+          <div class="metric-item"><span class="metric-label">Pick Up %:</span><div class="metric-box" style="background-color: lightblue;">75%</div></div>
+          <div class="metric-item"><span class="metric-label">Delivery %:</span><div class="metric-box" style="background-color: lightgreen;">80%</div></div>
+          <div class="metric-item"><span class="metric-label">On Time %:</span><div class="metric-box" style="background-color: lightcoral;">60%</div></div>
+          <div class="metric-item"><span class="metric-label">Late %:</span><div class="metric-box" style="background-color: gold;">15%</div></div>
+          <div class="metric-item"><span class="metric-label">Attempts %:</span><div class="metric-box" style="background-color: lightgrey;">90%</div></div>
+        </div>
+      </div>
+      <div class="insight-group">
+        <h4>Monthly Performance (Last Tuesday of Month)</h4>
+        <div class="insight-metrics">
+          <div class="metric-item"><span class="metric-label">Pick Up %:</span><div class="metric-box" style="background-color: lightblue;">85%</div></div>
+          <div class="metric-item"><span class="metric-label">Delivery %:</span><div class="metric-box" style="background-color: lightgreen;">88%</div></div>
+          <div class="metric-item"><span class="metric-label">On Time %:</span><div class="metric-box" style="background-color: lightcoral;">70%</div></div>
+          </div>
+      </div>
+    </section>
   </div>
 
   <script
