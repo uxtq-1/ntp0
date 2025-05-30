@@ -79,9 +79,8 @@ body {
   display: flex; /* To make map-placeholder take full height */
 }
 #map-placeholder {
-  flex-grow: 1; /* Takes full space of map-container */
-  height: auto; /* Override fixed height, let it fill flex container */
-  min-height: 500px; /* Ensure a minimum height */
+  flex-grow: 1; /* Takes full space of map-container if parent is column flex, or full width if row flex */
+  height: 500px; /* Explicit height for Leaflet initialization */
   width: 100%;
   box-sizing: border-box;
   outline: none; /* Remove focus outline, but accessible focus managed in JS */
@@ -115,13 +114,15 @@ body {
 }
 
 #client-menu-container {
-  left: 20px; /* Default position for client menu */
+  left: 10px; /* Consistent 10px from left edge */
+  right: auto; /* Ensure no conflict if a 'right' was ever set */
   width: 360px; /* Default width for larger screens */
   background-color: #e6f7ff; /* light blue for client */
 }
 
 #driver-menu-container {
-  right: 20px; /* Default position for driver menu */
+  right: 10px; /* Consistent 10px from right edge */
+  left: auto; /* Ensure no conflict if a 'left' was ever set */
   width: 360px; /* Default width for larger screens */
   background-color: #e6ffe6; /* light green for driver */
 }
