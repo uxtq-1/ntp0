@@ -28,18 +28,33 @@
         <input type="text" id="order-number" readonly>
       </div>
       <div>
+        <label for="client-ref-number">Client Reference Number:</label>
+        <input type="text" id="client-ref-number">
+      </div>
+      <div>
         <label for="pickup-name">Pick-up Name:</label>
         <input type="text" id="pickup-name">
       </div>
       <div>
-        <label>Pick-up Addresses:</label> <!-- Changed label -->
+        <label>Pick-up Addresses:</label>
         <div id="pickup-addresses-container">
-          <div> <!-- Initial address field -->
+          <div>
             <input type="text" class="pickup-address" placeholder="Pick-up Address 1">
-            <!-- No remove button for the first one initially, or add one disabled/hidden -->
           </div>
         </div>
         <button type="button" id="add-pickup-address-btn">Add Another Pick-up Address</button>
+      </div>
+      <div>
+        <label for="pickup-state">Pick-up State:</label>
+        <input type="text" id="pickup-state">
+      </div>
+      <div>
+        <label for="pickup-zip">Pick-up Zip Code:</label>
+        <input type="text" id="pickup-zip">
+      </div>
+      <div>
+        <label for="pickup-country">Pick-up Country:</label>
+        <input type="text" id="pickup-country">
       </div>
       
       <!-- Pick-up Contact Numbers -->
@@ -68,6 +83,18 @@
         </div>
         <button type="button" id="add-delivery-address-btn">Add Another Delivery Address</button>
       </div>
+      <div>
+        <label for="delivery-state">Delivery State:</label>
+        <input type="text" id="delivery-state">
+      </div>
+      <div>
+        <label for="delivery-zip">Delivery Zip Code:</label>
+        <input type="text" id="delivery-zip">
+      </div>
+      <div>
+        <label for="delivery-country">Delivery Country:</label>
+        <input type="text" id="delivery-country">
+      </div>
 
       <!-- Delivery Contact Numbers -->
       <div>
@@ -80,16 +107,49 @@
         <button type="button" id="add-delivery-contact-btn">Add Another Delivery Contact</button>
       </div>
 
-      <!-- Item Descriptions -->
+      <!-- Email Addresses (Dynamic) -->
       <div>
-        <label>Item Descriptions:</label>
-        <div id="item-descriptions-container">
+        <label>Email for Tracking:</label>
+        <div id="tracking-emails-container">
           <div>
-            <textarea class="item-description" placeholder="Item Description 1"></textarea>
+            <input type="email" class="tracking-email" placeholder="Tracking Email 1">
           </div>
         </div>
-        <button type="button" id="add-item-description-btn">Add Another Item Description</button>
+        <button type="button" id="add-tracking-email-btn">Add Another Email</button>
       </div>
+
+      <!-- Item Count (REMOVED as per new requirement) -->
+      
+      <!-- Item Descriptions -->
+      <div>
+        <label>Items (Description, Qty, Weight, Dimensions):</label>
+        <div id="item-descriptions-container">
+          <div class="item-description-entry">
+            <!-- Initial Item Entry -->
+            <h5>Item 1</h5>
+            <textarea class="item-description" placeholder="Item Description"></textarea>
+            <div class="item-details-line-1">
+              <input type="number" class="item-qty" placeholder="Qty" min="1" title="Quantity">
+              <input type="text" class="item-weight" placeholder="Weight (e.g., 5kg)" title="Weight">
+            </div>
+            <div class="item-details-line-2">
+              <label>Dimensions (LxWxH):</label>
+              <input type="text" class="item-length" placeholder="L" title="Length">
+              <input type="text" class="item-width" placeholder="W" title="Width">
+              <input type="text" class="item-height" placeholder="H" title="Height">
+            </div>
+            <!-- No remove button for the first static entry, or it's added by JS if desired -->
+          </div>
+        </div>
+        <button type="button" id="add-item-description-btn">Add Another Item</button> <!-- Text changed -->
+      </div>
+
+      <!-- Special Instructions -->
+      <div>
+        <label for="special-instructions">Special Instructions:</label>
+        <textarea id="special-instructions"></textarea>
+      </div>
+
       <button type="submit" id="create-order-btn">Create Order</button>
     </form>
   </div>
@@ -101,6 +161,10 @@
       <div>
         <label for="driver-name-static">Driver Name:</label>
         <input type="text" id="driver-name-static" placeholder="Enter driver's full name">
+      </div>
+      <div>
+        <label for="driver-photo">Driver Photo:</label>
+        <input type="file" id="driver-photo" accept="image/*">
       </div>
 
       <!-- Dynamic Vehicle Information -->
@@ -139,6 +203,22 @@
         </div>
       </div>
       <button type="button" id="add-driver-contact-btn">Add Another Contact Number</button>
+      <hr>
+
+      <!-- Dynamic Driver Addresses -->
+      <h4>Driver Addresses</h4>
+      <div id="driver-addresses-container">
+        <div class="driver-address-entry">
+          <h5>Address 1</h5>
+          <input type="text" class="driver-address-street" placeholder="Street Address">
+          <input type="text" class="driver-address-city" placeholder="City">
+          <input type="text" class="driver-address-state" placeholder="State">
+          <input type="text" class="driver-address-zip" placeholder="Zip Code">
+          <input type="text" class="driver-address-country" placeholder="Country">
+          <!-- No remove button for the first static entry, or it's added by JS -->
+        </div>
+      </div>
+      <button type="button" id="add-driver-address-btn">Add Another Address</button>
       <hr>
 
       <button type="submit" id="update-profile-btn">Update Profile</button>

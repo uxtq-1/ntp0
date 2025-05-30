@@ -2,6 +2,23 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // --- Global Data Storage ---
+  let orders = [];
+  let drivers = [];
+  let leafletMap = null; // Map instance, accessible within DCL scope
+
+  // Shared city coordinates for placeholder geocoding
+  const cityCoordinates = {
+    "New York": [40.7128, -74.0060],
+    "Los Angeles": [34.0522, -118.2437],
+    "Chicago": [41.8781, -87.6298],
+    "Houston": [29.7604, -95.3698],
+    "Phoenix": [33.4484, -112.0740],
+    "Philadelphia": [39.9526, -75.1652],
+    "London": [51.5074, -0.1278], 
+    // Add more cities as needed
+  };
+
   // --- Order Number Generation ---
   let lastOrderDate = '';
   let orderSequence = 1;
@@ -154,6 +171,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Field Creation Functions for Dynamic Entries ---
 
+// Global Helper to clear/reset dynamic fields
+function clearDynamicFields(containerId, entryClass, sectionTitlePrefix, fieldDefinitions) {
+    // fieldDefinitions: For simple entries, it's { class: 'field-class', placeholder: 'Placeholder Prefix' }
+    //                    For complex entries, it's an array of { class: 'field-class', placeholder: 'Specific Placeholder' (optional for complex) }
+    const container = document.getElementById(containerId);
+    if (!container) {
+      console.warn(`clearDynamicFields: Container ${containerId} not found.`);
+      return;
+    }
+
+    const allEntries = container.querySelectorAll(`.${entryClass}`);
+    allEntries.forEach((entry, index) => {
+    if (index === 0) { // This is the initial entry, clear its fields
+        if (Array.isArray(fieldDefinitions)) { // Complex entry
+        fieldDefinitions.forEach(fieldDef => {
+            const input = entry.querySelector(`.${fieldDef.class}`);
+            if (input) {
+            input.value = '';
+            // Placeholder for complex fields is usually static, set in HTML/JS create function
+            }
+        });
+        } else { // Simple entry (fieldDefinitions is an object)
+          if (fieldDefinitions && fieldDefinitions.class) {
+            const input = entry.querySelector(`.${fieldDefinitions.class}`);
+            if (input) {
+                input.value = '';
+                if (fieldDefinitions.placeholder) { // Check if placeholder exists
+                    input.placeholder = `${fieldDefinitions.placeholder} 1`;
+                }
+            } else {
+                 console.warn(`clearDynamicFields: Initial field .${fieldDefinitions.class} not found in .${entryClass} within ${containerId}`);
+            }
+          } else {
+             console.warn(`clearDynamicFields: fieldDefinitions object or its 'class' property is missing for simple entry in ${containerId}`);
+          }
+        }
+        // Reset H5 title if it exists for the first entry
+        const titleElement = entry.querySelector('h5');
+        if (titleElement && sectionTitlePrefix) {
+        titleElement.textContent = `${sectionTitlePrefix} 1`;
+        }
+    } else { // These are dynamically added entries, remove them
+        entry.remove();
+    }
+    });
+
+    // If the first entry was removed because it didn't have the entryClass initially (not current setup)
+    // or if the container is now empty but should have an initial entry structure (less likely with current HTML)
+    if (allEntries.length === 0 && container.firstElementChild && !container.querySelector(`.${entryClass}`)) {
+        // This case might need specific handling if the initial entry is ever set up without entryClass.
+        // For current setup, this block is unlikely to be hit as initial entries have entryClass.
+        console.warn(`clearDynamicFields: Container ${containerId} is empty after processing, initial entry structure might need review if it was not part of 'allEntries'.`);
+    }
+}
+
+
   function createSingleField(entryNumber, fieldClass, placeholderPrefix, fieldElementType = 'input', inputElementType = 'text') {
     const fragment = document.createDocumentFragment();
     let fieldElement;
@@ -172,6 +245,87 @@ document.addEventListener('DOMContentLoaded', () => {
     // Let's adjust: the placeholder is now set here.
     fieldElement.placeholder = `${placeholderPrefix} ${entryNumber}`;
     fragment.appendChild(fieldElement);
+    return fragment;
+  }
+
+  function createItemEntryFields(entryNumber) {
+    const fragment = document.createDocumentFragment();
+
+    // No H5 title here, addDynamicFieldEntry will add it based on sectionTitlePrefix ("Item")
+
+    const descriptionTextarea = document.createElement('textarea');
+    descriptionTextarea.classList.add('item-description');
+    descriptionTextarea.placeholder = 'Item Description'; // Placeholder is generic for each item
+    fragment.appendChild(descriptionTextarea);
+
+    const line1Div = document.createElement('div');
+    line1Div.classList.add('item-details-line-1'); // For styling Qty and Weight together
+
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'number';
+    qtyInput.classList.add('item-qty');
+    qtyInput.placeholder = 'Qty';
+    qtyInput.min = '1';
+    qtyInput.title = 'Quantity';
+    line1Div.appendChild(qtyInput);
+
+    const weightInput = document.createElement('input');
+    weightInput.type = 'text'; // Changed to text to allow units like 'kg' or 'lbs'
+    weightInput.classList.add('item-weight');
+    weightInput.placeholder = 'Weight (e.g., 5kg)';
+    weightInput.title = 'Weight';
+    line1Div.appendChild(weightInput);
+    fragment.appendChild(line1Div);
+
+    const line2Div = document.createElement('div');
+    line2Div.classList.add('item-details-line-2'); // For styling dimensions together
+    
+    // Adding a label for the dimensions group within the JS-created part might be redundant if placeholders are clear
+    // Or, it can be added for clarity, matching the initial HTML structure.
+    // For now, omitting the explicit "Dimensions (LxWxH):" label in dynamic entries for simplicity, relying on placeholders.
+
+    const lengthInput = document.createElement('input');
+    lengthInput.type = 'text';
+    lengthInput.classList.add('item-length');
+    lengthInput.placeholder = 'L';
+    lengthInput.title = 'Length';
+    line2Div.appendChild(lengthInput);
+
+    const widthInput = document.createElement('input');
+    widthInput.type = 'text';
+    widthInput.classList.add('item-width');
+    widthInput.placeholder = 'W';
+    widthInput.title = 'Width';
+    line2Div.appendChild(widthInput);
+
+    const heightInput = document.createElement('input');
+    heightInput.type = 'text';
+    heightInput.classList.add('item-height');
+    heightInput.placeholder = 'H';
+    heightInput.title = 'Height';
+    line2Div.appendChild(heightInput);
+    fragment.appendChild(line2Div);
+
+    return fragment;
+  }
+
+  function createDriverAddressFields(entryNumber) {
+    const fragment = document.createDocumentFragment();
+    const fields = [
+      { type: 'text', class: 'driver-address-street', placeholder: 'Street Address' },
+      { type: 'text', class: 'driver-address-city', placeholder: 'City' },
+      { type: 'text', class: 'driver-address-state', placeholder: 'State' },
+      { type: 'text', class: 'driver-address-zip', placeholder: 'Zip Code' },
+      { type: 'text', class: 'driver-address-country', placeholder: 'Country' }
+    ];
+    fields.forEach(fieldInfo => {
+      const input = document.createElement('input');
+      input.type = fieldInfo.type;
+      input.classList.add(fieldInfo.class);
+      input.placeholder = fieldInfo.placeholder;
+      // Each input will be on its own line by default block behavior, or styled with CSS
+      fragment.appendChild(input);
+    });
     return fragment;
   }
 
@@ -232,7 +386,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setupDynamicFieldSectionListeners('add-delivery-contact-btn', 'delivery-contacts-container', 'delivery-contact-entry',
     (n) => createSingleField(n, 'delivery-contact', 'Delivery Contact', 'input', 'tel'), 'remove-delivery-contact', null);
   setupDynamicFieldSectionListeners('add-item-description-btn', 'item-descriptions-container', 'item-description-entry',
-    (n) => createSingleField(n, 'item-description', 'Item Description', 'textarea'), 'remove-item-description', null);
+    createItemEntryFields, 'remove-item-description', 'Item'); // Use new create function and title prefix
+  setupDynamicFieldSectionListeners('add-tracking-email-btn', 'tracking-emails-container', 'tracking-email-entry',
+    (n) => createSingleField(n, 'tracking-email', 'Tracking Email', 'input', 'email'), 'remove-tracking-email', null);
 
   // Driver Menu
   setupDynamicFieldSectionListeners('add-vehicle-btn', 'driver-vehicles-container', 'vehicle-entry', 
@@ -240,7 +396,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setupDynamicFieldSectionListeners('add-certification-btn', 'driver-certifications-container', 'certification-entry', 
     createCertificationFields, 'remove-certification', 'Certification/License');
   setupDynamicFieldSectionListeners('add-driver-contact-btn', 'driver-contacts-container', 'driver-contact-entry',
-    (n) => createSingleField(n, 'driver-contact', 'Contact Number', 'input', 'tel'), 'remove-driver-contact', "Contact Number"); // H5 title might be a bit much here, but consistent for now
+    (n) => createSingleField(n, 'driver-contact', 'Contact Number', 'input', 'tel'), 'remove-driver-contact', "Contact Number"); 
+  setupDynamicFieldSectionListeners('add-driver-address-btn', 'driver-addresses-container', 'driver-address-entry',
+    createDriverAddressFields, 'remove-driver-address', 'Address');
 
 
   // Function to handle the creation of a new order
@@ -261,22 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return values;
     }
 
-    // Helper to clear/reset dynamic fields
-    function clearDynamicFields(containerId, fieldClass, entryClass, placeholderPrefix) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-
-      // Remove dynamically added entries (those with entryClass)
-      const dynamicEntries = container.querySelectorAll(`.${entryClass}`);
-      dynamicEntries.forEach(entry => entry.remove());
-
-      // Clear the first (initial) field and reset its placeholder
-      const initialField = container.querySelector(`.${fieldClass}`); // Should target the one in the initial div
-      if (initialField) {
-        initialField.value = '';
-        initialField.placeholder = `${placeholderPrefix} 1`;
-      }
-    }
+    // clearDynamicFields is now a global helper function. Its definition is outside.
 
     if (clientOrderForm) {
       clientOrderForm.addEventListener('submit', (event) => {
@@ -285,38 +428,108 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get values from static form fields
         const orderNumber = document.getElementById('order-number').value; // Assuming it might be populated by JS later
         const pickupName = document.getElementById('pickup-name').value;
+        const clientRefNumber = document.getElementById('client-ref-number').value;
+        const pickupState = document.getElementById('pickup-state').value;
+        const pickupZip = document.getElementById('pickup-zip').value;
+        const pickupCountry = document.getElementById('pickup-country').value;
+        
         const deliveryName = document.getElementById('delivery-name').value;
+        const deliveryState = document.getElementById('delivery-state').value;
+        const deliveryZip = document.getElementById('delivery-zip').value;
+        const deliveryCountry = document.getElementById('delivery-country').value;
+
+        // const itemCount = document.getElementById('item-count').value; // Removed
+        const specialInstructions = document.getElementById('special-instructions').value;
 
         // Collect values from dynamic fields
         const pickupAddresses = collectDynamicFieldValues('pickup-addresses-container', 'pickup-address');
         const deliveryAddresses = collectDynamicFieldValues('delivery-addresses-container', 'delivery-address');
         const pickupContacts = collectDynamicFieldValues('pickup-contacts-container', 'pickup-contact');
         const deliveryContacts = collectDynamicFieldValues('delivery-contacts-container', 'delivery-contact');
-        const itemDescriptions = collectDynamicFieldValues('item-descriptions-container', 'item-description');
+        const trackingEmails = collectDynamicFieldValues('tracking-emails-container', 'tracking-email');
+        
+        // Updated item collection logic
+        const items = [];
+        const itemEntries = document.querySelectorAll('#item-descriptions-container .item-description-entry');
+        itemEntries.forEach(entry => {
+          const description = entry.querySelector('.item-description')?.value.trim();
+          const quantity = entry.querySelector('.item-qty')?.value.trim();
+          const weight = entry.querySelector('.item-weight')?.value.trim();
+          const length = entry.querySelector('.item-length')?.value.trim();
+          const width = entry.querySelector('.item-width')?.value.trim();
+          const height = entry.querySelector('.item-height')?.value.trim();
+
+          // Add item if at least description or quantity is present, or any other field has data
+          const hasSomeData = [description, quantity, weight, length, width, height].some(val => val && val !== '');
+          if (hasSomeData) {
+            items.push({
+              description: description || '',
+              quantity: quantity || '',
+              weight: weight || '',
+              length: length || '',
+              width: width || '',
+              height: height || ''
+            });
+          }
+        });
         
         // Log all collected values
-        console.log("New Order:", {
+        const newOrderData = {
           orderNumber,
+          clientRefNumber,
           pickupName,
           pickupAddresses,
+          pickupState,
+          pickupZip,
+          pickupCountry,
           pickupContacts,
           deliveryName,
           deliveryAddresses,
+          deliveryState,
+          deliveryZip,
+          deliveryCountry,
           deliveryContacts,
-          itemDescriptions
-        });
+          trackingEmails,
+          items, // Replaces itemDescriptions
+          specialInstructions
+        };
+        orders.push(newOrderData);
+        console.log("New Order Added:", newOrderData);
+        console.log("Current Orders Array:", orders);
+
+        // Plot the new order on the map
+        plotOrderOnMap(newOrderData);
 
         // Clear static form fields
         // document.getElementById('order-number').value = ''; // Assuming read-only or set by system
+        document.getElementById('client-ref-number').value = '';
         document.getElementById('pickup-name').value = '';
+        document.getElementById('pickup-state').value = '';
+        document.getElementById('pickup-zip').value = '';
+        document.getElementById('pickup-country').value = '';
         document.getElementById('delivery-name').value = '';
+        document.getElementById('delivery-state').value = '';
+        document.getElementById('delivery-zip').value = '';
+        document.getElementById('delivery-country').value = '';
+        // document.getElementById('item-count').value = ''; // Removed
+        document.getElementById('special-instructions').value = '';
         
         // Clear all dynamic fields
-        clearDynamicFields('pickup-addresses-container', 'pickup-address', 'pickup-address-entry', 'Pick-up Address');
-        clearDynamicFields('delivery-addresses-container', 'delivery-address', 'delivery-address-entry', 'Delivery Address');
-        clearDynamicFields('pickup-contacts-container', 'pickup-contact', 'pickup-contact-entry', 'Pick-up Contact');
-        clearDynamicFields('delivery-contacts-container', 'delivery-contact', 'delivery-contact-entry', 'Delivery Contact');
-        clearDynamicFields('item-descriptions-container', 'item-description', 'item-description-entry', 'Item Description');
+        clearDynamicFields('pickup-addresses-container', 'pickup-address-entry', null, { class: 'pickup-address', placeholder: 'Pick-up Address' });
+        clearDynamicFields('delivery-addresses-container', 'delivery-address-entry', null, { class: 'delivery-address', placeholder: 'Delivery Address' });
+        clearDynamicFields('pickup-contacts-container', 'pickup-contact-entry', null, { class: 'pickup-contact', placeholder: 'Pick-up Contact' });
+        clearDynamicFields('delivery-contacts-container', 'delivery-contact-entry', null, { class: 'delivery-contact', placeholder: 'Delivery Contact' });
+        clearDynamicFields('tracking-emails-container', 'tracking-email-entry', null, { class: 'tracking-email', placeholder: 'Tracking Email' });
+        
+        // For item descriptions (complex entry)
+        clearDynamicFields('item-descriptions-container', 'item-description-entry', 'Item', [
+          { class: 'item-description' }, // Placeholder is static
+          { class: 'item-qty' },
+          { class: 'item-weight' },
+          { class: 'item-length' },
+          { class: 'item-width' },
+          { class: 'item-height' }
+        ]);
 
         // Populate a new order number for the next order
         populateOrderNumber();
@@ -356,10 +569,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return allEntriesData;
     }
     
-    // Reusing collectDynamicFieldValues for single field dynamic entries (like driver contacts)
-    // (This function is already defined within handleCreateOrder's scope, ideally it should be global or passed)
-    // For now, let's assume it's accessible or redefine it if necessary.
-    // To avoid issues, let's make a local version for single fields here too.
+    // Local version of collectSingleDynamicFieldValues for handleUpdateProfile
+    // This can remain local if only used here, or be globalized if handleCreateOrder needs identical functionality.
+    // For now, keeping it local to handleUpdateProfile.
     function collectSingleDynamicFieldValues(containerId, fieldClass) {
       const container = document.getElementById(containerId);
       if (!container) return [];
@@ -373,81 +585,68 @@ document.addEventListener('DOMContentLoaded', () => {
       return values;
     }
 
-
-    // Helper to clear/reset dynamic grouped fields
-    function clearDynamicGroupedFields(containerId, entryClass, sectionTitlePrefix) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-
-      const dynamicEntries = container.querySelectorAll(`.${entryClass}`);
-      dynamicEntries.forEach((entry, index) => {
-        if (index === 0) { // This is the initial entry
-          const inputs = entry.querySelectorAll('input, textarea');
-          inputs.forEach(input => input.value = '');
-          if (sectionTitlePrefix && entry.querySelector('h5')) {
-            entry.querySelector('h5').textContent = `${sectionTitlePrefix} 1`;
-          }
-        } else { // These are dynamically added entries
-          entry.remove();
-        }
-      });
-       // If the first entry was the only one and had no .entryClass (not the case with current HTML but good to be robust)
-      if (dynamicEntries.length === 0) {
-        const firstEntryLikeDiv = container.firstElementChild; // This might be the div.vehicle-entry
-        if (firstEntryLikeDiv && firstEntryLikeDiv.matches(`.${entryClass}`)){ // Check if it's an entryClass div
-            const inputs = firstEntryLikeDiv.querySelectorAll('input, textarea');
-            inputs.forEach(input => input.value = '');
-             if (sectionTitlePrefix && firstEntryLikeDiv.querySelector('h5')) {
-                firstEntryLikeDiv.querySelector('h5').textContent = `${sectionTitlePrefix} 1`;
-            }
-        }
-      }
-    }
-    // Simplified clear for single field dynamic entries
-     function clearSingleDynamicFields(containerId, fieldClass, entryClass, placeholderPrefix) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        const dynamicEntries = container.querySelectorAll(`.${entryClass}`); // Assuming entryClass for wrapper div
-        dynamicEntries.forEach((entry, index) => {
-            if (index > 0) entry.remove(); // Remove added ones
-        });
-        const initialField = container.querySelector(`.${entryClass} .${fieldClass}, div > .${fieldClass}`); // More robust selector for initial field
-        if (initialField) {
-            initialField.value = '';
-            if(placeholderPrefix) initialField.placeholder = `${placeholderPrefix} 1`;
-            // If there's an H5 for the single entry too
-            const titleElement = initialField.closest(`.${entryClass}`)?.querySelector('h5');
-            if(titleElement && placeholderPrefix) titleElement.textContent = `${placeholderPrefix} 1`;
-        }
-    }
-
+    // Local clearing helpers (clearDynamicGroupedFields, clearSingleDynamicFields) were removed in a previous step.
+    // This function will now use the global clearDynamicFields.
 
     if (driverProfileForm) {
       driverProfileForm.addEventListener('submit', (event) => {
         event.preventDefault(); // Prevent default form submission
 
         const driverName = document.getElementById('driver-name-static').value;
+        const driverPhotoInput = document.getElementById('driver-photo');
+        const driverPhotoFile = driverPhotoInput.files.length > 0 ? driverPhotoInput.files[0] : null;
+        const driverPhotoInfo = driverPhotoFile ? { name: driverPhotoFile.name, size: driverPhotoFile.size, type: driverPhotoFile.type } : null;
 
-        const vehicles = collectDynamicGroupedValues('driver-vehicles-container', 'vehicle-entry', {
+        const vehiclesData = collectDynamicGroupedValues('driver-vehicles-container', 'vehicle-entry', {
           type: 'vehicle-type', make: 'vehicle-make', model: 'vehicle-model', plate: 'vehicle-plate'
         });
-        const certifications = collectDynamicGroupedValues('driver-certifications-container', 'certification-entry', {
+        const certificationsData = collectDynamicGroupedValues('driver-certifications-container', 'certification-entry', {
           name: 'certification-name', licenseNumber: 'license-number', expirationDate: 'expiration-date'
         });
-        const driverContacts = collectSingleDynamicFieldValues('driver-contacts-container', 'driver-contact');
-
-        console.log("Driver Profile Update:", {
-          driverName,
-          vehicles,
-          certifications,
-          driverContacts
+        const driverContactsData = collectSingleDynamicFieldValues('driver-contacts-container', 'driver-contact'); 
+        const driverAddressesData = collectDynamicGroupedValues('driver-addresses-container', 'driver-address-entry', {
+            street: 'driver-address-street', 
+            city: 'driver-address-city', 
+            state: 'driver-address-state', 
+            zip: 'driver-address-zip', 
+            country: 'driver-address-country'
         });
+
+        const currentDriverData = {
+          driverName, 
+          driverPhoto: driverPhotoInfo,
+          vehicles: vehiclesData,
+          certifications: certificationsData,
+          driverContacts: driverContactsData,
+          driverAddresses: driverAddressesData
+        };
+
+        const existingDriverIndex = drivers.findIndex(driver => driver.driverName === currentDriverData.driverName);
+
+        if (existingDriverIndex > -1) {
+          drivers[existingDriverIndex] = currentDriverData;
+          console.log("Driver Profile Updated:", currentDriverData);
+        } else {
+          drivers.push(currentDriverData);
+          console.log("New Driver Profile Added:", currentDriverData);
+        }
+        console.log("Current Drivers Array:", drivers);
 
         // Clear form fields
         document.getElementById('driver-name-static').value = '';
-        clearDynamicGroupedFields('driver-vehicles-container', 'vehicle-entry', 'Vehicle');
-        clearDynamicGroupedFields('driver-certifications-container', 'certification-entry', 'Certification/License');
-        clearSingleDynamicFields('driver-contacts-container', 'driver-contact', 'driver-contact-entry', 'Contact Number');
+        if (driverPhotoInput) driverPhotoInput.value = ''; // Clear file input
+
+        // Using the global clearDynamicFields function
+        clearDynamicFields('driver-vehicles-container', 'vehicle-entry', 'Vehicle', [
+            {class:'vehicle-type'}, {class:'vehicle-make'}, {class:'vehicle-model'}, {class:'vehicle-plate'}
+        ]);
+        clearDynamicFields('driver-certifications-container', 'certification-entry', 'Certification/License', [
+            {class:'certification-name'}, {class:'license-number'}, {class:'expiration-date'}
+        ]);
+        clearDynamicFields('driver-contacts-container', 'driver-contact-entry', 'Contact Number', { class: 'driver-contact', placeholder: 'Contact Number' });
+        clearDynamicFields('driver-addresses-container', 'driver-address-entry', 'Address', [
+            {class:'driver-address-street'}, {class:'driver-address-city'}, {class:'driver-address-state'}, {class:'driver-address-zip'}, {class:'driver-address-country'}
+        ]);
       });
     } else {
       console.error('Driver profile form not found.');
@@ -529,20 +728,20 @@ function initMap() {
   }
 
   // Check if map is already initialized
-  if (mapPlaceholder._leaflet_id) {
+  if (leafletMap) { // Use the global variable for check
     console.warn('Map already initialized.');
     return;
   }
 
   try {
-    const map = L.map('map-placeholder').setView([51.505, -0.09], 13);
+    leafletMap = L.map('map-placeholder').setView([51.505, -0.09], 13); // Assign to global variable
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    }).addTo(leafletMap); // ensure it's added to the correct map instance
 
-    L.marker([51.505, -0.09]).addTo(map)
-      .bindPopup('A default marker at [51.505, -0.09].')
+    L.marker([51.505, -0.09]).addTo(leafletMap) // ensure it's added to the correct map instance
+      .bindPopup('A default marker at London.')
       .openPopup();
       
     console.log('Map initialized successfully.');
@@ -551,3 +750,44 @@ function initMap() {
     mapPlaceholder.innerHTML = '<p style="color:red; text-align:center;">Error initializing map. See console for details.</p>';
   }
 }
+
+// End of initMenuToggles
+
+// Function to plot a single order's pick-up location on the map
+// Now correctly placed within DOMContentLoaded
+function plotOrderOnMap(orderData) {
+  if (!leafletMap) {
+    console.error('plotOrderOnMap: Leaflet map instance not available.');
+    return;
+  }
+  // cityCoordinates is accessible from the DCL scope
+
+  let coordinates = null;
+  const firstPickupCity = orderData.pickupCity; 
+
+  if (firstPickupCity && cityCoordinates[firstPickupCity]) {
+      coordinates = cityCoordinates[firstPickupCity];
+  } else if (orderData.pickupAddresses && orderData.pickupAddresses.length > 0) {
+      const firstAddress = orderData.pickupAddresses[0].toLowerCase();
+      for (const city in cityCoordinates) {
+          if (firstAddress.includes(city.toLowerCase())) {
+              coordinates = cityCoordinates[city];
+              console.log(`Plotter (fallback): Found city ${city} in address: ${orderData.pickupAddresses[0]}`);
+              break;
+          }
+      }
+  }
+
+  if (coordinates) {
+      const popupContent = `<b>Order:</b> ${orderData.orderNumber}<br>
+                            <b>Client Ref:</b> ${orderData.clientRefNumber || 'N/A'}<br>
+                            <b>Pick-up City:</b> ${firstPickupCity || '(city not specified)'}<br>
+                            <b>Address 1:</b> ${orderData.pickupAddresses && orderData.pickupAddresses.length > 0 ? orderData.pickupAddresses[0] : 'N/A'}`;
+      L.marker(coordinates).addTo(leafletMap).bindPopup(popupContent);
+      console.log(`Plotted order ${orderData.orderNumber} for city: ${firstPickupCity || '(city derived from address)'}`);
+  } else {
+      const logCityInfo = firstPickupCity || (orderData.pickupAddresses && orderData.pickupAddresses.length > 0 ? orderData.pickupAddresses[0] : 'N/A');
+      console.log(`Could not plot order ${orderData.orderNumber}. City/Address: ${logCityInfo}. Coordinates found: ${!!coordinates}, Map ready: ${!!leafletMap}`);
+  }
+}
+// End of plotOrderOnMap function definition

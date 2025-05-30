@@ -188,6 +188,9 @@ label {
 }
 
 input[type="text"],
+input[type="email"], /* Added type="email" */
+input[type="tel"],   /* Added type="tel" for consistency as it's used elsewhere */
+input[type="number"],/* Added type="number" */
 textarea {
   width: calc(100% - 22px); /* Full width minus padding and border */
   padding: 10px;
@@ -253,7 +256,40 @@ h3 {
 /* Styling for all textareas in item description entries */
 .item-description-entry textarea.item-description {
   resize: vertical;
-  min-height: 60px; /* Same as general textarea styling but ensures specificity */
+  min-height: 60px; 
+  margin-bottom: 5px; /* Space before the next line of inputs */
+  width: 100%; /* Ensure it takes full width within the entry, overriding calc if needed */
+  box-sizing: border-box; /* Ensure padding/border don't make it overflow */
+}
+
+.item-description-entry .item-details-line-1,
+.item-description-entry .item-details-line-2 {
+  display: flex;
+  gap: 8px; /* Space between inputs on the same line */
+  margin-bottom: 5px;
+}
+
+.item-description-entry .item-details-line-1 input,
+.item-description-entry .item-details-line-2 input {
+  flex-grow: 1;
+  /* width is handled by flex-grow, remove fixed calc width from general input rule for these */
+  width: auto; 
+  margin-bottom: 0; /* Margin is on the container div (.item-details-line-1/2) */
+}
+
+.item-description-entry .item-details-line-2 label {
+  font-weight: normal;
+  font-size: 0.9em;
+  margin-right: 5px;
+  white-space: nowrap; /* Prevent label from wrapping */
+  flex-shrink: 0; /* Prevent label from shrinking */
+}
+
+/* Specific widths for dimension fields if needed, otherwise they flex-grow */
+.item-description-entry .item-length,
+.item-description-entry .item-width,
+.item-description-entry .item-height {
+  min-width: 40px; /* Ensure they are not too small */
 }
 
 
@@ -303,6 +339,19 @@ h3 {
   background-color: #218838; /* Darker green on hover */
 }
 
+/* Styling for file input */
+#driver-photo {
+  /* width: calc(100% - 22px); File inputs are tricky with width */
+  padding: 5px; /* Less padding than text inputs */
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: block; /* Make it block to manage width/margin better */
+  max-width: calc(100% - 22px); /* Try to match text input width behavior */
+}
+
+
 /* Driver Form Specific Styles for Dynamic Entries */
 #driver-profile-form h4 {
   margin-top: 20px;
@@ -320,7 +369,8 @@ h3 {
 }
 
 .vehicle-entry,
-.certification-entry { 
+.certification-entry,
+.driver-address-entry { /* Add new entry type here */
   padding: 10px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
@@ -329,7 +379,7 @@ h3 {
 }
 
 /* .driver-contact-entry will now use the simpler styling similar to client form entries */
-.driver-contact-entry {
+.driver-contact-entry { /* This already has simpler styling */
   display: flex; /* Similar to .pickup-address-entry */
   align-items: center;
   margin-bottom: 8px; 
@@ -338,7 +388,8 @@ h3 {
 
 .vehicle-entry h5,
 .certification-entry h5,
-.driver-contact-entry h5 { /* For driver contact if using H5 titles - will apply if H5 is present */
+.driver-address-entry h5, /* Add new entry type here */
+.driver-contact-entry h5 { 
   margin-top: 0;
   margin-bottom: 10px;
   color: #555;
@@ -346,39 +397,59 @@ h3 {
 }
 
 /* Styling for label-input pairs within vehicle and certification entries */
-.vehicle-entry div,
-.certification-entry div { 
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
+/* And for inputs directly within driver-address-entry */
+.vehicle-entry div, /* These have label+input inside a div */
+.certification-entry div,
+.driver-address-entry input { /* Inputs are direct children for driver addresses after H5 */
+  /* display: flex; align-items: center; are for the divs in vehicle/cert */
+  margin-bottom: 8px; /* Common margin for inputs or divs containing them */
 }
-/* Specific for driver contact entry's inner div if it exists and needs similar flex styling */
-.driver-contact-entry > div { /* Targeting the direct div child that wraps label and input */
+/* Specifics for the divs inside vehicle/cert that group label+input */
+.vehicle-entry div, 
+.certification-entry div {
   display: flex;
   align-items: center;
-  width: 100%; /* Make the inner div take full width */
+}
+
+/* Specific for driver contact entry's inner div if it exists and needs similar flex styling */
+.driver-contact-entry > div { 
+  display: flex;
+  align-items: center;
+  width: 100%; 
 }
 
 
 .vehicle-entry div label,
 .certification-entry div label,
-.driver-contact-entry div label { /* Style for label within .driver-contact-entry > div */
-  flex-basis: 120px; /* Fixed width for labels */
+/* No explicit labels inside dynamically created .driver-address-entry, placeholders are used. */
+/* Style for label within .driver-contact-entry > div */
+.driver-contact-entry div label { 
+  flex-basis: 120px; 
   margin-right: 10px;
-  font-weight: normal; /* Override general bold label if needed */
+  font-weight: normal; 
   color: #444;
   font-size: 0.95em;
 }
 
 .vehicle-entry div input,
-.certification-entry div input {
-  flex-grow: 1;
+.certification-entry div input,
+.driver-address-entry input { /* Style all inputs within these entries */
+  flex-grow: 1; /* Allow inputs in vehicle/cert to grow */
+  /* For driver-address-entry inputs, they are block by default, this won't hurt.
+     CSS below will make them take full width of their line. */
 }
+
+/* Ensure inputs in driver-address-entry take full width of their line */
+.driver-address-entry input[type="text"] {
+    width: calc(100% - 22px); /* Match general text input style if not in a flex row */
+    /* If they are to be inline or side-by-side, further flex/grid on .driver-address-entry is needed */
+}
+
 
 /* Ensure driver-contact input also grows and has margin like other single dynamic fields */
 .driver-contact-entry .driver-contact {
   flex-grow: 1;
-  margin-right: 8px; /* Space before remove button */
+  margin-right: 8px; 
 }
 
 
