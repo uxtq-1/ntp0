@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (orderNumberField) {
       orderNumberField.value = generateOrderNumber();
     } else {
-      console.error('Order number field not found.');
+      alert('Error: Order number field not found.');
     }
   }
 
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function addDynamicFieldEntry(containerId, entryClass, createEntryFieldsFn, removeButtonClassPrefix, sectionTitlePrefix) {
     const container = document.getElementById(containerId);
     if (!container) {
-      console.error(`Container ${containerId} not found.`);
+      alert(`Error: Container ${containerId} not found.`);
       return;
     }
 
@@ -141,14 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addButton) {
       addButton.addEventListener('click', () => addDynamicFieldEntry(containerId, entryClass, createEntryFieldsFn, removeButtonClassPrefix, sectionTitlePrefix));
     } else {
-      console.warn(`Add button ${addButtonId} not found.`);
+      alert(`Warning: Add button ${addButtonId} not found.`);
     }
 
     const container = document.getElementById(containerId);
     if (container) {
       container.addEventListener('click', (event) => handleDynamicFieldRemove(event, entryClass, removeButtonClassPrefix, sectionTitlePrefix));
     } else {
-      console.warn(`Container ${containerId} not found for event delegation.`);
+      alert(`Warning: Container ${containerId} not found for event delegation.`);
     }
   }
 
@@ -222,6 +222,142 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // --- Initialize Dynamic Field Sections ---
 
+  // --- Validation Helper ---
+  /**
+   * Validates a single input field and displays/clears an error message.
+   * @param {HTMLElement} inputElement - The input element to validate.
+   * @param {function} validationFn - A function that takes the input value and returns true if valid, false otherwise.
+   * @param {string} errorMessageText - The error message to display if validation fails.
+   * @returns {boolean} True if valid, false otherwise.
+   */
+  function validateField(inputElement, validationFn, errorMessageText) {
+    // Clear previous error message for this field
+    let errorSpan = inputElement.nextElementSibling;
+    if (errorSpan && errorSpan.classList.contains('error-message')) {
+      errorSpan.remove();
+    }
+    inputElement.classList.remove('input-error'); // Assuming an error class for styling
+
+    const value = inputElement.value.trim();
+    if (!validationFn(value)) {
+      errorSpan = document.createElement('span');
+      errorSpan.classList.add('error-message');
+      errorSpan.textContent = errorMessageText;
+      inputElement.insertAdjacentElement('afterend', errorSpan);
+      inputElement.classList.add('input-error');
+      return false;
+    }
+    return true;
+  }
+
+  // Basic validation functions (can be expanded)
+  const Validators = {
+    isNotEmpty: value => value !== '',
+    isPositiveNumber: value => Number(value) > 0,
+    matchesPattern: (value, pattern) => pattern.test(value),
+    isEmail: value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+    isPhoneNumber: value => /^[\d\s+\-()]+$/.test(value) // Example, adjust as needed
+  };
+
+
+  /**
+   * Resets a dynamic field section. Removes dynamically added entries and clears/resets the first entry.
+   * @param {string} containerId - ID of the container for the dynamic fields.
+   * @param {string} entryClass - CSS class used for dynamically added entries.
+   * @param {object} [options={}] - Options for resetting the first entry.
+   * @param {string} [options.firstEntryFieldSelector=null] - CSS selector for the input/textarea in the first entry (for single fields).
+   * @param {string} [options.placeholderPrefix=null] - Placeholder prefix to reset for the first single field.
+   * @param {string} [options.sectionTitlePrefix=null] - Title prefix to reset for the H5 in the first grouped entry.
+   * @param {boolean} [options.clearAllInputsInFirstEntry=false] - Whether to clear all input/textarea in the first entry (for grouped).
+   */
+  function resetDynamicSection(containerId, entryClass, options = {}) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // Remove dynamically added entries (all elements with entryClass except the first one if it also has it)
+    const allEntries = container.querySelectorAll(`.${entryClass}`);
+    allEntries.forEach((entry, index) => {
+      if (index > 0) { // Assuming the first entry (index 0) is the one to be cleared, not removed
+        entry.remove();
+      }
+    });
+
+    // Handle the first entry (index 0)
+    const firstEntry = container.querySelector(`.${entryClass}`); // Could also be container.firstElementChild if structure is guaranteed
+    if (firstEntry) {
+      if (options.clearAllInputsInFirstEntry) {
+        const inputsToClear = firstEntry.querySelectorAll('input, textarea');
+        inputsToClear.forEach(input => input.value = '');
+      } else if (options.firstEntryFieldSelector) {
+        const initialField = firstEntry.querySelector(options.firstEntryFieldSelector);
+        if (initialField) {
+          initialField.value = '';
+          if (options.placeholderPrefix) {
+            initialField.placeholder = `${options.placeholderPrefix} 1`;
+          }
+        }
+      }
+
+      if (options.sectionTitlePrefix && firstEntry.querySelector('h5')) {
+        firstEntry.querySelector('h5').textContent = `${options.sectionTitlePrefix} 1`;
+      }
+       // If the first entry itself was a dynamic one and got removed, and there's a non-entryClass static first element
+    } else if (!options.clearAllInputsInFirstEntry && options.firstEntryFieldSelector && container.firstElementChild) {
+        // This case handles if the dynamic entries were added after a truly static first element not having `entryClass`
+        const staticInitialField = container.querySelector(options.firstEntryFieldSelector);
+        if (staticInitialField) {
+             staticInitialField.value = '';
+            if (options.placeholderPrefix) {
+                staticInitialField.placeholder = `${options.placeholderPrefix} 1`;
+            }
+        }
+    }
+  }
+
+
+  /**
+   * Collects values from dynamic fields, supporting both single fields and grouped fields.
+   * @param {string} containerId - ID of the container for the dynamic fields.
+   * @param {string} itemSelector - CSS selector for individual entries (if grouped) or individual fields (if not grouped).
+   * @param {boolean} isGrouped - True if fields are grouped within an entry, false otherwise.
+   * @param {Object} [fieldsMap=null] - For grouped fields, an object mapping desired keys to their CSS classes within an entry.
+   * @returns {Array} An array of values (for single fields) or objects (for grouped fields).
+   */
+  function collectDynamicValues(containerId, itemSelector, isGrouped, fieldsMap = null) {
+    const container = document.getElementById(containerId);
+    if (!container) return [];
+    
+    const items = container.querySelectorAll(isGrouped ? `.${itemSelector}` : itemSelector); // If not grouped, itemSelector is the field class itself
+    const allEntriesData = [];
+
+    items.forEach(itemElement => {
+      if (isGrouped) {
+        const entryData = {};
+        let hasValue = false;
+        if (fieldsMap) {
+          for (const keyInMap in fieldsMap) {
+            const fieldClass = fieldsMap[keyInMap];
+            const field = itemElement.querySelector(`.${fieldClass}`); // itemElement is the entry div
+            if (field && field.value.trim() !== '') {
+              entryData[keyInMap] = field.value.trim();
+              hasValue = true;
+            } else {
+              entryData[keyInMap] = ''; 
+            }
+          }
+        }
+        if (hasValue) {
+          allEntriesData.push(entryData);
+        }
+      } else { // Single field, itemElement is the field itself
+        if (itemElement.value.trim() !== '') {
+          allEntriesData.push(itemElement.value.trim());
+        }
+      }
+    });
+    return allEntriesData;
+  }
+
   // Client Menu
   setupDynamicFieldSectionListeners('add-pickup-address-btn', 'pickup-addresses-container', 'pickup-address-entry', 
     (n) => createSingleField(n, 'pickup-address', 'Pick-up Address', 'input', 'text'), 'remove-pickup-address', null); // No H5 title for these simple ones
@@ -247,52 +383,58 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleCreateOrder() {
     const clientOrderForm = document.getElementById('client-order-form');
 
-    // Helper to collect values from dynamic fields
-    function collectDynamicFieldValues(containerId, fieldClass) {
-      const container = document.getElementById(containerId);
-      if (!container) return [];
-      const fields = container.querySelectorAll(`.${fieldClass}`);
-      const values = [];
-      fields.forEach(field => {
-        if (field.value.trim() !== '') {
-          values.push(field.value.trim());
-        }
-      });
-      return values;
-    }
-
-    // Helper to clear/reset dynamic fields
-    function clearDynamicFields(containerId, fieldClass, entryClass, placeholderPrefix) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-
-      // Remove dynamically added entries (those with entryClass)
-      const dynamicEntries = container.querySelectorAll(`.${entryClass}`);
-      dynamicEntries.forEach(entry => entry.remove());
-
-      // Clear the first (initial) field and reset its placeholder
-      const initialField = container.querySelector(`.${fieldClass}`); // Should target the one in the initial div
-      if (initialField) {
-        initialField.value = '';
-        initialField.placeholder = `${placeholderPrefix} 1`;
-      }
-    }
-
     if (clientOrderForm) {
       clientOrderForm.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent default form submission
+        event.preventDefault(); 
+        let isValid = true;
+
+        // --- Validate Static Fields ---
+        const pickupNameEl = document.getElementById('pickup-name');
+        if (!validateField(pickupNameEl, Validators.isNotEmpty, 'Pick-up name is required.')) isValid = false;
+        
+        const clientRefEl = document.getElementById('client-ref-number');
+        if (!validateField(clientRefEl, value => Validators.isNotEmpty(value) && Validators.matchesPattern(value, /^[A-Za-z0-9\-]+$/), 'Client reference must be alphanumeric/dashes and not empty.')) isValid = false;
+
+        // --- Validate Dynamic Fields ---
+        // Example: Validate first pickup address is not empty
+        const firstPickupAddressEl = document.querySelector('#pickup-addresses-container .pickup-address');
+        if (firstPickupAddressEl && !validateField(firstPickupAddressEl, Validators.isNotEmpty, 'At least one pick-up address is required.')) isValid = false;
+        
+        // Example: Validate all provided pickup contacts for pattern (if any)
+        const pickupContactFields = document.querySelectorAll('#pickup-contacts-container .pickup-contact');
+        pickupContactFields.forEach(contactField => {
+          if (contactField.value.trim() !== '') { // Only validate if not empty, as it's optional overall
+            if(!validateField(contactField, Validators.isPhoneNumber, 'Invalid phone number format.')) isValid = false;
+          }
+        });
+        
+        // Example: Validate item quantity if an item description is filled
+        const itemEntries = document.querySelectorAll('#item-descriptions-container .item-description-entry');
+        itemEntries.forEach((entry, index) => {
+            const descriptionEl = entry.querySelector('.item-description');
+            const qtyEl = entry.querySelector('.item-qty');
+            if (descriptionEl && descriptionEl.value.trim() !== '' && qtyEl) {
+                if (!validateField(qtyEl, Validators.isPositiveNumber, `Quantity for item ${index + 1} must be a positive number.`)) isValid = false;
+            }
+        });
+
+
+        if (!isValid) {
+          alert('Please correct the errors in the form.');
+          return;
+        }
 
         // Get values from static form fields
-        const orderNumber = document.getElementById('order-number').value; // Assuming it might be populated by JS later
-        const pickupName = document.getElementById('pickup-name').value;
-        const deliveryName = document.getElementById('delivery-name').value;
+        const orderNumber = document.getElementById('order-number').value;
+        const pickupName = pickupNameEl.value; // Use validated element's value
+        const deliveryName = document.getElementById('delivery-name').value; // Not validated yet, assuming optional or add validation
 
-        // Collect values from dynamic fields
-        const pickupAddresses = collectDynamicFieldValues('pickup-addresses-container', 'pickup-address');
-        const deliveryAddresses = collectDynamicFieldValues('delivery-addresses-container', 'delivery-address');
-        const pickupContacts = collectDynamicFieldValues('pickup-contacts-container', 'pickup-contact');
-        const deliveryContacts = collectDynamicFieldValues('delivery-contacts-container', 'delivery-contact');
-        const itemDescriptions = collectDynamicFieldValues('item-descriptions-container', 'item-description');
+        // Collect values from dynamic fields using the new helper
+        const pickupAddresses = collectDynamicValues('pickup-addresses-container', '.pickup-address', false);
+        const deliveryAddresses = collectDynamicValues('delivery-addresses-container', '.delivery-address', false);
+        const pickupContacts = collectDynamicValues('pickup-contacts-container', '.pickup-contact', false);
+        const deliveryContacts = collectDynamicValues('delivery-contacts-container', '.delivery-contact', false);
+        const itemDescriptions = collectDynamicValues('item-descriptions-container', '.item-description', false);
         
         // Log all collected values
         console.log("New Order:", {
@@ -312,17 +454,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('delivery-name').value = '';
         
         // Clear all dynamic fields
-        clearDynamicFields('pickup-addresses-container', 'pickup-address', 'pickup-address-entry', 'Pick-up Address');
-        clearDynamicFields('delivery-addresses-container', 'delivery-address', 'delivery-address-entry', 'Delivery Address');
-        clearDynamicFields('pickup-contacts-container', 'pickup-contact', 'pickup-contact-entry', 'Pick-up Contact');
-        clearDynamicFields('delivery-contacts-container', 'delivery-contact', 'delivery-contact-entry', 'Delivery Contact');
-        clearDynamicFields('item-descriptions-container', 'item-description', 'item-description-entry', 'Item Description');
-
+        resetDynamicSection('pickup-addresses-container', 'pickup-address-entry', { firstEntryFieldSelector: '.pickup-address', placeholderPrefix: 'Pick-up Address' });
+        resetDynamicSection('delivery-addresses-container', 'delivery-address-entry', { firstEntryFieldSelector: '.delivery-address', placeholderPrefix: 'Delivery Address' });
+        resetDynamicSection('pickup-contacts-container', 'pickup-contact-entry', { firstEntryFieldSelector: '.pickup-contact', placeholderPrefix: 'Pick-up Contact' });
+        resetDynamicSection('delivery-contacts-container', 'delivery-contact-entry', { firstEntryFieldSelector: '.delivery-contact', placeholderPrefix: 'Delivery Contact' });
+        resetDynamicSection('item-descriptions-container', 'item-description-entry', { firstEntryFieldSelector: '.item-description', placeholderPrefix: 'Item Description' });
+        
         // Populate a new order number for the next order
         populateOrderNumber();
       });
     } else {
-      console.error('Client order form not found.');
+      alert('Error: Client order form not found.');
     }
   }
 
@@ -330,111 +472,50 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleUpdateProfile() {
     const driverProfileForm = document.getElementById('driver-profile-form');
 
-    // Helper to collect values from dynamic grouped fields
-    function collectDynamicGroupedValues(containerId, entryClass, fieldClassesMap) {
-      const container = document.getElementById(containerId);
-      if (!container) return [];
-      const entries = container.querySelectorAll(`.${entryClass}`);
-      const allEntriesData = [];
-      entries.forEach(entryDiv => {
-        const entryData = {};
-        let hasValue = false;
-        for (const keyInMap in fieldClassesMap) {
-          const fieldClass = fieldClassesMap[keyInMap];
-          const field = entryDiv.querySelector(`.${fieldClass}`);
-          if (field && field.value.trim() !== '') {
-            entryData[keyInMap] = field.value.trim();
-            hasValue = true;
-          } else {
-            entryData[keyInMap] = ''; // Store empty if not found or no value
-          }
-        }
-        if (hasValue) { // Only add entry if at least one field in it has a value
-          allEntriesData.push(entryData);
-        }
-      });
-      return allEntriesData;
-    }
-    
-    // Reusing collectDynamicFieldValues for single field dynamic entries (like driver contacts)
-    // (This function is already defined within handleCreateOrder's scope, ideally it should be global or passed)
-    // For now, let's assume it's accessible or redefine it if necessary.
-    // To avoid issues, let's make a local version for single fields here too.
-    function collectSingleDynamicFieldValues(containerId, fieldClass) {
-      const container = document.getElementById(containerId);
-      if (!container) return [];
-      const fields = container.querySelectorAll(`.${fieldClass}`);
-      const values = [];
-      fields.forEach(field => {
-        if (field.value.trim() !== '') {
-          values.push(field.value.trim());
-        }
-      });
-      return values;
-    }
-
-
-    // Helper to clear/reset dynamic grouped fields
-    function clearDynamicGroupedFields(containerId, entryClass, sectionTitlePrefix) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-
-      const dynamicEntries = container.querySelectorAll(`.${entryClass}`);
-      dynamicEntries.forEach((entry, index) => {
-        if (index === 0) { // This is the initial entry
-          const inputs = entry.querySelectorAll('input, textarea');
-          inputs.forEach(input => input.value = '');
-          if (sectionTitlePrefix && entry.querySelector('h5')) {
-            entry.querySelector('h5').textContent = `${sectionTitlePrefix} 1`;
-          }
-        } else { // These are dynamically added entries
-          entry.remove();
-        }
-      });
-       // If the first entry was the only one and had no .entryClass (not the case with current HTML but good to be robust)
-      if (dynamicEntries.length === 0) {
-        const firstEntryLikeDiv = container.firstElementChild; // This might be the div.vehicle-entry
-        if (firstEntryLikeDiv && firstEntryLikeDiv.matches(`.${entryClass}`)){ // Check if it's an entryClass div
-            const inputs = firstEntryLikeDiv.querySelectorAll('input, textarea');
-            inputs.forEach(input => input.value = '');
-             if (sectionTitlePrefix && firstEntryLikeDiv.querySelector('h5')) {
-                firstEntryLikeDiv.querySelector('h5').textContent = `${sectionTitlePrefix} 1`;
-            }
-        }
-      }
-    }
-    // Simplified clear for single field dynamic entries
-     function clearSingleDynamicFields(containerId, fieldClass, entryClass, placeholderPrefix) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        const dynamicEntries = container.querySelectorAll(`.${entryClass}`); // Assuming entryClass for wrapper div
-        dynamicEntries.forEach((entry, index) => {
-            if (index > 0) entry.remove(); // Remove added ones
-        });
-        const initialField = container.querySelector(`.${entryClass} .${fieldClass}, div > .${fieldClass}`); // More robust selector for initial field
-        if (initialField) {
-            initialField.value = '';
-            if(placeholderPrefix) initialField.placeholder = `${placeholderPrefix} 1`;
-            // If there's an H5 for the single entry too
-            const titleElement = initialField.closest(`.${entryClass}`)?.querySelector('h5');
-            if(titleElement && placeholderPrefix) titleElement.textContent = `${placeholderPrefix} 1`;
-        }
-    }
-
-
     if (driverProfileForm) {
       driverProfileForm.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent default form submission
+        event.preventDefault();
+        let isValid = true;
 
-        const driverName = document.getElementById('driver-name-static').value;
+        // --- Validate Static Fields ---
+        const driverNameEl = document.getElementById('driver-name-static');
+        if (!validateField(driverNameEl, Validators.isNotEmpty, 'Driver name is required.')) isValid = false;
 
-        const vehicles = collectDynamicGroupedValues('driver-vehicles-container', 'vehicle-entry', {
+        // --- Validate Dynamic Grouped Fields ---
+        // Example: Validate vehicles - type and plate required for each
+        const vehicleEntries = document.querySelectorAll('#driver-vehicles-container .vehicle-entry');
+        vehicleEntries.forEach((entry, index) => {
+          const typeEl = entry.querySelector('.vehicle-type');
+          const plateEl = entry.querySelector('.vehicle-plate');
+          // Only validate if it's not the first empty template row or if it has some data
+          if (typeEl && plateEl && (typeEl.value.trim() !== '' || plateEl.value.trim() !== '')) {
+            if (!validateField(typeEl, Validators.isNotEmpty, `Vehicle type for vehicle ${index + 1} is required.`)) isValid = false;
+            if (!validateField(plateEl, Validators.isNotEmpty, `Plate number for vehicle ${index + 1} is required.`)) isValid = false;
+          }
+        });
+        
+        // Example: Validate driver contacts for pattern (if any)
+        const driverContactFields = document.querySelectorAll('#driver-contacts-container .driver-contact');
+        driverContactFields.forEach(contactField => {
+          if (contactField.value.trim() !== '') { // Only validate if not empty
+            if(!validateField(contactField, Validators.isPhoneNumber, 'Invalid phone number format.')) isValid = false;
+          }
+        });
+
+        if (!isValid) {
+          alert('Please correct the errors in the form.');
+          return;
+        }
+        
+        const driverName = driverNameEl.value; // Use validated element's value
+
+        const vehicles = collectDynamicValues('driver-vehicles-container', 'vehicle-entry', true, {
           type: 'vehicle-type', make: 'vehicle-make', model: 'vehicle-model', plate: 'vehicle-plate'
         });
-        const certifications = collectDynamicGroupedValues('driver-certifications-container', 'certification-entry', {
+        const certifications = collectDynamicValues('driver-certifications-container', 'certification-entry', true, {
           name: 'certification-name', licenseNumber: 'license-number', expirationDate: 'expiration-date'
         });
-        const driverContacts = collectSingleDynamicFieldValues('driver-contacts-container', 'driver-contact');
+        const driverContacts = collectDynamicValues('driver-contacts-container', '.driver-contact', false);
 
         console.log("Driver Profile Update:", {
           driverName,
@@ -445,12 +526,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Clear form fields
         document.getElementById('driver-name-static').value = '';
-        clearDynamicGroupedFields('driver-vehicles-container', 'vehicle-entry', 'Vehicle');
-        clearDynamicGroupedFields('driver-certifications-container', 'certification-entry', 'Certification/License');
-        clearSingleDynamicFields('driver-contacts-container', 'driver-contact', 'driver-contact-entry', 'Contact Number');
+        resetDynamicSection('driver-vehicles-container', 'vehicle-entry', { sectionTitlePrefix: 'Vehicle', clearAllInputsInFirstEntry: true });
+        resetDynamicSection('driver-certifications-container', 'certification-entry', { sectionTitlePrefix: 'Certification/License', clearAllInputsInFirstEntry: true });
+        resetDynamicSection('driver-contacts-container', 'driver-contact-entry', { firstEntryFieldSelector: '.driver-contact', placeholderPrefix: 'Contact Number', sectionTitlePrefix: 'Contact Number' }); // Assuming H5 for driver contacts too
       });
     } else {
-      console.error('Driver profile form not found.');
+      alert('Error: Driver profile form not found.');
     }
   }
 
@@ -466,6 +547,8 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('TEST MODE: Exposing functions to window object');
     window.setupDynamicFieldSectionListeners = setupDynamicFieldSectionListeners;
     window.handleDynamicFieldRemove = handleDynamicFieldRemove;
+    window.validateField = validateField; // Expose for testing
+    window.Validators = Validators; // Expose for testing
     // initMenuToggles is already global
     // addDynamicFieldEntry and other helpers could also be exposed if direct unit tests are needed
   }
@@ -481,7 +564,7 @@ function initMenuToggles() {
   const closeDriverMenuBtn = document.getElementById('close-driver-menu-btn');
 
   if (!clientMenuToggleBtn || !driverMenuToggleBtn || !clientMenuPanel || !driverMenuPanel || !closeClientMenuBtn || !closeDriverMenuBtn) {
-    console.error('One or more menu elements (toggle buttons, panels, or close buttons) not found. Ensure all IDs are correct.');
+    alert('Error: One or more menu elements (toggle buttons, panels, or close buttons) not found. Ensure all IDs are correct.');
     return;
   }
 
@@ -545,13 +628,13 @@ function initMap() {
   const mapPlaceholder = document.getElementById('map-placeholder');
 
   if (!mapPlaceholder) {
-    console.error('Map placeholder element not found.');
+    alert('Error: Map placeholder element not found.');
     return;
   }
 
   // Check if map is already initialized
   if (mapPlaceholder._leaflet_id) {
-    console.warn('Map already initialized.');
+    alert('Warning: Map already initialized.');
     return;
   }
 
@@ -568,7 +651,7 @@ function initMap() {
       
     console.log('Map initialized successfully.');
   } catch (error) {
-    console.error('Error initializing Leaflet map:', error);
-    mapPlaceholder.innerHTML = '<p style="color:red; text-align:center;">Error initializing map. See console for details.</p>';
+    alert('Error: Error initializing Leaflet map: ' + error.message);
+    mapPlaceholder.innerHTML = '<p style="color:red; text-align:center; font-weight:bold;">Map Error: Could not initialize the map. ' + error.message + '</p>';
   }
 }
