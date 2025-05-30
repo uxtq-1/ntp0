@@ -57,6 +57,7 @@ body {
   height: 500px;
   width: 100%;
   box-sizing: border-box;
+  outline: none; /* Remove focus outline, but accessible focus managed in JS */
 }
 
 /* Menu Containers */
@@ -70,13 +71,15 @@ body {
   border-radius: 5px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   z-index: 1001;
-  display: none;
   box-sizing: border-box;
+  background-color: #e6f7ff; /* light blue for client */
+  display: none;
 }
-#client-menu-container { left: 20px; width: 350px; background-color: #e6f7ff; }
-#driver-menu-container { right: 20px; width: 350px; background-color: #e6ffe6; }
+#driver-menu-container {
+  background-color: #e6ffe6; /* light green for driver */
+}
 
-/* Responsive for smaller screens */
+/* Responsive */
 @media (max-width: 768px) {
   #client-menu-container,
   #driver-menu-container {
@@ -115,6 +118,7 @@ input[type="text"],
 input[type="email"],
 input[type="tel"],
 input[type="number"],
+input[type="date"],
 textarea {
   width: calc(100% - 22px);
   padding: 10px;
@@ -122,14 +126,17 @@ textarea {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  font-size: 1em;
 }
 textarea {
   resize: vertical;
   min-height: 60px;
 }
+
+/* Buttons */
 button {
   background-color: #007bff;
-  color: #fff;
+  color: white;
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
@@ -141,61 +148,47 @@ button:hover {
   background-color: #0056b3;
 }
 
-/* Dynamic Field Entries */
+/* Dynamic Fields */
 .pickup-address-entry,
 .delivery-address-entry,
 .pickup-contact-entry,
 .delivery-contact-entry,
-.item-description-entry {
+.item-description-entry,
+.vehicle-entry,
+.certification-entry,
+.driver-contact-entry,
+.driver-address-entry {
   display: flex;
   align-items: center;
   margin-bottom: 8px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
-.pickup-address-entry input,
-.delivery-address-entry input,
-.pickup-contact-entry input,
-.delivery-contact-entry input,
-.item-description-entry textarea {
-  flex-grow: 1;
-  margin-right: 8px;
-}
+
 .item-description-entry textarea.item-description {
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 5px;
-  min-height: 60px;
+  flex-grow: 1;
+  min-width: 250px;
   resize: vertical;
 }
-.item-description-entry .item-details-line-1,
-.item-description-entry .item-details-line-2 {
+
+.item-details-line-1,
+.item-details-line-2 {
   display: flex;
   gap: 8px;
-  margin-bottom: 5px;
+  width: 100%;
 }
-.item-description-entry .item-details-line-1 input,
-.item-description-entry .item-details-line-2 input {
+
+.item-details-line-1 input,
+.item-details-line-2 input {
   flex-grow: 1;
   width: auto;
-  margin-bottom: 0;
-}
-.item-description-entry .item-details-line-2 label {
-  font-weight: normal;
-  font-size: 0.9em;
-  margin-right: 5px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.item-description-entry .item-length,
-.item-description-entry .item-width,
-.item-description-entry .item-height {
-  min-width: 40px;
 }
 
 /* Remove Buttons */
 .remove-dynamic-field-btn {
   padding: 5px 10px;
   background-color: #dc3545;
-  color: #fff;
+  color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -214,9 +207,10 @@ button:hover {
 #add-item-description-btn,
 #add-vehicle-btn,
 #add-certification-btn,
-#add-driver-contact-btn {
+#add-driver-contact-btn,
+#add-driver-address-btn {
   background-color: #28a745;
-  color: #fff;
+  color: white;
   padding: 8px 12px;
   margin-top: 8px;
   margin-bottom: 10px;
@@ -231,11 +225,12 @@ button:hover {
 #add-item-description-btn:hover,
 #add-vehicle-btn:hover,
 #add-certification-btn:hover,
-#add-driver-contact-btn:hover {
+#add-driver-contact-btn:hover,
+#add-driver-address-btn:hover {
   background-color: #218838;
 }
 
-/* File input */
+/* File Input */
 #driver-photo {
   padding: 5px;
   margin-bottom: 10px;
@@ -244,77 +239,4 @@ button:hover {
   box-sizing: border-box;
   display: block;
   max-width: calc(100% - 22px);
-}
-
-/* Driver Form Entries */
-#driver-profile-form h4 {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  color: #333;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 5px;
-}
-#driver-profile-form hr {
-  margin: 15px 0;
-  border: none;
-  border-top: 1px solid #eee;
-}
-.vehicle-entry,
-.certification-entry,
-.driver-address-entry {
-  padding: 10px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  background-color: #f9f9f9;
-}
-.driver-contact-entry {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-}
-.vehicle-entry h5,
-.certification-entry h5,
-.driver-address-entry h5,
-.driver-contact-entry h5 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: #555;
-  font-size: 1.1em;
-}
-.vehicle-entry div,
-.certification-entry div,
-.driver-address-entry input {
-  margin-bottom: 8px;
-}
-.vehicle-entry div,
-.certification-entry div {
-  display: flex;
-  align-items: center;
-}
-.driver-contact-entry > div {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-.vehicle-entry div label,
-.certification-entry div label,
-.driver-contact-entry div label {
-  flex-basis: 120px;
-  margin-right: 10px;
-  font-weight: normal;
-  color: #444;
-  font-size: 0.95em;
-}
-.vehicle-entry div input,
-.certification-entry div input,
-.driver-address-entry input {
-  flex-grow: 1;
-}
-.driver-address-entry input[type="text"] {
-  width: calc(100% - 22px);
-}
-.driver-contact-entry .driver-contact {
-  flex-grow: 1;
-  margin-right: 8px;
 }
