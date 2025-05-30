@@ -1,333 +1,223 @@
-/* Basic styles */
+/* Basic Styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4; /* Light gray background for the page */
+  background-color: #f4f4f4;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* Menu Toggle Buttons Styling */
+/* Toggle Buttons */
 #client-menu-toggle-btn,
 #driver-menu-toggle-btn {
   position: absolute;
-  top: 20px; /* Adjusted from 10px to account for app-container padding */
+  top: 20px;
   z-index: 1000;
-  background-color: #fff;
+  background: #fff;
   border: 1px solid #ccc;
   padding: 8px 12px;
   cursor: pointer;
-  font-size: 1.2em; /* For hamburger icon */
+  font-size: 1.2em;
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.15);
 }
-
 #client-menu-toggle-btn:hover,
 #driver-menu-toggle-btn:hover {
   background-color: #f0f0f0;
 }
+#client-menu-toggle-btn { left: 20px; }
+#driver-menu-toggle-btn { right: 20px; }
 
-#client-menu-toggle-btn {
-  left: 20px; /* Adjusted from 10px */
-}
-
-#driver-menu-toggle-btn {
-  right: 20px; /* Adjusted from 10px */
-}
-
-
+/* App Container */
 #app-container {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center children like map-container horizontally */
+  align-items: center;
   width: 100%;
   flex-grow: 1;
-  position: relative; /* For positioning menus and buttons later */
-  padding: 10px; /* Add some padding around the app content */
+  position: relative;
+  padding: 10px;
   box-sizing: border-box;
 }
 
-/* map-container will hold the map-placeholder and define its max-width for centering */
+/* Map Container */
 #map-container {
   width: 100%;
-  max-width: 1200px; /* Adjust as needed for desired max map width */
-  /* margin: 0 auto; is not strictly needed if app-container uses align-items: center */
-  /* The existing margin from the generic #map-container rule will apply if not overridden */
-  /* Let's ensure it doesn't conflict with flex centering */
-  margin-top: 0; /* Reset top/bottom margin if coming from generic rule */
-  margin-bottom: 0; /* Reset top/bottom margin if coming from generic rule */
-  /* The existing border, box-shadow, and padding from generic #map-container are fine. */
+  max-width: 1200px;
+  margin-top: 0;
+  margin-bottom: 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: transparent;
 }
-
 #map-placeholder {
-  height: 500px; /* Explicit height for Leaflet map */
-  width: 100%;   /* Make map responsive within its container */
-  /* display: flex, align-items, justify-content, padding, border, background-color 
-     are removed or commented out as Leaflet controls the content and appearance.
-     The placeholder text "Map Area" was removed from HTML. */
-  box-sizing: border-box; 
+  height: 500px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none; /* Remove focus outline, but accessible focus managed in JS */
 }
 
-/* Container Styling */
-/* Generic rule for major panel containers. Specifics for map-container are above/below. */
+/* Menu Containers */
 #client-menu-container,
 #driver-menu-container {
-  /* display: none; is set by default. JS will change to 'block' or other visible style. */
-  /* Common styles for DEPLOYED (visible) menu panels */
   position: absolute;
-  top: 70px; /* Below toggle buttons (button height ~40px + padding) */
-  background-color: #ffffff;
-  /* border: 1px solid #ccc; // Already has a similar border from generic rule */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Enhanced shadow for pop-out effect */
-  z-index: 1001; /* Above map and toggle buttons */
-  padding: 20px; /* Overriding generic panel padding for more content space */
-  border-radius: 5px; /* Consistent with other elements */
-  max-height: calc(100vh - 90px); /* Viewport height minus top offset and some bottom margin */
-  overflow-y: auto; /* Enable scrolling for long content */
+  top: 70px;
+  padding: 20px;
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 1001;
   box-sizing: border-box;
-
-  /* Default to hidden, JS will override this to show */
-  display: none; 
-  
-  /* Retain specific background colors from their individual rules if not overridden by this common one */
-  /* The generic rule already provides: margin, padding, border, border-radius, box-shadow */
-  /* We are enhancing/overriding some of these here for the deployed state */
+  background-color: #e6f7ff; /* light blue for client */
+  display: none;
 }
-
-/* Specific positioning and width for each panel */
-#client-menu-container {
-  left: 20px; /* Align with left toggle button's spacing */
-  width: 350px; 
-  /* background-color: #e6f7ff; /* Retained from specific rule */
-}
-
 #driver-menu-container {
-  right: 20px; /* Align with right toggle button's spacing */
-  width: 350px;
-  /* background-color: #e6ffe6; /* Retained from specific rule */
+  background-color: #e6ffe6; /* light green for driver */
 }
 
-
-/* Media Query for smaller screens */
+/* Responsive */
 @media (max-width: 768px) {
   #client-menu-container,
   #driver-menu-container {
-    width: calc(100% - 40px); /* Full width with some margin */
+    width: calc(100% - 40px);
     left: 20px;
-    right: 20px; /* This effectively centers it with the left: 20px */
-    /* top: 60px; /* Keep top position or adjust if header height changes */
-    /* max-height can remain the same or be adjusted */
+    right: 20px;
   }
 }
 
-
-/* Retain specific background for client/driver menus */
-/* These are applied on top of the common deployed styles if not conflicting */
-#client-menu-container { /* This will add/override background-color if JS sets display:block */
-  background-color: #e6f7ff; /* Light blue */
-}
-
-#driver-menu-container { /* This will add/override background-color if JS sets display:block */
-  background-color: #e6ffe6; /* Light green */
-}
-
-/* Close Button Styling for Menus */
+/* Close Button */
 .close-menu-btn {
   position: absolute;
   top: 10px;
   right: 10px;
   background: transparent;
   border: none;
-  font-size: 1.8em; /* Made slightly larger for easier clicking */
-  font-weight: bold; /* Make X more prominent */
-  color: #555; /* Subtle color, not too aggressive */
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #555;
   cursor: pointer;
   padding: 5px;
   line-height: 1;
-  z-index: 1002; /* Ensure it's above other content within the panel but respects panel's z-index */
+  z-index: 1002;
 }
-
 .close-menu-btn:hover {
-  color: #000; /* Darken on hover */
-  /* background-color: #f0f0f0; /* Optional: subtle background on hover */
+  color: #000;
 }
 
-
-#map-container { /* This rule is from before, let's ensure it's still sensible */
-  /* margin: 10px; /* This was part of the old generic rule. Now handled by app-container padding and specific map-container centering */
-  padding: 0; /* Map placeholder should fill map-container without its own padding */
-  border: 1px solid #ddd; /* Border around the map area */
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  /* Ensure map-container itself doesn't get a conflicting background if map-placeholder is the map */
-  background-color: transparent; /* Or remove if map-placeholder is the actual map */
-}
-
-
-/* Specific Container Styling */
-#client-menu-container {
-  background-color: #e6f7ff; /* Light blue */
-}
-
-#driver-menu-container {
-  background-color: #e6ffe6; /* Light green */
-}
-
-#controls-container {
-  background-color: #efefef; /* Light gray */
-  text-align: center;
-}
-
-/* Form Element Styling (Basic) */
+/* Form Elements */
 label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
 }
-
 input[type="text"],
-input[type="email"], /* Added type="email" */
-input[type="tel"],   /* Added type="tel" for consistency as it's used elsewhere */
-input[type="number"],/* Added type="number" */
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
 textarea {
-  width: calc(100% - 22px); /* Full width minus padding and border */
+  width: calc(100% - 22px);
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  font-size: 1em;
 }
-
 textarea {
-  resize: vertical; /* Allow vertical resize, disable horizontal */
+  resize: vertical;
   min-height: 60px;
 }
 
+/* Buttons */
 button {
-  background-color: #007bff; /* Bootstrap primary blue */
+  background-color: #007bff;
   color: white;
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 1em;
-  margin-bottom: 10px; /* Consistent margin */
+  margin-bottom: 10px;
 }
-
 button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #0056b3;
 }
 
-/* Utility class for form field grouping if needed in future */
-.form-field-group div {
-  margin-bottom: 10px; /* Ensure spacing between grouped elements if wrapped in divs */
-}
-
-h3 {
-  margin-top: 0; /* Remove default top margin for headings within containers */
-  color: #333;
-}
-
-/* Styling for dynamic pickup address fields */
-/* Generic styling for dynamic field entries */
+/* Dynamic Fields */
 .pickup-address-entry,
 .delivery-address-entry,
 .pickup-contact-entry,
 .delivery-contact-entry,
-.item-description-entry {
+.item-description-entry,
+.vehicle-entry,
+.certification-entry,
+.driver-contact-entry,
+.driver-address-entry {
   display: flex;
   align-items: center;
-  margin-bottom: 8px; /* Increased space between address entries */
+  margin-bottom: 8px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-/* Generic styling for dynamic input fields within entries */
-.pickup-address-entry input,
-.delivery-address-entry input,
-.pickup-contact-entry input,
-.delivery-contact-entry input,
-.item-description-entry textarea {
-  flex-grow: 1; /* Input field takes available space */
-  margin-right: 8px; /* Increased space before the remove button */
-  /* margin-bottom is handled by the parent entry div */
-}
-
-/* Styling for all textareas in item description entries */
 .item-description-entry textarea.item-description {
-  resize: vertical;
-  min-height: 60px; 
-  margin-bottom: 5px; /* Space before the next line of inputs */
-  width: 100%; /* Ensure it takes full width within the entry, overriding calc if needed */
-  box-sizing: border-box; /* Ensure padding/border don't make it overflow */
-}
-
-.item-description-entry .item-details-line-1,
-.item-description-entry .item-details-line-2 {
-  display: flex;
-  gap: 8px; /* Space between inputs on the same line */
-  margin-bottom: 5px;
-}
-
-.item-description-entry .item-details-line-1 input,
-.item-description-entry .item-details-line-2 input {
   flex-grow: 1;
-  /* width is handled by flex-grow, remove fixed calc width from general input rule for these */
-  width: auto; 
-  margin-bottom: 0; /* Margin is on the container div (.item-details-line-1/2) */
+  min-width: 250px;
+  resize: vertical;
 }
 
-.item-description-entry .item-details-line-2 label {
-  font-weight: normal;
-  font-size: 0.9em;
-  margin-right: 5px;
-  white-space: nowrap; /* Prevent label from wrapping */
-  flex-shrink: 0; /* Prevent label from shrinking */
+.item-details-line-1,
+.item-details-line-2 {
+  display: flex;
+  gap: 8px;
+  width: 100%;
 }
 
-/* Specific widths for dimension fields if needed, otherwise they flex-grow */
-.item-description-entry .item-length,
-.item-description-entry .item-width,
-.item-description-entry .item-height {
-  min-width: 40px; /* Ensure they are not too small */
+.item-details-line-1 input,
+.item-details-line-2 input {
+  flex-grow: 1;
+  width: auto;
 }
 
-
-/* Generic styling for "Remove" buttons in dynamic fields */
-.remove-dynamic-field-btn { /* This class was added in JS to all remove buttons */
+/* Remove Buttons */
+.remove-dynamic-field-btn {
   padding: 5px 10px;
-  background-color: #dc3545; /* Red color for remove */
+  background-color: #dc3545;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9em;
-  line-height: 1.2; /* Ensure text fits well */
+  line-height: 1.2;
 }
-
 .remove-dynamic-field-btn:hover {
-  background-color: #c82333; /* Darker red on hover */
+  background-color: #c82333;
 }
 
-/* Generic styling for "Add Another..." buttons */
+/* Add Buttons */
 #add-pickup-address-btn,
 #add-delivery-address-btn,
 #add-pickup-contact-btn,
 #add-delivery-contact-btn,
 #add-item-description-btn,
-#add-vehicle-btn, /* Added driver buttons to this common rule */
+#add-vehicle-btn,
 #add-certification-btn,
-#add-driver-contact-btn {
-  background-color: #28a745; /* Green color for add */
+#add-driver-contact-btn,
+#add-driver-address-btn {
+  background-color: #28a745;
   color: white;
   padding: 8px 12px;
-  margin-top: 8px; /* Consistent space above the add button */
-  margin-bottom: 10px; /* Consistent space below the add button */
+  margin-top: 8px;
+  margin-bottom: 10px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
-
 #add-pickup-address-btn:hover,
 #add-delivery-address-btn:hover,
 #add-pickup-contact-btn:hover,
@@ -335,129 +225,18 @@ h3 {
 #add-item-description-btn:hover,
 #add-vehicle-btn:hover,
 #add-certification-btn:hover,
-#add-driver-contact-btn:hover {
-  background-color: #218838; /* Darker green on hover */
+#add-driver-contact-btn:hover,
+#add-driver-address-btn:hover {
+  background-color: #218838;
 }
 
-/* Styling for file input */
+/* File Input */
 #driver-photo {
-  /* width: calc(100% - 22px); File inputs are tricky with width */
-  padding: 5px; /* Less padding than text inputs */
+  padding: 5px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  display: block; /* Make it block to manage width/margin better */
-  max-width: calc(100% - 22px); /* Try to match text input width behavior */
+  display: block;
+  max-width: calc(100% - 22px);
 }
-
-
-/* Driver Form Specific Styles for Dynamic Entries */
-#driver-profile-form h4 {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  color: #333;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 5px;
-}
-
-#driver-profile-form hr {
-  margin-top: 15px;
-  margin-bottom: 15px;
-  border: 0;
-  border-top: 1px solid #eee;
-}
-
-.vehicle-entry,
-.certification-entry,
-.driver-address-entry { /* Add new entry type here */
-  padding: 10px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  margin-bottom: 15px; /* Space between entries */
-  background-color: #f9f9f9; /* Slightly different background for entry groups */
-}
-
-/* .driver-contact-entry will now use the simpler styling similar to client form entries */
-.driver-contact-entry { /* This already has simpler styling */
-  display: flex; /* Similar to .pickup-address-entry */
-  align-items: center;
-  margin-bottom: 8px; 
-}
-
-
-.vehicle-entry h5,
-.certification-entry h5,
-.driver-address-entry h5, /* Add new entry type here */
-.driver-contact-entry h5 { 
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: #555;
-  font-size: 1.1em;
-}
-
-/* Styling for label-input pairs within vehicle and certification entries */
-/* And for inputs directly within driver-address-entry */
-.vehicle-entry div, /* These have label+input inside a div */
-.certification-entry div,
-.driver-address-entry input { /* Inputs are direct children for driver addresses after H5 */
-  /* display: flex; align-items: center; are for the divs in vehicle/cert */
-  margin-bottom: 8px; /* Common margin for inputs or divs containing them */
-}
-/* Specifics for the divs inside vehicle/cert that group label+input */
-.vehicle-entry div, 
-.certification-entry div {
-  display: flex;
-  align-items: center;
-}
-
-/* Specific for driver contact entry's inner div if it exists and needs similar flex styling */
-.driver-contact-entry > div { 
-  display: flex;
-  align-items: center;
-  width: 100%; 
-}
-
-
-.vehicle-entry div label,
-.certification-entry div label,
-/* No explicit labels inside dynamically created .driver-address-entry, placeholders are used. */
-/* Style for label within .driver-contact-entry > div */
-.driver-contact-entry div label { 
-  flex-basis: 120px; 
-  margin-right: 10px;
-  font-weight: normal; 
-  color: #444;
-  font-size: 0.95em;
-}
-
-.vehicle-entry div input,
-.certification-entry div input,
-.driver-address-entry input { /* Style all inputs within these entries */
-  flex-grow: 1; /* Allow inputs in vehicle/cert to grow */
-  /* For driver-address-entry inputs, they are block by default, this won't hurt.
-     CSS below will make them take full width of their line. */
-}
-
-/* Ensure inputs in driver-address-entry take full width of their line */
-.driver-address-entry input[type="text"] {
-    width: calc(100% - 22px); /* Match general text input style if not in a flex row */
-    /* If they are to be inline or side-by-side, further flex/grid on .driver-address-entry is needed */
-}
-
-
-/* Ensure driver-contact input also grows and has margin like other single dynamic fields */
-.driver-contact-entry .driver-contact {
-  flex-grow: 1;
-  margin-right: 8px; 
-}
-
-
-/* Remove the specific margin rule for driver add buttons as it's now in the generic rule */
-/*
-#add-vehicle-btn,
-#add-certification-btn,
-#add-driver-contact-btn {
-  margin-bottom: 10px; 
-}
-*/
