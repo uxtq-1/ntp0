@@ -19,7 +19,7 @@ function logTestResult(testName, passed, message = '') {
 let currentTestDOMContainer = null;
 
 function setupDOM(html) {
-  cleanupDOM(); 
+  cleanupDOM();
   const container = document.createElement('div');
   container.id = 'test-container-' + Date.now() + Math.random().toString(36).substring(2, 7);
   container.innerHTML = html;
@@ -112,7 +112,7 @@ function testErrorAlerts() {
       tempMapPlaceholder.id = 'map-placeholder';
       document.body.appendChild(tempMapPlaceholder);
   }
-  
+
   initMap(); // Call the function that should error
 
   const mapInitErrorMsg = "Error: Error initializing Leaflet map: L is not defined"; // Or similar, depends on exact error
@@ -125,7 +125,7 @@ function testErrorAlerts() {
       testPassed = false;
       messages.push(`Map placeholder error HTML not set correctly. Got: ${mapPlaceholder.innerHTML}`);
   }
-  
+
   window.L = originalL; // Restore
   if(tempMapPlaceholder) tempMapPlaceholder.remove();
   restoreAlert(); // Restore alert for next sub-test
@@ -146,7 +146,7 @@ function testErrorAlerts() {
   if (originalOrderNumberField) originalOrderNumberField.id = 'order-number'; // Restore
   restoreAlert();
   logTestResult(`${testSuiteName} - populateOrderNumber Error`, testPassed, messages.join('; '));
-  
+
   cleanupDOM();
 }
 
@@ -171,7 +171,7 @@ function testInputValidation() {
   let pickupNameInput = clientForm.querySelector('#pickup-name');
   let clientRefInput = clientForm.querySelector('#client-ref-number');
   let firstPickupAddressInput = clientForm.querySelector('.pickup-address');
-  
+
   mockAlert();
   mockConsoleLog(); // To check if "New Order" is logged
 
@@ -179,7 +179,7 @@ function testInputValidation() {
   clientRefInput.value = 'VALID-REF'; // Set one field valid to isolate test
   firstPickupAddressInput.value = 'Valid Address';
   // Pickup name is left empty
-  
+
   // Directly call the handler logic (simplified for test focus)
   // In a real scenario, you might need to trigger the event if handler is not exposed
   // For now, we assume handleCreateOrder is accessible or we test its validation part
@@ -218,7 +218,7 @@ function testInputValidation() {
 
   mockAlert();
   mockConsoleLog();
-  
+
   pickupNameInput.value = 'Valid Name';
   firstPickupAddressInput.value = 'Valid Address';
   clientRefInput.value = 'INVALID CHARS!!'; // Invalid pattern
@@ -246,7 +246,7 @@ function testInputValidation() {
   pickupNameInput = clientForm.querySelector('#pickup-name');
   clientRefInput = clientForm.querySelector('#client-ref-number');
   firstPickupAddressInput = clientForm.querySelector('.pickup-address');
-  
+
   mockAlert();
   mockConsoleLog();
 
@@ -291,7 +291,7 @@ function testInputValidation() {
       <div><label for="driver-name-static">Driver Name:</label><input type="text" id="driver-name-static"/></div>
       <button type="submit" id="update-profile-btn">Update Profile</button>
     </form>`;
-  
+
   // Test 4: Driver form - required field empty
   let driverFormContainer = setupDOM(driverFormHTML);
   let driverForm = driverFormContainer.querySelector('#driver-profile-form');
@@ -303,7 +303,7 @@ function testInputValidation() {
   // driverNameInput is left empty
   let isValidDriver = true;
   if (!window.validateField(driverNameInput, window.Validators.isNotEmpty, 'Driver name is required.')) isValidDriver = false;
-  
+
   if (!isValidDriver) {
     window.alert('Please correct the errors in the form.');
   } else {
@@ -333,14 +333,14 @@ function runTests() {
   originalConsoleLog.log('Starting tests...'); // Use original for this top-level log
 
   let functionsAvailable = true;
-  if (typeof window.setupDynamicFieldSectionListeners !== 'function' || 
+  if (typeof window.setupDynamicFieldSectionListeners !== 'function' ||
       typeof window.handleDynamicFieldRemove !== 'function' ||
       typeof window.validateField !== 'function' ||
       typeof window.Validators !== 'object') {
     functionsAvailable = false;
     logTestResult('Global Setup Check', false, 'Required functions (setupDynamicFieldSectionListeners, handleDynamicFieldRemove, validateField, Validators) not exposed by app.js.');
   }
-  
+
   if (typeof initMenuToggles !== 'function') {
     functionsAvailable = false;
     logTestResult('Global Setup Check for Menus', false, 'initMenuToggles not global.');
@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
     button.textContent = 'Run Tests (Dynamically Added)';
     if(document.body) {
         document.body.insertBefore(button, document.body.firstChild);
-    } else { 
+    } else {
         document.documentElement.appendChild(button);
     }
     button.addEventListener('click', runTests);

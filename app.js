@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function collectDynamicValues(containerId, itemSelector, isGrouped, fieldsMap = null) {
     const container = document.getElementById(containerId);
     if (!container) return [];
-    
+
     const items = container.querySelectorAll(isGrouped ? `.${itemSelector}` : itemSelector); // If not grouped, itemSelector is the field class itself
     const allEntriesData = [];
 
@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
               entryData[keyInMap] = field.value.trim();
               hasValue = true;
             } else {
-              entryData[keyInMap] = ''; 
+              entryData[keyInMap] = '';
             }
           }
         }
@@ -385,13 +385,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (clientOrderForm) {
       clientOrderForm.addEventListener('submit', (event) => {
-        event.preventDefault(); 
+        event.preventDefault();
         let isValid = true;
 
         // --- Validate Static Fields ---
         const pickupNameEl = document.getElementById('pickup-name');
         if (!validateField(pickupNameEl, Validators.isNotEmpty, 'Pick-up name is required.')) isValid = false;
-        
+
         const clientRefEl = document.getElementById('client-ref-number');
         if (!validateField(clientRefEl, value => Validators.isNotEmpty(value) && Validators.matchesPattern(value, /^[A-Za-z0-9\-]+$/), 'Client reference must be alphanumeric/dashes and not empty.')) isValid = false;
 
@@ -399,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Example: Validate first pickup address is not empty
         const firstPickupAddressEl = document.querySelector('#pickup-addresses-container .pickup-address');
         if (firstPickupAddressEl && !validateField(firstPickupAddressEl, Validators.isNotEmpty, 'At least one pick-up address is required.')) isValid = false;
-        
+
         // Example: Validate all provided pickup contacts for pattern (if any)
         const pickupContactFields = document.querySelectorAll('#pickup-contacts-container .pickup-contact');
         pickupContactFields.forEach(contactField => {
@@ -407,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(!validateField(contactField, Validators.isPhoneNumber, 'Invalid phone number format.')) isValid = false;
           }
         });
-        
+
         // Example: Validate item quantity if an item description is filled
         const itemEntries = document.querySelectorAll('#item-descriptions-container .item-description-entry');
         itemEntries.forEach((entry, index) => {
@@ -459,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resetDynamicSection('pickup-contacts-container', 'pickup-contact-entry', { firstEntryFieldSelector: '.pickup-contact', placeholderPrefix: 'Pick-up Contact' });
         resetDynamicSection('delivery-contacts-container', 'delivery-contact-entry', { firstEntryFieldSelector: '.delivery-contact', placeholderPrefix: 'Delivery Contact' });
         resetDynamicSection('item-descriptions-container', 'item-description-entry', { firstEntryFieldSelector: '.item-description', placeholderPrefix: 'Item Description' });
-        
+
         // Populate a new order number for the next order
         populateOrderNumber();
       });
@@ -493,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!validateField(plateEl, Validators.isNotEmpty, `Plate number for vehicle ${index + 1} is required.`)) isValid = false;
           }
         });
-        
+
         // Example: Validate driver contacts for pattern (if any)
         const driverContactFields = document.querySelectorAll('#driver-contacts-container .driver-contact');
         driverContactFields.forEach(contactField => {
@@ -506,7 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
           alert('Please correct the errors in the form.');
           return;
         }
-        
+
         const driverName = driverNameEl.value; // Use validated element's value
 
         const vehicles = collectDynamicValues('driver-vehicles-container', 'vehicle-entry', true, {
