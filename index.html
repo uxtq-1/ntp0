@@ -6,14 +6,23 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 </head>
 <body>
-  <div id="map-container"> 
-    <!-- The map-placeholder div will be directly used by Leaflet -->
-    <div id="map-placeholder"></div> 
-  </div>
-  <div id="controls-container"></div>
-  <div id="client-menu-container">
-    <h3>Client Order Menu</h3>
-    <form id="client-order-form">
+  <div id="app-container">
+    <button id="client-menu-toggle-btn" aria-label="Toggle Client Menu">&#9776;</button>
+    <button id="driver-menu-toggle-btn" aria-label="Toggle Driver Menu">&#9776;</button>
+
+    <!-- map-container might be redundant if map-placeholder is styled directly for centering.
+         For now, keeping map-placeholder inside map-container as it was.
+         The map-placeholder itself is the Leaflet target. -->
+    <div id="map-container"> 
+      <div id="map-placeholder"></div> 
+    </div>
+
+    <!-- Removed div#controls-container -->
+
+    <div id="client-menu-container">
+      <button class="close-menu-btn" id="close-client-menu-btn" aria-label="Close Client Menu">&times;</button>
+      <h3>Client Order Menu</h3>
+      <form id="client-order-form">
       <div>
         <label for="order-number">Order Number:</label>
         <input type="text" id="order-number" readonly>
@@ -87,6 +96,7 @@
   <div id="driver-menu-container">
     <h3>Driver Profile Menu</h3>
     <form id="driver-profile-form">
+      <button class="close-menu-btn" id="close-driver-menu-btn" aria-label="Close Driver Menu">&times;</button>
       <!-- Driver Name (static for now, could be part of a non-dynamic section) -->
       <div>
         <label for="driver-name-static">Driver Name:</label>

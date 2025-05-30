@@ -459,7 +459,65 @@ document.addEventListener('DOMContentLoaded', () => {
   handleUpdateProfile();
   initMap(); // Initialize the map
   populateOrderNumber(); // Populate initial order number on load
+  initMenuToggles(); // Initialize menu toggle functionality
 });
+
+// Function to initialize menu toggle buttons
+function initMenuToggles() {
+  const clientMenuToggleBtn = document.getElementById('client-menu-toggle-btn');
+  const driverMenuToggleBtn = document.getElementById('driver-menu-toggle-btn');
+  const clientMenuPanel = document.getElementById('client-menu-container');
+  const driverMenuPanel = document.getElementById('driver-menu-container');
+  const closeClientMenuBtn = document.getElementById('close-client-menu-btn');
+  const closeDriverMenuBtn = document.getElementById('close-driver-menu-btn');
+
+  if (!clientMenuToggleBtn || !driverMenuToggleBtn || !clientMenuPanel || !driverMenuPanel || !closeClientMenuBtn || !closeDriverMenuBtn) {
+    console.error('One or more menu elements (toggle buttons, panels, or close buttons) not found. Ensure all IDs are correct.');
+    return;
+  }
+
+  clientMenuToggleBtn.addEventListener('click', () => {
+    const isClientMenuVisible = clientMenuPanel.style.display === 'block'; // Or check class if using classes
+    
+    // Toggle client menu
+    clientMenuPanel.style.display = isClientMenuVisible ? 'none' : 'block';
+    
+    // If opening client menu, ensure driver menu is closed
+    if (!isClientMenuVisible) { // i.e., if client menu was hidden and is now being shown
+      driverMenuPanel.style.display = 'none';
+    }
+  });
+
+  driverMenuToggleBtn.addEventListener('click', () => {
+    const isDriverMenuVisible = driverMenuPanel.style.display === 'block';
+    
+    // Toggle driver menu
+    driverMenuPanel.style.display = isDriverMenuVisible ? 'none' : 'block';
+    
+    // If opening driver menu, ensure client menu is closed
+    if (!isDriverMenuVisible) { // i.e., if driver menu was hidden and is now being shown
+      clientMenuPanel.style.display = 'none';
+    }
+  });
+
+  // Optional: Close menus if user clicks outside of them on the map or app container
+  // This is more advanced and might be added later if needed.
+  // For example, document.getElementById('app-container').addEventListener('click', (e) => { ... });
+
+  // Event listeners for the new close buttons
+  closeClientMenuBtn.addEventListener('click', () => {
+    if (clientMenuPanel) {
+      clientMenuPanel.style.display = 'none';
+    }
+  });
+
+  closeDriverMenuBtn.addEventListener('click', () => {
+    if (driverMenuPanel) {
+      driverMenuPanel.style.display = 'none';
+    }
+  });
+}
+
 
 // Function to initialize the Leaflet map
 function initMap() {
