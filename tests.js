@@ -330,7 +330,7 @@ function testInputValidation() {
 // --- Run All Tests ---
 function runTests() {
   resetTestState();
-  originalConsoleLog.log('Starting tests...'); // Use original for this top-level log
+  originalConsoleLog('Starting tests...'); // Use original for this top-level log
 
   let functionsAvailable = true;
   if (typeof window.setupDynamicFieldSectionListeners !== 'function' ||
@@ -355,7 +355,7 @@ function runTests() {
     logTestResult('Core Tests Skipped', false, 'Due to missing global functions, core application tests were skipped.');
   }
 
-  originalConsoleLog.log(`\nTests finished. ${passCount}/${testCount} passed.`);
+  originalConsoleLog(`\nTests finished. ${passCount}/${testCount} passed.`);
   if (allTestMessages.length > 0) {
     originalConsoleError("Detailed failures:\n" + allTestMessages.join('\n'));
   }
