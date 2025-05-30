@@ -9,12 +9,41 @@ body {
   min-height: 100vh;
 }
 
-/* Toggle Buttons */
+/* App Container */
+#app-container {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */ /* Removed to allow full-width header etc. */
+  width: 100%;
+  flex-grow: 1;
+  position: relative; /* For absolute positioned menus */
+  /* padding: 10px; */ /* Removed, apply padding to inner sections as needed */
+  box-sizing: border-box;
+}
+
+/* Header Area */
+#app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px; /* Vertical padding 10px, horizontal 20px */
+  background-color: #f8f9fa; /* Light background for header */
+  border-bottom: 1px solid #dee2e6;
+  /* margin-top: 10px; /* This was in prompt, but header usually at very top */
+}
+
+#app-title {
+  text-align: center;
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1.5em; /* Example size */
+}
+
+/* Toggle Buttons (Now in Header) */
 #client-menu-toggle-btn,
 #driver-menu-toggle-btn {
-  position: absolute;
-  top: 20px;
-  z-index: 1000;
+  /* Removed position: absolute, top, left, right */
+  z-index: 1000; /* Keep above some elements if needed, though less critical in flex flow */
   background: #fff;
   border: 1px solid #ccc;
   padding: 8px 12px;
@@ -22,51 +51,61 @@ body {
   font-size: 1.2em;
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  /* margin: 0 5px; /* Add some margin if needed */
 }
 #client-menu-toggle-btn:hover,
 #driver-menu-toggle-btn:hover {
   background-color: #f0f0f0;
 }
-#client-menu-toggle-btn { left: 20px; }
-#driver-menu-toggle-btn { right: 20px; }
+/* Order can be used if space-between on header is not enough, e.g. #client-menu-toggle-btn { order: -1; } */
 
-/* App Container */
-#app-container {
+
+/* Main Content Area */
+#main-content-area {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
   flex-grow: 1;
-  position: relative;
-  padding: 10px;
-  box-sizing: border-box;
+  padding: 18px 10px 10px 10px;
+  /* overflow: auto; /* If content might overflow */
 }
 
 /* Map Container */
 #map-container {
-  width: 100%;
-  max-width: 1200px;
-  margin-top: 0;
-  margin-bottom: 0;
+  flex-grow: 1; /* Takes available space */
+  /* max-width: 1200px; /* This might be too restrictive if sidebar is present */
   border: 1px solid #ddd;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  background-color: transparent;
+  background-color: transparent; /* Ensure it doesn't hide map */
+  display: flex; /* To make map-placeholder take full height */
 }
 #map-placeholder {
-  height: 500px;
+  flex-grow: 1; /* Takes full space of map-container */
+  height: auto; /* Override fixed height, let it fill flex container */
+  min-height: 500px; /* Ensure a minimum height */
   width: 100%;
   box-sizing: border-box;
   outline: none; /* Remove focus outline, but accessible focus managed in JS */
+}
+
+/* Heatmap Sidebar Placeholder */
+#heatmap-sidebar-placeholder {
+  width: 250px;
+  flex-shrink: 0; /* Prevent shrinking */
+  margin-left: 5px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 /* Menu Containers */
 #client-menu-container,
 #driver-menu-container {
   position: absolute;
-  top: 70px;
+  /* top: 70px; /* Adjusted based on new header. Header padding 10+10, h1 font-size ~24px. Approx 45-50px header height. */
+  top: 55px; /* Estimate, adjust after checking header height */
   padding: 20px;
-  max-height: calc(100vh - 90px);
+  max-height: calc(100vh - 75px); /* top (55px) + some bottom clearance (20px) */
   overflow-y: auto;
   border-radius: 5px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -89,10 +128,34 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
+  #app-header {
+    /* flex-direction: column; /* Optional: if title and buttons need to stack */
+    /* align-items: flex-start; */
+  }
+  #app-title {
+    font-size: 1.2em; /* Reduce title size on mobile */
+  }
+  #client-menu-toggle-btn, #driver-menu-toggle-btn {
+    padding: 6px 10px;
+    font-size: 1em;
+  }
+
+  #main-content-area {
+    flex-direction: column;
+  }
+  #map-container{
+    /* max-width: 100%; /* Allow map to use full width available in column */
+  }
+  #heatmap-sidebar-placeholder {
+    width: auto; /* Full width */
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
   #client-menu-container,
   #driver-menu-container {
     width: 300px; /* Fixed width for mobile */
-    max-width: calc(100% - 40px); /* Ensure it fits with some padding */
+    max-width: calc(100% - 20px); /* Ensure it fits with some padding (10px each side) */
     /* Override desktop left/right to ensure they don't conflict if both open (though JS prevents this) */
   }
   #client-menu-container {
@@ -104,6 +167,86 @@ body {
     left: auto; /* Driver menu from right */
   }
 }
+
+/* Performance Insights Section */
+#performance-insights-section {
+  padding: 20px; /* More padding for a distinct section */
+  background-color: #e9ecef;
+  text-align: center;
+  margin-top: 10px; /* Space from main content or menus */
+  border-top: 1px solid #dee2e6;
+}
+
+#performance-filters-placeholder {
+  margin-bottom: 20px;
+}
+
+#performance-filters-placeholder button {
+  margin: 5px;
+  padding: 8px 12px;
+  background-color: #6c757d; /* Secondary button color */
+  border-color: #6c757d;
+}
+#performance-filters-placeholder button:hover {
+  background-color: #5a6268;
+}
+
+.insight-group {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: left; /* Align text to left within each group */
+}
+
+.insight-group h4 {
+  margin-top: 0;
+  margin-bottom: 15px; /* More space after title */
+  font-size: 1.1em;
+  color: #333;
+}
+
+.insight-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around; /* Distribute items evenly */
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 5px; /* More vertical margin */
+  padding: 10px;
+  min-width: 100px; /* Ensure items have some width */
+  background-color: #f9f9f9; /* Slight background for item */
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
+
+.metric-label {
+  font-size: 0.9em;
+  margin-bottom: 5px; /* Space between label and box */
+  color: #555;
+}
+
+.metric-box {
+  width: 80px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  border-radius: 3px;
+  color: #fff; /* Default text color for boxes, assuming dark backgrounds */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  /* background-color: #007bff; /* Default if no inline style */
+}
+/* Example specific box colors (if not using inline styles)
+.metric-box.pickup { background-color: lightblue; color: #333; }
+.metric-box.delivery { background-color: lightgreen; color: #333; }
+*/
 
 /* Close Button */
 .close-menu-btn {
