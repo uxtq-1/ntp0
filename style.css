@@ -72,10 +72,18 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   z-index: 1001;
   box-sizing: border-box;
-  background-color: #e6f7ff; /* light blue for client */
-  display: none;
+  display: none; /* Initially hidden */
 }
+
+#client-menu-container {
+  left: 20px; /* Default position for client menu */
+  width: 360px; /* Default width for larger screens */
+  background-color: #e6f7ff; /* light blue for client */
+}
+
 #driver-menu-container {
+  right: 20px; /* Default position for driver menu */
+  width: 360px; /* Default width for larger screens */
   background-color: #e6ffe6; /* light green for driver */
 }
 
@@ -83,9 +91,17 @@ body {
 @media (max-width: 768px) {
   #client-menu-container,
   #driver-menu-container {
-    width: calc(100% - 40px);
-    left: 20px;
-    right: 20px;
+    width: 300px; /* Fixed width for mobile */
+    max-width: calc(100% - 40px); /* Ensure it fits with some padding */
+    /* Override desktop left/right to ensure they don't conflict if both open (though JS prevents this) */
+  }
+  #client-menu-container {
+    left: 10px;
+    right: auto; /* Client menu from left */
+  }
+  #driver-menu-container {
+    right: 10px;
+    left: auto; /* Driver menu from right */
   }
 }
 
@@ -131,6 +147,14 @@ textarea {
 textarea {
   resize: vertical;
   min-height: 60px;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.85em;
+  display: block; /* Display it on its own line */
+  margin-top: -5px; /* Reduce space if input has margin-bottom */
+  margin-bottom: 5px; /* Space before next element */
 }
 
 /* Buttons */
