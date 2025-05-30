@@ -1,243 +1,242 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Map App</title>
-  <!-- Leaflet CSS -->
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-  crossorigin=""
-/>
+/* Basic Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 
-<!-- Leaflet JS -->
-<script
-  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-  crossorigin=""
-></script>
-</head>
-<body>
-  <div id="app-container">
-    <button id="client-menu-toggle-btn" aria-label="Toggle Client Menu">&#9776;</button>
-    <button id="driver-menu-toggle-btn" aria-label="Toggle Driver Menu">&#9776;</button>
+/* Toggle Buttons */
+#client-menu-toggle-btn,
+#driver-menu-toggle-btn {
+  position: absolute;
+  top: 20px;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 1.2em;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+#client-menu-toggle-btn:hover,
+#driver-menu-toggle-btn:hover {
+  background-color: #f0f0f0;
+}
+#client-menu-toggle-btn { left: 20px; }
+#driver-menu-toggle-btn { right: 20px; }
 
-    <!-- map-container might be redundant if map-placeholder is styled directly for centering.
-         For now, keeping map-placeholder inside map-container as it was.
-         The map-placeholder itself is the Leaflet target. -->
-    <div id="map-container"> 
-      <div id="map-placeholder"></div> 
-    </div>
+/* App Container */
+#app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex-grow: 1;
+  position: relative;
+  padding: 10px;
+  box-sizing: border-box;
+}
 
-    <!-- Removed div#controls-container -->
+/* Map Container */
+#map-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 0;
+  margin-bottom: 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: transparent;
+}
+#map-placeholder {
+  height: 500px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none; /* Remove focus outline, but accessible focus managed in JS */
+}
 
-    <div id="client-menu-container">
-      <button class="close-menu-btn" id="close-client-menu-btn" aria-label="Close Client Menu">&times;</button>
-      <h3>Client Order Menu</h3>
-      <form id="client-order-form">
-      <div>
-        <label for="order-number">Order Number:</label>
-        <input type="text" id="order-number" readonly>
-      </div>
-      <div>
-        <label for="client-ref-number">Client Reference Number:</label>
-        <input type="text" id="client-ref-number">
-      </div>
-      <div>
-        <label for="pickup-name">Pick-up Name:</label>
-        <input type="text" id="pickup-name">
-      </div>
-      <div>
-        <label>Pick-up Addresses:</label>
-        <div id="pickup-addresses-container">
-          <div>
-            <input type="text" class="pickup-address" placeholder="Pick-up Address 1">
-          </div>
-        </div>
-        <button type="button" id="add-pickup-address-btn">Add Another Pick-up Address</button>
-      </div>
-      <div>
-        <label for="pickup-state">Pick-up State:</label>
-        <input type="text" id="pickup-state">
-      </div>
-      <div>
-        <label for="pickup-zip">Pick-up Zip Code:</label>
-        <input type="text" id="pickup-zip">
-      </div>
-      <div>
-        <label for="pickup-country">Pick-up Country:</label>
-        <input type="text" id="pickup-country">
-      </div>
-      
-      <!-- Pick-up Contact Numbers -->
-      <div>
-        <label>Pick-up Contact Numbers:</label>
-        <div id="pickup-contacts-container">
-          <div>
-            <input type="text" class="pickup-contact" placeholder="Pick-up Contact 1">
-          </div>
-        </div>
-        <button type="button" id="add-pickup-contact-btn">Add Another Pick-up Contact</button>
-      </div>
+/* Menu Containers */
+#client-menu-container,
+#driver-menu-container {
+  position: absolute;
+  top: 70px;
+  padding: 20px;
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 1001;
+  box-sizing: border-box;
+  background-color: #e6f7ff; /* light blue for client */
+  display: none;
+}
+#driver-menu-container {
+  background-color: #e6ffe6; /* light green for driver */
+}
 
-      <div>
-        <label for="delivery-name">Delivery Name:</label>
-        <input type="text" id="delivery-name">
-      </div>
+/* Responsive */
+@media (max-width: 768px) {
+  #client-menu-container,
+  #driver-menu-container {
+    width: calc(100% - 40px);
+    left: 20px;
+    right: 20px;
+  }
+}
 
-      <!-- Delivery Addresses -->
-      <div>
-        <label>Delivery Addresses:</label>
-        <div id="delivery-addresses-container">
-          <div>
-            <input type="text" class="delivery-address" placeholder="Delivery Address 1">
-          </div>
-        </div>
-        <button type="button" id="add-delivery-address-btn">Add Another Delivery Address</button>
-      </div>
-      <div>
-        <label for="delivery-state">Delivery State:</label>
-        <input type="text" id="delivery-state">
-      </div>
-      <div>
-        <label for="delivery-zip">Delivery Zip Code:</label>
-        <input type="text" id="delivery-zip">
-      </div>
-      <div>
-        <label for="delivery-country">Delivery Country:</label>
-        <input type="text" id="delivery-country">
-      </div>
+/* Close Button */
+.close-menu-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+  z-index: 1002;
+}
+.close-menu-btn:hover {
+  color: #000;
+}
 
-      <!-- Delivery Contact Numbers -->
-      <div>
-        <label>Delivery Contact Numbers:</label>
-        <div id="delivery-contacts-container">
-          <div>
-            <input type="text" class="delivery-contact" placeholder="Delivery Contact 1">
-          </div>
-        </div>
-        <button type="button" id="add-delivery-contact-btn">Add Another Delivery Contact</button>
-      </div>
+/* Form Elements */
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
+textarea {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1em;
+}
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
 
-      <!-- Email Addresses (Dynamic) -->
-      <div>
-        <label>Email for Tracking:</label>
-        <div id="tracking-emails-container">
-          <div>
-            <input type="email" class="tracking-email" placeholder="Tracking Email 1">
-          </div>
-        </div>
-        <button type="button" id="add-tracking-email-btn">Add Another Email</button>
-      </div>
+/* Buttons */
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-bottom: 10px;
+}
+button:hover {
+  background-color: #0056b3;
+}
 
-      <!-- Item Count (REMOVED as per new requirement) -->
-      
-      <!-- Item Descriptions -->
-      <div>
-        <label>Items (Description, Qty, Weight, Dimensions):</label>
-        <div id="item-descriptions-container">
-          <div class="item-description-entry">
-            <!-- Initial Item Entry -->
-            <h5>Item 1</h5>
-            <textarea class="item-description" placeholder="Item Description"></textarea>
-            <div class="item-details-line-1">
-              <input type="number" class="item-qty" placeholder="Qty" min="1" title="Quantity">
-              <input type="text" class="item-weight" placeholder="Weight (e.g., 5kg)" title="Weight">
-            </div>
-            <div class="item-details-line-2">
-              <label>Dimensions (LxWxH):</label>
-              <input type="text" class="item-length" placeholder="L" title="Length">
-              <input type="text" class="item-width" placeholder="W" title="Width">
-              <input type="text" class="item-height" placeholder="H" title="Height">
-            </div>
-            <!-- No remove button for the first static entry, or it's added by JS if desired -->
-          </div>
-        </div>
-        <button type="button" id="add-item-description-btn">Add Another Item</button> <!-- Text changed -->
-      </div>
+/* Dynamic Fields */
+.pickup-address-entry,
+.delivery-address-entry,
+.pickup-contact-entry,
+.delivery-contact-entry,
+.item-description-entry,
+.vehicle-entry,
+.certification-entry,
+.driver-contact-entry,
+.driver-address-entry {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
-      <!-- Special Instructions -->
-      <div>
-        <label for="special-instructions">Special Instructions:</label>
-        <textarea id="special-instructions"></textarea>
-      </div>
+.item-description-entry textarea.item-description {
+  flex-grow: 1;
+  min-width: 250px;
+  resize: vertical;
+}
 
-      <button type="submit" id="create-order-btn">Create Order</button>
-    </form>
-  </div>
-  <div id="driver-menu-container">
-    <h3>Driver Profile Menu</h3>
-    <form id="driver-profile-form">
-      <button class="close-menu-btn" id="close-driver-menu-btn" aria-label="Close Driver Menu">&times;</button>
-      <!-- Driver Name (static for now, could be part of a non-dynamic section) -->
-      <div>
-        <label for="driver-name-static">Driver Name:</label>
-        <input type="text" id="driver-name-static" placeholder="Enter driver's full name">
-      </div>
-      <div>
-        <label for="driver-photo">Driver Photo:</label>
-        <input type="file" id="driver-photo" accept="image/*">
-      </div>
+.item-details-line-1,
+.item-details-line-2 {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
 
-      <!-- Dynamic Vehicle Information -->
-      <h4>Vehicles</h4>
-      <div id="driver-vehicles-container">
-        <div class="vehicle-entry">
-          <h5>Vehicle 1</h5>
-          <div><label>Type:</label><input type="text" class="vehicle-type" placeholder="e.g., Sedan, Truck"></div>
-          <div><label>Make:</label><input type="text" class="vehicle-make" placeholder="e.g., Toyota"></div>
-          <div><label>Model:</label><input type="text" class="vehicle-model" placeholder="e.g., Camry"></div>
-          <div><label>Plate Number:</label><input type="text" class="vehicle-plate" placeholder="e.g., ABC-123"></div>
-          <!-- No remove button for the first entry by default or it's hidden/disabled -->
-        </div>
-      </div>
-      <button type="button" id="add-vehicle-btn">Add Another Vehicle</button>
-      <hr>
+.item-details-line-1 input,
+.item-details-line-2 input {
+  flex-grow: 1;
+  width: auto;
+}
 
-      <!-- Dynamic Certifications/Licenses -->
-      <h4>Certifications/Licenses</h4>
-      <div id="driver-certifications-container">
-        <div class="certification-entry">
-          <h5>Certification/License 1</h5>
-          <div><label>Name:</label><input type="text" class="certification-name" placeholder="e.g., Driver's License, Forklift"></div>
-          <div><label>License Number:</label><input type="text" class="license-number" placeholder="e.g., DL12345"></div>
-          <div><label>Expiration Date:</label><input type="date" class="expiration-date"></div>
-        </div>
-      </div>
-      <button type="button" id="add-certification-btn">Add Another Certification/License</button>
-      <hr>
+/* Remove Buttons */
+.remove-dynamic-field-btn {
+  padding: 5px 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  line-height: 1.2;
+}
+.remove-dynamic-field-btn:hover {
+  background-color: #c82333;
+}
 
-      <!-- Dynamic Driver Contact Numbers -->
-      <h4>Contact Numbers</h4>
-      <div id="driver-contacts-container">
-        <div class="driver-contact-entry"> <!-- Initial entry wrapper -->
-          <div><label>Contact Number 1:</label><input type="tel" class="driver-contact" placeholder="e.g., 555-1234"></div>
-        </div>
-      </div>
-      <button type="button" id="add-driver-contact-btn">Add Another Contact Number</button>
-      <hr>
+/* Add Buttons */
+#add-pickup-address-btn,
+#add-delivery-address-btn,
+#add-pickup-contact-btn,
+#add-delivery-contact-btn,
+#add-item-description-btn,
+#add-vehicle-btn,
+#add-certification-btn,
+#add-driver-contact-btn,
+#add-driver-address-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 12px;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#add-pickup-address-btn:hover,
+#add-delivery-address-btn:hover,
+#add-pickup-contact-btn:hover,
+#add-delivery-contact-btn:hover,
+#add-item-description-btn:hover,
+#add-vehicle-btn:hover,
+#add-certification-btn:hover,
+#add-driver-contact-btn:hover,
+#add-driver-address-btn:hover {
+  background-color: #218838;
+}
 
-      <!-- Dynamic Driver Addresses -->
-      <h4>Driver Addresses</h4>
-      <div id="driver-addresses-container">
-        <div class="driver-address-entry">
-          <h5>Address 1</h5>
-          <input type="text" class="driver-address-street" placeholder="Street Address">
-          <input type="text" class="driver-address-city" placeholder="City">
-          <input type="text" class="driver-address-state" placeholder="State">
-          <input type="text" class="driver-address-zip" placeholder="Zip Code">
-          <input type="text" class="driver-address-country" placeholder="Country">
-          <!-- No remove button for the first static entry, or it's added by JS -->
-        </div>
-      </div>
-      <button type="button" id="add-driver-address-btn">Add Another Address</button>
-      <hr>
-
-      <button type="submit" id="update-profile-btn">Update Profile</button>
-    </form>
-  </div>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="app.js"></script>
-</body>
-</html>
+/* File Input */
+#driver-photo {
+  padding: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: block;
+  max-width: calc(100% - 22px);
+}
