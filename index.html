@@ -1,242 +1,574 @@
-/* Basic Styles */
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+    content="
+      default-src 'self';
+      script-src 'self' https://unpkg.com 'nonce-abc123';
+      style-src 'self' https://unpkg.com 'nonce-abc123';
+      img-src 'self' data:;
+      connect-src 'self';
+      font-src 'self';
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+    "
+  />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OPS Logistics Map App</title>
 
-/* Toggle Buttons */
-#client-menu-toggle-btn,
-#driver-menu-toggle-btn {
-  position: absolute;
-  top: 20px;
-  z-index: 1000;
-  background: #fff;
-  border: 1px solid #ccc;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 1.2em;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-}
-#client-menu-toggle-btn:hover,
-#driver-menu-toggle-btn:hover {
-  background-color: #f0f0f0;
-}
-#client-menu-toggle-btn { left: 20px; }
-#driver-menu-toggle-btn { right: 20px; }
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+    nonce="abc123"
+  />
 
-/* App Container */
-#app-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  flex-grow: 1;
-  position: relative;
-  padding: 10px;
-  box-sizing: border-box;
-}
+  <link rel="stylesheet" href="style.css" nonce="abc123" />
+</head>
+<body>
+  <div id="app-container" role="main">
+    <button
+      id="client-menu-toggle-btn"
+      aria-label="Toggle Client Menu"
+      aria-expanded="false"
+      aria-controls="client-menu-container"
+    >&#9776;</button>
+    <button
+      id="driver-menu-toggle-btn"
+      aria-label="Toggle Driver Menu"
+      aria-expanded="false"
+      aria-controls="driver-menu-container"
+    >&#9776;</button>
 
-/* Map Container */
-#map-container {
-  width: 100%;
-  max-width: 1200px;
-  margin-top: 0;
-  margin-bottom: 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  background-color: transparent;
-}
-#map-placeholder {
-  height: 500px;
-  width: 100%;
-  box-sizing: border-box;
-  outline: none; /* Remove focus outline, but accessible focus managed in JS */
-}
+    <section
+      id="map-container"
+      aria-label="Delivery and Driver Map"
+      role="region"
+    >
+      <div id="map-placeholder" tabindex="0" aria-live="polite" aria-atomic="true"></div>
+    </section>
 
-/* Menu Containers */
-#client-menu-container,
-#driver-menu-container {
-  position: absolute;
-  top: 70px;
-  padding: 20px;
-  max-height: calc(100vh - 90px);
-  overflow-y: auto;
-  border-radius: 5px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  z-index: 1001;
-  box-sizing: border-box;
-  background-color: #e6f7ff; /* light blue for client */
-  display: none;
-}
-#driver-menu-container {
-  background-color: #e6ffe6; /* light green for driver */
-}
+    <aside
+      id="client-menu-container"
+      aria-label="Client Order Menu"
+      role="region"
+      hidden
+    >
+      <button
+        class="close-menu-btn"
+        id="close-client-menu-btn"
+        aria-label="Close Client Menu"
+      >&times;</button>
+      <h3>Client Order Menu</h3>
+      <form id="client-order-form" autocomplete="off" novalidate>
+        <div>
+          <label for="order-number">Order Number:</label>
+          <input
+            type="text"
+            id="order-number"
+            name="order-number"
+            readonly
+            aria-readonly="true"
+          />
+        </div>
+        <div>
+          <label for="client-ref-number">Client Reference Number:</label>
+          <input
+            type="text"
+            id="client-ref-number"
+            name="client-ref-number"
+            autocomplete="off"
+            required
+            aria-required="true"
+            maxlength="50"
+            pattern="[A-Za-z0-9\-]+"
+            title="Alphanumeric and dashes only"
+          />
+        </div>
+        <div>
+          <label for="pickup-name">Pick-up Name:</label>
+          <input
+            type="text"
+            id="pickup-name"
+            name="pickup-name"
+            autocomplete="off"
+            required
+            aria-required="true"
+            maxlength="100"
+          />
+        </div>
+        <fieldset>
+          <legend>Pick-up Addresses</legend>
+          <div id="pickup-addresses-container" aria-live="polite" aria-relevant="additions removals">
+            <div class="pickup-address-entry">
+              <input
+                type="text"
+                class="pickup-address"
+                name="pickup-address-1"
+                placeholder="Pick-up Address 1"
+                required
+                aria-required="true"
+                autocomplete="off"
+                maxlength="200"
+              />
+            </div>
+          </div>
+          <button type="button" id="add-pickup-address-btn" aria-label="Add Another Pick-up Address">Add Another Pick-up Address</button>
+        </fieldset>
+        <div>
+          <label for="pickup-state">Pick-up State:</label>
+          <input
+            type="text"
+            id="pickup-state"
+            name="pickup-state"
+            autocomplete="off"
+            maxlength="50"
+          />
+        </div>
+        <div>
+          <label for="pickup-zip">Pick-up Zip Code:</label>
+          <input
+            type="text"
+            id="pickup-zip"
+            name="pickup-zip"
+            autocomplete="off"
+            maxlength="20"
+            pattern="[0-9\-]+"
+            title="Numbers and dashes only"
+          />
+        </div>
+        <div>
+          <label for="pickup-country">Pick-up Country:</label>
+          <input
+            type="text"
+            id="pickup-country"
+            name="pickup-country"
+            autocomplete="off"
+            maxlength="50"
+          />
+        </div>
 
-/* Responsive */
-@media (max-width: 768px) {
-  #client-menu-container,
-  #driver-menu-container {
-    width: calc(100% - 40px);
-    left: 20px;
-    right: 20px;
-  }
-}
+        <fieldset>
+          <legend>Pick-up Contact Numbers</legend>
+          <div id="pickup-contacts-container" aria-live="polite" aria-relevant="additions removals">
+            <div class="pickup-contact-entry">
+              <input
+                type="tel"
+                class="pickup-contact"
+                name="pickup-contact-1"
+                placeholder="Pick-up Contact 1"
+                pattern="[\d\s+\-()]+"
+                title="Digits, spaces, plus, dash, parentheses"
+                autocomplete="off"
+                maxlength="20"
+              />
+            </div>
+          </div>
+          <button type="button" id="add-pickup-contact-btn" aria-label="Add Another Pick-up Contact">Add Another Pick-up Contact</button>
+        </fieldset>
 
-/* Close Button */
-.close-menu-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: transparent;
-  border: none;
-  font-size: 1.8em;
-  font-weight: bold;
-  color: #555;
-  cursor: pointer;
-  padding: 5px;
-  line-height: 1;
-  z-index: 1002;
-}
-.close-menu-btn:hover {
-  color: #000;
-}
+        <div>
+          <label for="delivery-name">Delivery Name:</label>
+          <input
+            type="text"
+            id="delivery-name"
+            name="delivery-name"
+            autocomplete="off"
+            maxlength="100"
+          />
+        </div>
 
-/* Form Elements */
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="number"],
-input[type="date"],
-textarea {
-  width: calc(100% - 22px);
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 1em;
-}
-textarea {
-  resize: vertical;
-  min-height: 60px;
-}
+        <fieldset>
+          <legend>Delivery Addresses</legend>
+          <div id="delivery-addresses-container" aria-live="polite" aria-relevant="additions removals">
+            <div class="delivery-address-entry">
+              <input
+                type="text"
+                class="delivery-address"
+                name="delivery-address-1"
+                placeholder="Delivery Address 1"
+                autocomplete="off"
+                maxlength="200"
+              />
+            </div>
+          </div>
+          <button type="button" id="add-delivery-address-btn" aria-label="Add Another Delivery Address">Add Another Delivery Address</button>
+        </fieldset>
+        <div>
+          <label for="delivery-state">Delivery State:</label>
+          <input
+            type="text"
+            id="delivery-state"
+            name="delivery-state"
+            autocomplete="off"
+            maxlength="50"
+          />
+        </div>
+        <div>
+          <label for="delivery-zip">Delivery Zip Code:</label>
+          <input
+            type="text"
+            id="delivery-zip"
+            name="delivery-zip"
+            autocomplete="off"
+            maxlength="20"
+            pattern="[0-9\-]+"
+            title="Numbers and dashes only"
+          />
+        </div>
+        <div>
+          <label for="delivery-country">Delivery Country:</label>
+          <input
+            type="text"
+            id="delivery-country"
+            name="delivery-country"
+            autocomplete="off"
+            maxlength="50"
+          />
+        </div>
 
-/* Buttons */
-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1em;
-  margin-bottom: 10px;
-}
-button:hover {
-  background-color: #0056b3;
-}
+        <fieldset>
+          <legend>Delivery Contact Numbers</legend>
+          <div id="delivery-contacts-container" aria-live="polite" aria-relevant="additions removals">
+            <div class="delivery-contact-entry">
+              <input
+                type="tel"
+                class="delivery-contact"
+                name="delivery-contact-1"
+                placeholder="Delivery Contact 1"
+                pattern="[\d\s+\-()]+"
+                title="Digits, spaces, plus, dash, parentheses"
+                autocomplete="off"
+                maxlength="20"
+              />
+            </div>
+          </div>
+          <button type="button" id="add-delivery-contact-btn" aria-label="Add Another Delivery Contact">Add Another Delivery Contact</button>
+        </fieldset>
 
-/* Dynamic Fields */
-.pickup-address-entry,
-.delivery-address-entry,
-.pickup-contact-entry,
-.delivery-contact-entry,
-.item-description-entry,
-.vehicle-entry,
-.certification-entry,
-.driver-contact-entry,
-.driver-address-entry {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  gap: 8px;
-  flex-wrap: wrap;
-}
+        <fieldset>
+          <legend>Email Addresses for Tracking</legend>
+          <div id="tracking-emails-container" aria-live="polite" aria-relevant="additions removals">
+            <div class="tracking-email-entry">
+              <input
+                type="email"
+                class="tracking-email"
+                name="tracking-email-1"
+                placeholder="Tracking Email 1"
+                autocomplete="off"
+                maxlength="100"
+              />
+            </div>
+          </div>
+          <button type="button" id="add-tracking-email-btn" aria-label="Add Another Email">Add Another Email</button>
+        </fieldset>
 
-.item-description-entry textarea.item-description {
-  flex-grow: 1;
-  min-width: 250px;
-  resize: vertical;
-}
+        <fieldset>
+          <legend>Items (Description, Quantity, Weight, Dimensions)</legend>
+          <div id="item-descriptions-container" aria-live="polite" aria-relevant="additions removals">
+            <div class="item-description-entry" role="group" aria-label="Item 1">
+              <h5>Item 1</h5>
+              <textarea
+                class="item-description"
+                name="item-description-1"
+                placeholder="Item Description"
+                maxlength="500"
+              ></textarea>
+              <div class="item-details-line-1">
+                <input
+                  type="number"
+                  class="item-qty"
+                  name="item-qty-1"
+                  placeholder="Qty"
+                  min="1"
+                  title="Quantity"
+                  aria-label="Quantity"
+                />
+                <input
+                  type="text"
+                  class="item-weight"
+                  name="item-weight-1"
+                  placeholder="Weight (e.g., 5kg)"
+                  title="Weight"
+                  maxlength="20"
+                />
+              </div>
+              <div class="item-details-line-2">
+                <label>Dimensions (LxWxH):</label>
+                <input
+                  type="text"
+                  class="item-length"
+                  name="item-length-1"
+                  placeholder="L"
+                  title="Length"
+                  maxlength="10"
+                />
+                <input
+                  type="text"
+                  class="item-width"
+                  name="item-width-1"
+                  placeholder="W"
+                  title="Width"
+                  maxlength="10"
+                />
+                <input
+                  type="text"
+                  class="item-height"
+                  name="item-height-1"
+                  placeholder="H"
+                  title="Height"
+                  maxlength="10"
+                />
+              </div>
+            </div>
+          </div>
+          <button type="button" id="add-item-description-btn" aria-label="Add Another Item">Add Another Item</button>
+        </fieldset>
 
-.item-details-line-1,
-.item-details-line-2 {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-}
+        <div>
+          <label for="special-instructions">Special Instructions:</label>
+          <textarea
+            id="special-instructions"
+            name="special-instructions"
+            maxlength="1000"
+            placeholder="Enter any special instructions here..."
+          ></textarea>
+        </div>
 
-.item-details-line-1 input,
-.item-details-line-2 input {
-  flex-grow: 1;
-  width: auto;
-}
+        <button type="submit" id="create-order-btn">Create Order</button>
+      </form>
+    </aside>
 
-/* Remove Buttons */
-.remove-dynamic-field-btn {
-  padding: 5px 10px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
-  line-height: 1.2;
-}
-.remove-dynamic-field-btn:hover {
-  background-color: #c82333;
-}
+    <aside id="driver-menu-container" aria-label="Driver Profile Menu" role="region" hidden>
+      <button
+        class="close-menu-btn"
+        id="close-driver-menu-btn"
+        aria-label="Close Driver Menu"
+      >&times;</button>
+      <h3>Driver Profile Menu</h3>
+      <form id="driver-profile-form" autocomplete="off" novalidate>
+        <div>
+          <label for="driver-name-static">Driver Name:</label>
+          <input
+            type="text"
+            id="driver-name-static"
+            name="driver-name-static"
+            placeholder="Enter driver's full name"
+            maxlength="100"
+            required
+            aria-required="true"
+          />
+        </div>
+        <div>
+          <label for="driver-photo">Driver Photo:</label>
+          <input
+            type="file"
+            id="driver-photo"
+            name="driver-photo"
+            accept="image/*"
+            aria-describedby="driver-photo-desc"
+          />
+          <small id="driver-photo-desc">Upload a recent photo of the driver (optional).</small>
+        </div>
 
-/* Add Buttons */
-#add-pickup-address-btn,
-#add-delivery-address-btn,
-#add-pickup-contact-btn,
-#add-delivery-contact-btn,
-#add-item-description-btn,
-#add-vehicle-btn,
-#add-certification-btn,
-#add-driver-contact-btn,
-#add-driver-address-btn {
-  background-color: #28a745;
-  color: white;
-  padding: 8px 12px;
-  margin-top: 8px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-#add-pickup-address-btn:hover,
-#add-delivery-address-btn:hover,
-#add-pickup-contact-btn:hover,
-#add-delivery-contact-btn:hover,
-#add-item-description-btn:hover,
-#add-vehicle-btn:hover,
-#add-certification-btn:hover,
-#add-driver-contact-btn:hover,
-#add-driver-address-btn:hover {
-  background-color: #218838;
-}
+        <fieldset>
+          <legend>Vehicles</legend>
+          <div id="driver-vehicles-container" aria-live="polite" aria-relevant="additions removals">
+            <div class="vehicle-entry" role="group" aria-label="Vehicle 1">
+              <h5>Vehicle 1</h5>
+              <div>
+                <label for="vehicle-type-1">Type:</label>
+                <input
+                  type="text"
+                  id="vehicle-type-1"
+                  class="vehicle-type"
+                  name="vehicle-type-1"
+                  placeholder="e.g., Sedan, Truck"
+                  maxlength="50"
+                />
+              </div>
+              <div>
+                <label for="vehicle-make-1">Make:</label>
+                <input
+                  type="text"
+                  id="vehicle-make-1"
+                  class="vehicle-make"
+                  name="vehicle-make-1"
+                  placeholder="e.g., Toyota"
+                  maxlength="50"
+                />
+              </div>
+              <div>
+                <label for="vehicle-model-1">Model:</label>
+                <input
+                  type="text"
+                  id="vehicle-model-1"
+                  class="vehicle-model"
+                  name="vehicle-model-1"
+                  placeholder="e.g., Camry"
+                  maxlength="50"
+                />
+              </div>
+              <div>
+                <label for="vehicle-plate-1">Plate Number:</label>
+                <input
+                  type="text"
+                  id="vehicle-plate-1"
+                  class="vehicle-plate"
+                  name="vehicle-plate-1"
+                  placeholder="e.g., ABC-123"
+                  maxlength="20"
+                />
+              </div>
+            </div>
+          </div>
+          <button type="button" id="add-vehicle-btn" aria-label="Add Another Vehicle">Add Another Vehicle</button>
+        </fieldset>
+        <hr />
 
-/* File Input */
-#driver-photo {
-  padding: 5px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  display: block;
-  max-width: calc(100% - 22px);
-}
+        <fieldset>
+          <legend>Certifications / Licenses</legend>
+          <div id="driver-certifications-container" aria-live="polite" aria-relevant="additions removals">
+            <div class="certification-entry" role="group" aria-label="Certification 1">
+              <h5>Certification/License 1</h5>
+              <div>
+                <label for="certification-name-1">Name:</label>
+                <input
+                  type="text"
+                  id="certification-name-1"
+                  class="certification-name"
+                  name="certification-name-1"
+                  placeholder="e.g., Driver's License, Forklift"
+                  maxlength="100"
+                />
+              </div>
+              <div>
+                <label for="license-number-1">License Number:</label>
+                <input
+                  type="text"
+                  id="license-number-1"
+                  class="license-number"
+                  name="license-number-1"
+                  placeholder="e.g., DL12345"
+                  maxlength="50"
+                />
+              </div>
+              <div>
+                <label for="expiration-date-1">Expiration Date:</label>
+                <input
+                  type="date"
+                  id="expiration-date-1"
+                  class="expiration-date"
+                  name="expiration-date-1"
+                  pattern="\d{4}-\d{2}-\d{2}"
+                  title="Format: YYYY-MM-DD"
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            id="add-certification-btn"
+            aria-label="Add Another Certification or License"
+          >Add Another Certification/License</button>
+        </fieldset>
+        <hr />
+
+        <fieldset>
+          <legend>Contact Numbers</legend>
+          <div id="driver-contacts-container" aria-live="polite" aria-relevant="additions removals">
+            <div class="driver-contact-entry" role="group" aria-label="Contact Number 1">
+              <div>
+                <label for="driver-contact-1">Contact Number 1:</label>
+                <input
+                  type="tel"
+                  id="driver-contact-1"
+                  class="driver-contact"
+                  name="driver-contact-1"
+                  placeholder="e.g., 555-1234"
+                  pattern="[\d\s+\-()]+"
+                  title="Digits, spaces, plus, dash, parentheses"
+                  maxlength="20"
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            id="add-driver-contact-btn"
+            aria-label="Add Another Contact Number"
+          >Add Another Contact Number</button>
+        </fieldset>
+        <hr />
+
+        <fieldset>
+          <legend>Driver Addresses</legend>
+          <div id="driver-addresses-container" aria-live="polite" aria-relevant="additions removals">
+            <div class="driver-address-entry" role="group" aria-label="Address 1">
+              <h5>Address 1</h5>
+              <input
+                type="text"
+                class="driver-address-street"
+                name="driver-address-street-1"
+                placeholder="Street Address"
+                maxlength="200"
+              />
+              <input
+                type="text"
+                class="driver-address-city"
+                name="driver-address-city-1"
+                placeholder="City"
+                maxlength="100"
+              />
+              <input
+                type="text"
+                class="driver-address-state"
+                name="driver-address-state-1"
+                placeholder="State"
+                maxlength="50"
+              />
+              <input
+                type="text"
+                class="driver-address-zip"
+                name="driver-address-zip-1"
+                placeholder="Zip Code"
+                maxlength="20"
+                pattern="[0-9\-]+"
+                title="Numbers and dashes only"
+              />
+              <input
+                type="text"
+                class="driver-address-country"
+                name="driver-address-country-1"
+                placeholder="Country"
+                maxlength="50"
+              />
+            </div>
+          </div>
+          <button
+            type="button"
+            id="add-driver-address-btn"
+            aria-label="Add Another Address"
+          >Add Another Address</button>
+        </fieldset>
+
+        <hr />
+        <button type="submit" id="update-profile-btn">Update Profile</button>
+      </form>
+    </aside>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+    nonce="abc123"
+  ></script>
+  <script src="app.js" nonce="abc123"></script>
+</body>
+</html>
