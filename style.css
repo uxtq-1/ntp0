@@ -3,10 +3,16 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  background-color: #FFFFFF; /* Palette: Main Background */
+  color: #212529; /* Palette: Text */
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, legend {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 /* App Container */
@@ -26,36 +32,36 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px; /* Vertical padding 10px, horizontal 20px */
-  background-color: #f8f9fa; /* Light background for header */
-  border-bottom: 1px solid #dee2e6;
-  /* margin-top: 10px; /* This was in prompt, but header usually at very top */
+  padding: 10px 20px;
+  background-color: #f8f9fa; /* Palette: Light Section BG */
+  border-bottom: 1px solid #dee2e6; /* Palette: Borders (or slightly darker for definition) */
 }
 
 #app-title {
   text-align: center;
   flex-grow: 1;
   margin: 0;
-  font-size: 1.5em; /* Example size */
+  font-size: 1.5em;
+  color: #212529; /* Palette: Text (explicit) */
 }
 
 /* Toggle Buttons (Now in Header) */
 #client-menu-toggle-btn,
 #driver-menu-toggle-btn {
-  /* Removed position: absolute, top, left, right */
-  z-index: 1000; /* Keep above some elements if needed, though less critical in flex flow */
-  background: #fff;
-  border: 1px solid #ccc;
+  z-index: 1000;
+  background-color: #FFFFFF; /* Palette: Main Background (button itself) */
+  border: 1px solid #ced4da; /* Palette: Borders */
+  color: #007bff; /* Palette: Primary (for icon color) */
   padding: 8px 12px;
   cursor: pointer;
   font-size: 1.2em;
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-  /* margin: 0 5px; /* Add some margin if needed */
 }
 #client-menu-toggle-btn:hover,
 #driver-menu-toggle-btn:hover {
-  background-color: #f0f0f0;
+  background-color: #e9ecef; /* Slightly darker than white, or a light primary tint */
+  border-color: #adb5bd; /* Darker border on hover */
 }
 /* Order can be used if space-between on header is not enough, e.g. #client-menu-toggle-btn { order: -1; } */
 
@@ -70,13 +76,12 @@ body {
 
 /* Map Container */
 #map-container {
-  flex-grow: 1; /* Takes available space */
-  /* max-width: 1200px; /* This might be too restrictive if sidebar is present */
-  border: 1px solid #ddd;
+  flex-grow: 1;
+  border: 1px solid #ced4da; /* Palette: Borders */
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  background-color: transparent; /* Ensure it doesn't hide map */
-  display: flex; /* To make map-placeholder take full height */
+  background-color: transparent;
+  display: flex;
 }
 #map-placeholder {
   flex-grow: 1; /* Takes full space of map-container if parent is column flex, or full width if row flex */
@@ -89,11 +94,12 @@ body {
 /* Heatmap Sidebar Placeholder */
 #heatmap-sidebar-placeholder {
   width: 250px;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
   margin-left: 5px;
-  background-color: #f0f0f0;
+  background-color: #f8f9fa; /* Palette: Light Section BG */
+  color: #212529; /* Palette: Text */
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #dee2e6; /* Palette: Borders (or slightly darker) */
   border-radius: 4px;
 }
 
@@ -101,30 +107,38 @@ body {
 #client-menu-container,
 #driver-menu-container {
   position: absolute;
-  /* top: 70px; /* Adjusted based on new header. Header padding 10+10, h1 font-size ~24px. Approx 45-50px header height. */
-  top: 55px; /* Estimate, adjust after checking header height */
+  top: 55px;
   padding: 20px;
-  max-height: calc(100vh - 75px); /* top (55px) + some bottom clearance (20px) */
+  max-height: calc(100vh - 75px);
   overflow-y: auto;
   border-radius: 5px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   z-index: 1001;
   box-sizing: border-box;
-  display: none; /* Initially hidden */
+  display: none;
+  background-color: #f8f9fa; /* Palette: Light Section BG */
+  border: 1px solid #dee2e6; /* Palette: Borders (or slightly darker) */
+  /* Text color inherited from body */
+}
+#client-menu-container h3,
+#driver-menu-container h3 {
+    color: #007bff; /* Palette: Primary */
+    margin-top: 0; /* Adjust spacing for menu headings */
 }
 
+
 #client-menu-container {
-  left: 10px; /* Consistent 10px from left edge */
-  right: auto; /* Ensure no conflict if a 'right' was ever set */
-  width: 360px; /* Default width for larger screens */
-  background-color: #e6f7ff; /* light blue for client */
+  left: 10px;
+  right: auto;
+  width: 360px;
+  /* background-color: #e6f7ff; /* Removed, common BG now */
 }
 
 #driver-menu-container {
-  right: 10px; /* Consistent 10px from right edge */
-  left: auto; /* Ensure no conflict if a 'left' was ever set */
-  width: 360px; /* Default width for larger screens */
-  background-color: #e6ffe6; /* light green for driver */
+  right: 10px;
+  left: auto;
+  width: 360px;
+  /* background-color: #e6ffe6; /* Removed, common BG now */
 }
 
 /* Responsive */
@@ -198,38 +212,44 @@ body {
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 4px;
-  text-align: left; /* Align text to left within each group */
+  text-align: left;
 }
 
 .insight-group h4 {
   margin-top: 0;
-  margin-bottom: 15px; /* More space after title */
+  margin-bottom: 15px;
   font-size: 1.1em;
-  color: #333;
+  color: #007bff; /* Palette: Primary */
 }
 
 .insight-metrics {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around; /* Distribute items evenly */
+  justify-content: space-around;
 }
 
 .metric-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 10px 5px; /* More vertical margin */
+  margin: 10px 5px;
   padding: 10px;
-  min-width: 100px; /* Ensure items have some width */
-  background-color: #f9f9f9; /* Slight background for item */
+  min-width: 100px;
+  background-color: #f8f9fa; /* Palette: Light Section BG */
   border-radius: 4px;
-  border: 1px solid #eee;
+  border: 1px solid #dee2e6; /* Palette: Borders */
+}
+.metric-item:hover {
+  background-color: #FFFFFF; /* Lighten from #f8f9fa */
+  border-color: #adb5bd;    /* A slightly darker, more prominent border */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.075); /* A subtle shadow to lift it */
+  cursor: default; /* Indicate it's not yet clickable, can change to 'pointer' later */
 }
 
 .metric-label {
   font-size: 0.9em;
-  margin-bottom: 5px; /* Space between label and box */
-  color: #555;
+  margin-bottom: 5px;
+  color: #6c757d; /* Palette: Secondary (for labels) */
 }
 
 .metric-box {
@@ -240,14 +260,15 @@ body {
   align-items: center;
   font-weight: bold;
   border-radius: 3px;
-  color: #fff; /* Default text color for boxes, assuming dark backgrounds */
+  /* color: #fff; /* Default text color set by specific classes below */
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  /* background-color: #007bff; /* Default if no inline style */
 }
-/* Example specific box colors (if not using inline styles)
-.metric-box.pickup { background-color: lightblue; color: #333; }
-.metric-box.delivery { background-color: lightgreen; color: #333; }
-*/
+.metric-box.pickup { background-color: #007bff; color: #FFFFFF; }
+.metric-box.delivery { background-color: #007bff; color: #FFFFFF; } /* Using Primary for Delivery too */
+.metric-box.on-time { background-color: #28a745; color: #FFFFFF; }
+.metric-box.late { background-color: #ffc107; color: #212529; } /* Dark text for light amber */
+.metric-box.attempts { background-color: #6c757d; color: #FFFFFF; }
+
 
 /* Close Button */
 .close-menu-btn {
@@ -258,14 +279,14 @@ body {
   border: none;
   font-size: 1.8em;
   font-weight: bold;
-  color: #555;
+  color: #6c757d; /* Palette: Secondary */
   cursor: pointer;
   padding: 5px;
   line-height: 1;
   z-index: 1002;
 }
 .close-menu-btn:hover {
-  color: #000;
+  color: #212529; /* Palette: Text (darker on hover) */
 }
 
 /* Form Elements */
@@ -273,6 +294,7 @@ label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
+  /* color: #212529; /* Inherited from body */
 }
 input[type="text"],
 input[type="email"],
@@ -283,37 +305,52 @@ textarea {
   width: calc(100% - 22px);
   padding: 10px;
   margin-bottom: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #ced4da; /* Palette: Borders */
   border-radius: 4px;
   box-sizing: border-box;
   font-size: 1em;
+  background-color: #FFFFFF; /* Palette: Main Background */
+  color: #212529; /* Palette: Text */
 }
 textarea {
   resize: vertical;
   min-height: 60px;
 }
+input[type="text"].input-error, /* For validation */
+input[type="email"].input-error,
+input[type="tel"].input-error,
+input[type="number"].input-error,
+input[type="date"].input-error,
+textarea.input-error {
+  border-color: #dc3545; /* Standard error red, not from palette but conventional */
+}
 
 .error-message {
-  color: red;
+  color: #dc3545; /* Standard error red */
   font-size: 0.85em;
-  display: block; /* Display it on its own line */
-  margin-top: -5px; /* Reduce space if input has margin-bottom */
-  margin-bottom: 5px; /* Space before next element */
+  display: block;
+  margin-top: -5px;
+  margin-bottom: 5px;
 }
 
 /* Buttons */
-button {
-  background-color: #007bff;
-  color: white;
+button,
+input[type="submit"], /* If any forms use input type submit */
+input[type="button"] { /* If any forms use input type button */
+  background-color: #007bff; /* Palette: Primary */
+  color: #FFFFFF;
   padding: 10px 15px;
-  border: none;
+  border: 1px solid #007bff; /* Palette: Primary */
   border-radius: 4px;
   cursor: pointer;
   font-size: 1em;
   margin-bottom: 10px;
 }
-button:hover {
-  background-color: #0056b3;
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover {
+  background-color: #0056b3; /* Darker primary */
+  border-color: #0050a6; /* Darker primary */
 }
 
 /* Dynamic Fields */
@@ -368,6 +405,9 @@ button:hover {
 }
 
 /* Add Buttons */
+/* Specific Button Types */
+
+/* Add Another... buttons changed to Secondary Grey */
 #add-pickup-address-btn,
 #add-delivery-address-btn,
 #add-pickup-contact-btn,
@@ -377,14 +417,11 @@ button:hover {
 #add-certification-btn,
 #add-driver-contact-btn,
 #add-driver-address-btn {
-  background-color: #28a745;
-  color: white;
-  padding: 8px 12px;
+  background-color: #6c757d; /* Palette: Secondary */
+  border-color: #6c757d; /* Palette: Secondary */
+  color: #FFFFFF;
+  padding: 8px 12px; /* Keep specific padding if desired */
   margin-top: 8px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
 }
 #add-pickup-address-btn:hover,
 #add-delivery-address-btn:hover,
@@ -395,8 +432,46 @@ button:hover {
 #add-certification-btn:hover,
 #add-driver-contact-btn:hover,
 #add-driver-address-btn:hover {
-  background-color: #218838;
+  background-color: #5a6268; /* Darker secondary */
+  border-color: #545b62;
 }
+
+/* Performance Filter Buttons (already styled, ensure consistency or override if needed) */
+#performance-filters-placeholder button {
+  background-color: #6c757d; /* Palette: Secondary */
+  border-color: #6c757d; /* Palette: Secondary */
+  color: #FFFFFF;
+}
+#performance-filters-placeholder button:hover {
+  background-color: #5a6268; /* Darker secondary */
+  border-color: #545b62;
+}
+
+/* Main action buttons (ensure they are primary) */
+#create-order-btn,
+#update-profile-btn {
+  background-color: #007bff; /* Palette: Primary */
+  border-color: #007bff; /* Palette: Primary */
+  color: #FFFFFF;
+}
+#create-order-btn:hover,
+#update-profile-btn:hover {
+  background-color: #0056b3;
+  border-color: #0050a6;
+}
+
+/* Test button - style as primary for now */
+#run-tests-btn {
+    /* Position fixed styles are already inline in HTML, keep them there */
+    background-color: #007bff; /* Palette: Primary */
+    border-color: #007bff; /* Palette: Primary */
+    color: #FFFFFF;
+}
+#run-tests-btn:hover {
+    background-color: #0056b3;
+    border-color: #0050a6;
+}
+
 
 /* File Input */
 #driver-photo {
