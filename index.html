@@ -56,13 +56,14 @@
       role="region"
       hidden
     >
-      <button
-        class="close-menu-btn"
-        id="close-client-menu-btn"
-        aria-label="Close Client Menu"
-      >&times;</button>
-      <h3>Client Order Menu</h3>
-      <form id="client-order-form" autocomplete="off" novalidate>
+      <div class="menu-modal-content">
+        <button
+          class="close-menu-btn"
+          id="close-client-menu-btn"
+          aria-label="Close Client Menu"
+        >&times;</button>
+        <h3>Client Order Menu</h3>
+        <form id="client-order-form" autocomplete="off" novalidate>
         <div>
           <label for="order-number">Order Number:</label>
           <input
@@ -100,10 +101,13 @@
           />
         </div>
         <fieldset>
-          <legend>Pick-up Addresses</legend>
-          <div id="pickup-addresses-container" aria-live="polite" aria-relevant="additions removals">
-            <div class="pickup-address-entry">
-              <input
+          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="pickup-addresses-panel" data-target="pickup-addresses-panel">
+            Pick-up Addresses <span class="collapsible-icon">►</span>
+          </legend>
+          <div id="pickup-addresses-panel" class="collapsible-panel" hidden>
+            <div id="pickup-addresses-container" aria-live="polite" aria-relevant="additions removals">
+              <div class="pickup-address-entry">
+                <input
                 type="text"
                 class="pickup-address"
                 name="pickup-address-1"
@@ -114,8 +118,9 @@
                 maxlength="200"
               />
             </div>
+            </div>
+            <button type="button" id="add-pickup-address-btn" aria-label="Add Another Pick-up Address">Add Another Pick-up Address</button>
           </div>
-          <button type="button" id="add-pickup-address-btn" aria-label="Add Another Pick-up Address">Add Another Pick-up Address</button>
         </fieldset>
         <div>
           <label for="pickup-state">Pick-up State:</label>
@@ -151,10 +156,13 @@
         </div>
 
         <fieldset>
-          <legend>Pick-up Contact Numbers</legend>
-          <div id="pickup-contacts-container" aria-live="polite" aria-relevant="additions removals">
-            <div class="pickup-contact-entry">
-              <input
+          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="pickup-contacts-panel" data-target="pickup-contacts-panel">
+            Pick-up Contact Numbers <span class="collapsible-icon">►</span>
+          </legend>
+          <div id="pickup-contacts-panel" class="collapsible-panel" hidden>
+            <div id="pickup-contacts-container" aria-live="polite" aria-relevant="additions removals">
+              <div class="pickup-contact-entry">
+                <input
                 type="tel"
                 class="pickup-contact"
                 name="pickup-contact-1"
@@ -165,8 +173,9 @@
                 maxlength="20"
               />
             </div>
+            </div>
+            <button type="button" id="add-pickup-contact-btn" aria-label="Add Another Pick-up Contact">Add Another Pick-up Contact</button>
           </div>
-          <button type="button" id="add-pickup-contact-btn" aria-label="Add Another Pick-up Contact">Add Another Pick-up Contact</button>
         </fieldset>
 
         <div>
@@ -181,10 +190,13 @@
         </div>
 
         <fieldset>
-          <legend>Delivery Addresses</legend>
-          <div id="delivery-addresses-container" aria-live="polite" aria-relevant="additions removals">
-            <div class="delivery-address-entry">
-              <input
+          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="delivery-addresses-panel" data-target="delivery-addresses-panel">
+            Delivery Addresses <span class="collapsible-icon">►</span>
+          </legend>
+          <div id="delivery-addresses-panel" class="collapsible-panel" hidden>
+            <div id="delivery-addresses-container" aria-live="polite" aria-relevant="additions removals">
+              <div class="delivery-address-entry">
+                <input
                 type="text"
                 class="delivery-address"
                 name="delivery-address-1"
@@ -193,8 +205,9 @@
                 maxlength="200"
               />
             </div>
+            </div>
+            <button type="button" id="add-delivery-address-btn" aria-label="Add Another Delivery Address">Add Another Delivery Address</button>
           </div>
-          <button type="button" id="add-delivery-address-btn" aria-label="Add Another Delivery Address">Add Another Delivery Address</button>
         </fieldset>
         <div>
           <label for="delivery-state">Delivery State:</label>
@@ -230,10 +243,13 @@
         </div>
 
         <fieldset>
-          <legend>Delivery Contact Numbers</legend>
-          <div id="delivery-contacts-container" aria-live="polite" aria-relevant="additions removals">
-            <div class="delivery-contact-entry">
-              <input
+          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="delivery-contacts-panel" data-target="delivery-contacts-panel">
+            Delivery Contact Numbers <span class="collapsible-icon">►</span>
+          </legend>
+          <div id="delivery-contacts-panel" class="collapsible-panel" hidden>
+            <div id="delivery-contacts-container" aria-live="polite" aria-relevant="additions removals">
+              <div class="delivery-contact-entry">
+                <input
                 type="tel"
                 class="delivery-contact"
                 name="delivery-contact-1"
@@ -244,15 +260,19 @@
                 maxlength="20"
               />
             </div>
+            </div>
+            <button type="button" id="add-delivery-contact-btn" aria-label="Add Another Delivery Contact">Add Another Delivery Contact</button>
           </div>
-          <button type="button" id="add-delivery-contact-btn" aria-label="Add Another Delivery Contact">Add Another Delivery Contact</button>
         </fieldset>
 
         <fieldset>
-          <legend>Email Addresses for Tracking</legend>
-          <div id="tracking-emails-container" aria-live="polite" aria-relevant="additions removals">
-            <div class="tracking-email-entry">
-              <input
+          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="tracking-emails-panel" data-target="tracking-emails-panel">
+            Email Addresses for Tracking <span class="collapsible-icon">►</span>
+          </legend>
+          <div id="tracking-emails-panel" class="collapsible-panel" hidden>
+            <div id="tracking-emails-container" aria-live="polite" aria-relevant="additions removals">
+              <div class="tracking-email-entry">
+                <input
                 type="email"
                 class="tracking-email"
                 name="tracking-email-1"
@@ -261,16 +281,20 @@
                 maxlength="100"
               />
             </div>
+            </div>
+            <button type="button" id="add-tracking-email-btn" aria-label="Add Another Email">Add Another Email</button>
           </div>
-          <button type="button" id="add-tracking-email-btn" aria-label="Add Another Email">Add Another Email</button>
         </fieldset>
 
         <fieldset>
-          <legend>Items (Description, Quantity, Weight, Dimensions)</legend>
-          <div id="item-descriptions-container" aria-live="polite" aria-relevant="additions removals">
-            <div class="item-description-entry" role="group" aria-label="Item 1">
-              <h5>Item 1</h5>
-              <textarea
+          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="items-panel" data-target="items-panel">
+            Items (Description, Quantity, Weight, Dimensions) <span class="collapsible-icon">►</span>
+          </legend>
+          <div id="items-panel" class="collapsible-panel" hidden>
+            <div id="item-descriptions-container" aria-live="polite" aria-relevant="additions removals">
+              <div class="item-description-entry" role="group" aria-label="Item 1">
+                <h5>Item 1</h5>
+                <textarea
                 class="item-description"
                 name="item-description-1"
                 placeholder="Item Description"
@@ -323,8 +347,9 @@
                 />
               </div>
             </div>
+            </div>
+            <button type="button" id="add-item-description-btn" aria-label="Add Another Item">Add Another Item</button>
           </div>
-          <button type="button" id="add-item-description-btn" aria-label="Add Another Item">Add Another Item</button>
         </fieldset>
 
         <div>
@@ -339,16 +364,18 @@
 
         <button type="submit" id="create-order-btn">Create Order</button>
       </form>
+      </div>
     </aside>
 
     <aside id="driver-menu-container" aria-label="Driver Profile Menu" role="region" hidden>
-      <button
-        class="close-menu-btn"
-        id="close-driver-menu-btn"
-        aria-label="Close Driver Menu"
-      >&times;</button>
-      <h3>Driver Profile Menu</h3>
-      <form id="driver-profile-form" autocomplete="off" novalidate>
+      <div class="menu-modal-content">
+        <button
+          class="close-menu-btn"
+          id="close-driver-menu-btn"
+          aria-label="Close Driver Menu"
+        >&times;</button>
+        <h3>Driver Profile Menu</h3>
+        <form id="driver-profile-form" autocomplete="off" novalidate>
         <div>
           <label for="driver-name-static">Driver Name:</label>
           <input
@@ -374,11 +401,14 @@
         </div>
 
         <fieldset>
-          <legend>Vehicles</legend>
-          <div id="driver-vehicles-container" aria-live="polite" aria-relevant="additions removals">
-            <div class="vehicle-entry" role="group" aria-label="Vehicle 1">
-              <h5>Vehicle 1</h5>
-              <div>
+          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="vehicles-panel" data-target="vehicles-panel">
+            Vehicles <span class="collapsible-icon">►</span>
+          </legend>
+          <div id="vehicles-panel" class="collapsible-panel" hidden>
+            <div id="driver-vehicles-container" aria-live="polite" aria-relevant="additions removals">
+              <div class="vehicle-entry" role="group" aria-label="Vehicle 1">
+                <h5>Vehicle 1</h5>
+                <div>
                 <label for="vehicle-type-1">Type:</label>
                 <input
                   type="text"
@@ -423,17 +453,21 @@
                 />
               </div>
             </div>
+            </div>
+            <button type="button" id="add-vehicle-btn" aria-label="Add Another Vehicle">Add Another Vehicle</button>
           </div>
-          <button type="button" id="add-vehicle-btn" aria-label="Add Another Vehicle">Add Another Vehicle</button>
         </fieldset>
         <hr />
 
         <fieldset>
-          <legend>Certifications / Licenses</legend>
-          <div id="driver-certifications-container" aria-live="polite" aria-relevant="additions removals">
-            <div class="certification-entry" role="group" aria-label="Certification 1">
-              <h5>Certification/License 1</h5>
-              <div>
+          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="certifications-panel" data-target="certifications-panel">
+            Certifications / Licenses <span class="collapsible-icon">►</span>
+          </legend>
+          <div id="certifications-panel" class="collapsible-panel" hidden>
+            <div id="driver-certifications-container" aria-live="polite" aria-relevant="additions removals">
+              <div class="certification-entry" role="group" aria-label="Certification 1">
+                <h5>Certification/License 1</h5>
+                <div>
                 <label for="certification-name-1">Name:</label>
                 <input
                   type="text"
@@ -467,22 +501,26 @@
                 />
               </div>
             </div>
+            </div>
+            <button
+              type="button"
+              id="add-certification-btn"
+              aria-label="Add Another Certification or License"
+            >Add Another Certification/License</button>
           </div>
-          <button
-            type="button"
-            id="add-certification-btn"
-            aria-label="Add Another Certification or License"
-          >Add Another Certification/License</button>
         </fieldset>
         <hr />
 
         <fieldset>
-          <legend>Contact Numbers</legend>
-          <div id="driver-contacts-container" aria-live="polite" aria-relevant="additions removals">
-            <div class="driver-contact-entry" role="group" aria-label="Contact Number 1">
-              <div>
-                <label for="driver-contact-1">Contact Number 1:</label>
-                <input
+          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="driver-form-contacts-panel" data-target="driver-form-contacts-panel">
+            Contact Numbers <span class="collapsible-icon">►</span>
+          </legend>
+          <div id="driver-form-contacts-panel" class="collapsible-panel" hidden>
+            <div id="driver-contacts-container" aria-live="polite" aria-relevant="additions removals">
+              <div class="driver-contact-entry" role="group" aria-label="Contact Number 1">
+                <div>
+                  <label for="driver-contact-1">Contact Number 1:</label>
+                  <input
                   type="tel"
                   id="driver-contact-1"
                   class="driver-contact"
@@ -494,21 +532,25 @@
                 />
               </div>
             </div>
+            </div>
+            <button
+              type="button"
+              id="add-driver-contact-btn"
+              aria-label="Add Another Contact Number"
+            >Add Another Contact Number</button>
           </div>
-          <button
-            type="button"
-            id="add-driver-contact-btn"
-            aria-label="Add Another Contact Number"
-          >Add Another Contact Number</button>
         </fieldset>
         <hr />
 
         <fieldset>
-          <legend>Driver Addresses</legend>
-          <div id="driver-addresses-container" aria-live="polite" aria-relevant="additions removals">
-            <div class="driver-address-entry" role="group" aria-label="Address 1">
-              <h5>Address 1</h5>
-              <input
+          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="driver-addresses-panel" data-target="driver-addresses-panel">
+            Driver Addresses <span class="collapsible-icon">►</span>
+          </legend>
+          <div id="driver-addresses-panel" class="collapsible-panel" hidden>
+            <div id="driver-addresses-container" aria-live="polite" aria-relevant="additions removals">
+              <div class="driver-address-entry" role="group" aria-label="Address 1">
+                <h5>Address 1</h5>
+                <input
                 type="text"
                 class="driver-address-street"
                 name="driver-address-street-1"
@@ -546,17 +588,19 @@
                 maxlength="50"
               />
             </div>
+            </div>
+            <button
+              type="button"
+              id="add-driver-address-btn"
+              aria-label="Add Another Address"
+            >Add Another Address</button>
           </div>
-          <button
-            type="button"
-            id="add-driver-address-btn"
-            aria-label="Add Another Address"
-          >Add Another Address</button>
         </fieldset>
 
         <hr />
         <button type="submit" id="update-profile-btn">Update Profile</button>
       </form>
+      </div>
     </aside>
 
     <div id="main-content-area">
