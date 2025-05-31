@@ -177,7 +177,179 @@ h1, h2, h3, h4, h5, legend {
     /* The overlay is full screen, modal content handles its own width */
   }
   /* .menu-modal-content max-width and width:90% will handle responsiveness */
+
+  /* Default stacked layout for form elements (mobile first) */
+  form#client-order-form div > label, /* Target labels in simple div wrappers */
+  form#client-order-form fieldset .collapsible-panel div > label,
+  form#driver-profile-form div > label,
+  form#driver-profile-form fieldset .collapsible-panel div > label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    width: auto; /* Ensure it's not fixed width from desktop */
+  }
+
+  form#client-order-form div > input[type="text"],
+  form#client-order-form div > input[type="email"],
+  form#client-order-form div > input[type="tel"],
+  form#client-order-form div > input[type="number"],
+  form#client-order-form div > input[type="date"],
+  form#client-order-form div > textarea,
+  form#client-order-form fieldset .collapsible-panel div > input[type="text"],
+  form#client-order-form fieldset .collapsible-panel div > input[type="email"],
+  form#client-order-form fieldset .collapsible-panel div > input[type="tel"],
+  form#client-order-form fieldset .collapsible-panel div > input[type="number"],
+  form#client-order-form fieldset .collapsible-panel div > input[type="date"],
+  form#client-order-form fieldset .collapsible-panel div > textarea,
+  form#driver-profile-form div > input[type="text"],
+  form#driver-profile-form div > input[type="email"],
+  form#driver-profile-form div > input[type="tel"],
+  form#driver-profile-form div > input[type="number"],
+  form#driver-profile-form div > input[type="date"],
+  form#driver-profile-form div > textarea,
+  form#driver-profile-form fieldset .collapsible-panel div > input[type="text"],
+  form#driver-profile-form fieldset .collapsible-panel div > input[type="email"],
+  form#driver-profile-form fieldset .collapsible-panel div > input[type="tel"],
+  form#driver-profile-form fieldset .collapsible-panel div > input[type="number"],
+  form#driver-profile-form fieldset .collapsible-panel div > input[type="date"],
+  form#driver-profile-form fieldset .collapsible-panel div > textarea {
+    width: calc(100% - 22px); /* Existing style, good for stacked */
+    margin-bottom: 10px; /* Ensure inputs have their own bottom margin */
+  }
 }
+
+
+/* Wider Screen Form Layouts */
+@media (min-width: 769px) {
+  /* Target divs that are direct children of form or collapsible panel, and likely wrap a single label-input pair.
+     Exclude divs that are themselves containers for dynamic fields or complex groups. */
+  form#client-order-form > div:not([id$="-container"]):not(.item-details-line-1):not(.item-details-line-2),
+  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]):not(.item-details-line-1):not(.item-details-line-2),
+  form#driver-profile-form > div:not([id$="-container"]):not(.vehicle-entry):not(.certification-entry):not(.driver-contact-entry):not(.driver-address-entry),
+  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]):not(.vehicle-entry):not(.certification-entry):not(.driver-contact-entry):not(.driver-address-entry) {
+    display: flex;
+    align-items: baseline; /* Align label text with input text */
+    gap: 10px;
+    /* margin-bottom will still be 20px from the parent rule, which is fine */
+  }
+
+  form#client-order-form > div:not([id$="-container"]) > label,
+  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > label,
+  form#driver-profile-form > div:not([id$="-container"]) > label,
+  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > label {
+    flex-basis: 200px; /* Adjust as needed */
+    flex-shrink: 0;
+    text-align: right;
+    margin-bottom: 0; /* Override default */
+  }
+
+  form#client-order-form > div:not([id$="-container"]) > input[type="text"],
+  form#client-order-form > div:not([id$="-container"]) > input[type="email"],
+  form#client-order-form > div:not([id$="-container"]) > input[type="tel"],
+  form#client-order-form > div:not([id$="-container"]) > input[type="number"],
+  form#client-order-form > div:not([id$="-container"]) > input[type="date"],
+  form#client-order-form > div:not([id$="-container"]) > textarea,
+  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="text"],
+  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="email"],
+  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="tel"],
+  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="number"],
+  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="date"],
+  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > textarea,
+  form#driver-profile-form > div:not([id$="-container"]) > input[type="text"],
+  form#driver-profile-form > div:not([id$="-container"]) > input[type="email"],
+  form#driver-profile-form > div:not([id$="-container"]) > input[type="tel"],
+  form#driver-profile-form > div:not([id$="-container"]) > input[type="number"],
+  form#driver-profile-form > div:not([id$="-container"]) > input[type="date"],
+  form#driver-profile-form > div:not([id$="-container"]) > textarea,
+  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="text"],
+  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="email"],
+  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="tel"],
+  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="number"],
+  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="date"],
+  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > textarea {
+    flex-grow: 1;
+    width: auto; /* Let flexbox determine width */
+    margin-bottom: 0; /* Handled by parent div's margin */
+  }
+
+  /* Refinements for specific complex groups */
+  .item-details-line-1 input,
+  .item-details-line-2 input {
+    flex-grow: 1;
+    flex-basis: 0; /* Allow them to share space equally */
+    width: auto; /* Override general input width for these specific cases */
+  }
+  .item-details-line-2 > label { /* Label for Dimensions L W H */
+    flex-basis: auto !important; /* Override the general label flex-basis */
+    text-align: left !important;
+    margin-right: 5px;
+  }
+
+  /* Vehicle entry: each div inside is a label-input pair */
+  .vehicle-entry > div {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 10px; /* Space between these pairs */
+  }
+  .vehicle-entry > div > label {
+    flex-basis: 120px; /* Smaller basis for these sub-labels */
+    flex-shrink: 0;
+    text-align: right;
+    margin-bottom: 0;
+  }
+  .vehicle-entry > div > input {
+    flex-grow: 1;
+    width: auto;
+    margin-bottom: 0;
+  }
+
+  /* Certification entry: similar to vehicle entry */
+  .certification-entry > div {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .certification-entry > div > label {
+    flex-basis: 120px;
+    flex-shrink: 0;
+    text-align: right;
+    margin-bottom: 0;
+  }
+  .certification-entry > div > input {
+    flex-grow: 1;
+    width: auto;
+    margin-bottom: 0;
+  }
+
+  /* Driver Contact entry (within driver form): div > div > label/input */
+   form#driver-profile-form .driver-contact-entry > div > div {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  form#driver-profile-form .driver-contact-entry > div > div > label {
+    flex-basis: 120px;
+    flex-shrink: 0;
+    text-align: right;
+    margin-bottom: 0;
+  }
+  form#driver-profile-form .driver-contact-entry > div > div > input {
+    flex-grow: 1;
+    width: auto;
+    margin-bottom: 0;
+  }
+
+  /* Driver Address entry: similar to vehicle entry */
+  .driver-address-entry > input[type="text"] { /* Direct input children of this class */
+    width: calc(50% - 27px); /* Example: two inputs per line, accounting for gap and parent padding */
+    /* This might need more specific selectors if structure is more complex */
+  }
+  /* A more robust way for driver addresses might be to wrap pairs in divs and flex those */
+
+}
+
 
 /* Performance Insights Section */
 #performance-insights-section {
@@ -363,6 +535,56 @@ input[type="button"]:hover {
   background-color: #0056b3; /* Darker primary */
   border-color: #0050a6; /* Darker primary */
 }
+
+/* Collapsible Sections */
+legend.collapsible-trigger {
+  cursor: pointer;
+  display: block; /* Ensure it takes full width of fieldset for click area */
+  padding: 10px 0; /* Adjust padding as needed, legends have tricky default styles */
+  border-bottom: 1px solid #ced4da; /* Palette: Borders */
+  margin-bottom: 10px; /* Space before the panel content starts */
+  transition: background-color 0.2s ease-out;
+  position: relative; /* For absolute positioning of icon if needed, though flex is better */
+  /* Ensure it aligns with fieldset content, fieldsets often have padding */
+  margin-left: -7px; /* Counteract typical fieldset padding for legend alignment if needed */
+  margin-right: -7px; /* Counteract typical fieldset padding for legend alignment if needed */
+  padding-left: 7px; /* Restore padding for content */
+  padding-right: 7px; /* Restore padding for content */
+}
+
+legend.collapsible-trigger:hover {
+  background-color: #e9ecef; /* Palette: Performance Insights Section BG (light hover) */
+}
+
+legend.collapsible-trigger.active {
+  /* background-color: #e9ecef; */ /* Example: if a different background for active trigger is desired */
+  /* border-bottom-color: #007bff; /* Example: highlight with primary color */
+}
+
+.collapsible-icon {
+  display: inline-block;
+  margin-left: auto; /* Push to the right if legend is flex */
+  padding-left: 10px; /* Space from title text */
+  transition: transform 0.2s ease-in-out;
+  /* Default state is closed, content '►' is set in HTML */
+}
+legend.collapsible-trigger.active .collapsible-icon {
+  transform: rotate(90deg); /* Rotates ► to point down */
+}
+/* If legend is not flex, then float right might be an option for icon, or absolute positioning */
+/* For legend as block, better to ensure icon is last element and use CSS to position if needed,
+   or rely on it being at the end of the text flow. The JS adds icon-open to the span itself. */
+.collapsible-icon.icon-open { /* Class added by JS to icon span */
+   transform: rotate(90deg);
+}
+
+
+.collapsible-panel {
+  padding-top: 10px; /* Space between the trigger's bottom border and panel content */
+  /* Transitions for height/max-height on 'hidden' attribute are not directly possible with CSS.
+     JS would need to toggle classes that set max-height for smooth animation. */
+}
+
 
 /* Dynamic Fields */
 .pickup-address-entry,

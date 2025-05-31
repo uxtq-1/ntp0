@@ -222,6 +222,49 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // --- Initialize Dynamic Field Sections ---
 
+  // --- Collapsible Section Logic ---
+  function toggleCollapsibleSection(triggerElement) {
+    const targetId = triggerElement.getAttribute('data-target');
+    const panel = document.getElementById(targetId);
+
+    if (panel) {
+      triggerElement.classList.toggle('active');
+      panel.hidden = !panel.hidden;
+      const isExpanded = !panel.hidden;
+      triggerElement.setAttribute('aria-expanded', isExpanded.toString());
+
+      const icon = triggerElement.querySelector('.collapsible-icon');
+      if (icon) {
+        icon.classList.toggle('icon-open', isExpanded);
+        // Assuming CSS will rotate/change the icon based on .icon-open
+      }
+    } else {
+      alert(`Error: Collapsible panel with ID ${targetId} not found.`);
+    }
+  }
+
+  function initCollapsibleSections() {
+    const triggers = document.querySelectorAll('.collapsible-trigger');
+    triggers.forEach(trigger => {
+      // Set initial aria-expanded state based on panel's hidden attribute
+      const targetId = trigger.getAttribute('data-target');
+      const panel = document.getElementById(targetId);
+      if (panel) {
+        const isExpanded = !panel.hidden;
+        trigger.setAttribute('aria-expanded', isExpanded.toString());
+        const icon = trigger.querySelector('.collapsible-icon');
+        if (icon) {
+          icon.classList.toggle('icon-open', isExpanded);
+        }
+      }
+
+      trigger.addEventListener('click', (event) => {
+        toggleCollapsibleSection(event.currentTarget);
+      });
+    });
+  }
+
+
   // --- Validation Helper ---
   /**
    * Validates a single input field and displays/clears an error message.
@@ -541,14 +584,17 @@ document.addEventListener('DOMContentLoaded', () => {
   initMap(); // Initialize the map
   populateOrderNumber(); // Populate initial order number on load
   initMenuToggles(); // Initialize menu toggle functionality
+  initCollapsibleSections(); // Initialize collapsible sections
 
   // Expose functions for testing purposes
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
     console.log('TEST MODE: Exposing functions to window object');
     window.setupDynamicFieldSectionListeners = setupDynamicFieldSectionListeners;
     window.handleDynamicFieldRemove = handleDynamicFieldRemove;
-    window.validateField = validateField; // Expose for testing
-    window.Validators = Validators; // Expose for testing
+    window.validateField = validateField;
+    window.Validators = Validators;
+    window.toggleCollapsibleSection = toggleCollapsibleSection; // Expose for testing
+    window.initCollapsibleSections = initCollapsibleSections; // Expose for testing
     // initMenuToggles is already global
     // addDynamicFieldEntry and other helpers could also be exposed if direct unit tests are needed
   }
