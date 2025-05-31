@@ -56,13 +56,14 @@
       role="region"
       hidden
     >
-      <button
-        class="close-menu-btn"
-        id="close-client-menu-btn"
-        aria-label="Close Client Menu"
-      >&times;</button>
-      <h3>Client Order Menu</h3>
-      <form id="client-order-form" autocomplete="off" novalidate>
+      <div class="menu-modal-content">
+        <button
+          class="close-menu-btn"
+          id="close-client-menu-btn"
+          aria-label="Close Client Menu"
+        >&times;</button>
+        <h3>Client Order Menu</h3>
+        <form id="client-order-form" autocomplete="off" novalidate>
         <div>
           <label for="order-number">Order Number:</label>
           <input
@@ -339,16 +340,18 @@
 
         <button type="submit" id="create-order-btn">Create Order</button>
       </form>
+      </div>
     </aside>
 
     <aside id="driver-menu-container" aria-label="Driver Profile Menu" role="region" hidden>
-      <button
-        class="close-menu-btn"
-        id="close-driver-menu-btn"
-        aria-label="Close Driver Menu"
-      >&times;</button>
-      <h3>Driver Profile Menu</h3>
-      <form id="driver-profile-form" autocomplete="off" novalidate>
+      <div class="menu-modal-content">
+        <button
+          class="close-menu-btn"
+          id="close-driver-menu-btn"
+          aria-label="Close Driver Menu"
+        >&times;</button>
+        <h3>Driver Profile Menu</h3>
+        <form id="driver-profile-form" autocomplete="off" novalidate>
         <div>
           <label for="driver-name-static">Driver Name:</label>
           <input
@@ -557,6 +560,7 @@
         <hr />
         <button type="submit" id="update-profile-btn">Update Profile</button>
       </form>
+      </div>
     </aside>
 
     <div id="main-content-area">

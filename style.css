@@ -103,43 +103,47 @@ h1, h2, h3, h4, h5, legend {
   border-radius: 4px;
 }
 
-/* Menu Containers */
+/* Menu Containers - Full Screen Overlay Styling */
 #client-menu-container,
 #driver-menu-container {
-  position: absolute;
-  top: 55px;
-  padding: 20px;
-  max-height: calc(100vh - 75px);
-  overflow-y: auto;
-  border-radius: 5px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  position: fixed; /* Changed from absolute for full-screen overlay */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex; /* For centering modal content. JS will toggle to 'none' via hidden or direct style. */
+  align-items: center;
+  justify-content: center;
   z-index: 1001;
-  box-sizing: border-box;
-  display: none;
-  background-color: #f8f9fa; /* Palette: Light Section BG */
-  border: 1px solid #dee2e6; /* Palette: Borders (or slightly darker) */
-  /* Text color inherited from body */
+  /* display: none; /* Initial state, controlled by JS via hidden attribute or style.display */
+  /* Removed padding, max-height, specific L/R, width, border-radius, box-shadow, old background-color, border */
+  /* overflow-y is now on .menu-modal-content */
 }
+
+/* Specific styles for headings inside menus remain, but they will be inside .menu-modal-content */
 #client-menu-container h3,
 #driver-menu-container h3 {
     color: #007bff; /* Palette: Primary */
-    margin-top: 0; /* Adjust spacing for menu headings */
+    margin-top: 0;
 }
 
+/* Removed individual #client-menu-container and #driver-menu-container specific positioning rules,
+   as they are now full-screen overlays and share common styling. */
 
-#client-menu-container {
-  left: 10px;
-  right: auto;
-  width: 360px;
-  /* background-color: #e6f7ff; /* Removed, common BG now */
+/* New class for the actual modal box content */
+.menu-modal-content {
+  background-color: #f8f9fa; /* Palette: Light Section BG */
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  max-width: 700px;
+  width: 90%; /* Responsive width */
+  max-height: 90vh; /* Fit on screen */
+  overflow-y: auto; /* Scrollable content */
+  position: relative; /* For absolute positioning of the close button inside */
 }
 
-#driver-menu-container {
-  right: 10px;
-  left: auto;
-  width: 360px;
-  /* background-color: #e6ffe6; /* Removed, common BG now */
-}
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -169,18 +173,10 @@ h1, h2, h3, h4, h5, legend {
 
   #client-menu-container,
   #driver-menu-container {
-    width: 300px; /* Fixed width for mobile */
-    max-width: calc(100% - 20px); /* Ensure it fits with some padding (10px each side) */
-    /* Override desktop left/right to ensure they don't conflict if both open (though JS prevents this) */
+    /* Old specific width/max-width/left/right for side panels are removed */
+    /* The overlay is full screen, modal content handles its own width */
   }
-  #client-menu-container {
-    left: 10px;
-    right: auto; /* Client menu from left */
-  }
-  #driver-menu-container {
-    right: 10px;
-    left: auto; /* Driver menu from right */
-  }
+  /* .menu-modal-content max-width and width:90% will handle responsiveness */
 }
 
 /* Performance Insights Section */
@@ -273,8 +269,8 @@ h1, h2, h3, h4, h5, legend {
 /* Close Button */
 .close-menu-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px; /* Adjusted for new padding in .menu-modal-content */
+  right: 15px; /* Adjusted for new padding in .menu-modal-content */
   background: transparent;
   border: none;
   font-size: 1.8em;
@@ -292,10 +288,25 @@ h1, h2, h3, h4, h5, legend {
 /* Form Elements */
 label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 5px; /* Space between label and its input */
   font-weight: bold;
   /* color: #212529; /* Inherited from body */
 }
+
+/* Spacing for direct children of forms (field containers and fieldsets) */
+form#client-order-form > div,
+form#client-order-form > fieldset,
+form#driver-profile-form > div,
+form#driver-profile-form > fieldset {
+  margin-bottom: 20px; /* Increased vertical spacing between form sections */
+}
+
+legend {
+  font-weight: bold; /* Ensure legends are bold as per typical styling */
+  margin-bottom: 10px; /* Space below the legend title within a fieldset */
+  padding-bottom: 5px; /* Optional: if more space needed directly under legend text */
+}
+
 input[type="text"],
 input[type="email"],
 input[type="tel"],
