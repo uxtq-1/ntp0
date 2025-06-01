@@ -177,42 +177,61 @@ h1, h2, h3, h4, h5, legend {
     /* The overlay is full screen, modal content handles its own width */
   }
   /* .menu-modal-content max-width and width:90% will handle responsiveness */
+}
 
+/* Form Column Layouts (New) */
+.form-section-columns {
+  /* Default: columns stack (mobile-first) */
+  display: block;
+}
+.form-column {
+  /* Default: full width when stacked */
+  width: 100%;
+}
+.form-column + .form-column { /* Add space above subsequent columns when stacked */
+  margin-top: 20px;
+}
+.form-column h4 {
+  font-size: 1.1em;
+  color: #007bff; /* Palette: Primary */
+  margin-top: 0; /* Assuming it's often the first element */
+  margin-bottom: 15px;
+  border-bottom: 1px solid #dee2e6; /* Palette: Borders (or #ced4da) */
+  padding-bottom: 5px;
+}
+
+
+@media (max-width: 768px) { /* Consolidate mobile-first/default form styles here */
   /* Default stacked layout for form elements (mobile first) */
-  form#client-order-form div > label, /* Target labels in simple div wrappers */
-  form#client-order-form fieldset .collapsible-panel div > label,
-  form#driver-profile-form div > label,
-  form#driver-profile-form fieldset .collapsible-panel div > label {
+  /* These selectors now target divs inside .form-column OR direct children of .collapsible-panel (for non-columnar sections) */
+  .form-column > div > label,
+  .collapsible-panel > div:not(.form-section-columns) > label, /* For direct divs in panels not using columns */
+  form#client-order-form > div > label, /* For simple fields directly under form (if any left) */
+  form#driver-profile-form > div > label {
     display: block;
     text-align: left;
     margin-bottom: 5px;
     width: auto; /* Ensure it's not fixed width from desktop */
   }
 
-  form#client-order-form div > input[type="text"],
-  form#client-order-form div > input[type="email"],
-  form#client-order-form div > input[type="tel"],
-  form#client-order-form div > input[type="number"],
-  form#client-order-form div > input[type="date"],
-  form#client-order-form div > textarea,
-  form#client-order-form fieldset .collapsible-panel div > input[type="text"],
-  form#client-order-form fieldset .collapsible-panel div > input[type="email"],
-  form#client-order-form fieldset .collapsible-panel div > input[type="tel"],
-  form#client-order-form fieldset .collapsible-panel div > input[type="number"],
-  form#client-order-form fieldset .collapsible-panel div > input[type="date"],
-  form#client-order-form fieldset .collapsible-panel div > textarea,
-  form#driver-profile-form div > input[type="text"],
-  form#driver-profile-form div > input[type="email"],
-  form#driver-profile-form div > input[type="tel"],
-  form#driver-profile-form div > input[type="number"],
-  form#driver-profile-form div > input[type="date"],
-  form#driver-profile-form div > textarea,
-  form#driver-profile-form fieldset .collapsible-panel div > input[type="text"],
-  form#driver-profile-form fieldset .collapsible-panel div > input[type="email"],
-  form#driver-profile-form fieldset .collapsible-panel div > input[type="tel"],
-  form#driver-profile-form fieldset .collapsible-panel div > input[type="number"],
-  form#driver-profile-form fieldset .collapsible-panel div > input[type="date"],
-  form#driver-profile-form fieldset .collapsible-panel div > textarea {
+  .form-column > div > input[type="text"],
+  .form-column > div > input[type="email"],
+  .form-column > div > input[type="tel"],
+  .form-column > div > input[type="number"],
+  .form-column > div > input[type="date"],
+  .form-column > div > input[type="file"],
+  .form-column > div > select,
+  .form-column > div > textarea,
+  .collapsible-panel > div:not(.form-section-columns) > input[type="text"],
+  .collapsible-panel > div:not(.form-section-columns) > input[type="email"],
+  .collapsible-panel > div:not(.form-section-columns) > input[type="tel"],
+  .collapsible-panel > div:not(.form-section-columns) > input[type="number"],
+  .collapsible-panel > div:not(.form-section-columns) > input[type="date"],
+  .collapsible-panel > div:not(.form-section-columns) > input[type="file"],
+  .collapsible-panel > div:not(.form-section-columns) > select,
+  .collapsible-panel > div:not(.form-section-columns) > textarea,
+  form#client-order-form > div > input[type="text"], /* Fallback for direct children */
+  form#driver-profile-form > div > input[type="text"] {
     width: calc(100% - 22px); /* Existing style, good for stacked */
     margin-bottom: 10px; /* Ensure inputs have their own bottom margin */
   }
@@ -221,133 +240,238 @@ h1, h2, h3, h4, h5, legend {
 
 /* Wider Screen Form Layouts */
 @media (min-width: 769px) {
+  .form-section-columns {
+    display: flex;
+    gap: 30px; /* Space between columns */
+  }
+  .form-column {
+    flex: 1;
+    min-width: 0; /* Flex item fix */
+    /* margin-top is reset for side-by-side columns */
+  }
+  .form-column + .form-column {
+    margin-top: 0;
+  }
+
+
   /* Target divs that are direct children of form or collapsible panel, and likely wrap a single label-input pair.
      Exclude divs that are themselves containers for dynamic fields or complex groups. */
-  form#client-order-form > div:not([id$="-container"]):not(.item-details-line-1):not(.item-details-line-2),
-  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]):not(.item-details-line-1):not(.item-details-line-2),
-  form#driver-profile-form > div:not([id$="-container"]):not(.vehicle-entry):not(.certification-entry):not(.driver-contact-entry):not(.driver-address-entry),
-  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]):not(.vehicle-entry):not(.certification-entry):not(.driver-contact-entry):not(.driver-address-entry) {
+  /* New simpler selector: Target divs directly inside .form-column or .collapsible-panel (if not using columns) */
+  .form-column > div:not([id$="-container"]):not(.item-details-line-1):not(.item-details-line-2):not(.vehicle-entry):not(.certification-entry):not(.driver-contact-entry):not(.driver-address-entry),
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not(.item-details-line-1):not(.item-details-line-2) {
     display: flex;
     align-items: baseline; /* Align label text with input text */
     gap: 10px;
-    /* margin-bottom will still be 20px from the parent rule, which is fine */
+    margin-bottom: 15px; /* Spacing between fields in a column */
   }
 
-  form#client-order-form > div:not([id$="-container"]) > label,
-  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > label,
-  form#driver-profile-form > div:not([id$="-container"]) > label,
-  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > label {
-    flex-basis: 200px; /* Adjust as needed */
+  .form-column > div:not([id$="-container"]) > label,
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > label {
+    flex-basis: 180px; /* Adjust as needed */
     flex-shrink: 0;
     text-align: right;
     margin-bottom: 0; /* Override default */
   }
 
-  form#client-order-form > div:not([id$="-container"]) > input[type="text"],
-  form#client-order-form > div:not([id$="-container"]) > input[type="email"],
-  form#client-order-form > div:not([id$="-container"]) > input[type="tel"],
-  form#client-order-form > div:not([id$="-container"]) > input[type="number"],
-  form#client-order-form > div:not([id$="-container"]) > input[type="date"],
-  form#client-order-form > div:not([id$="-container"]) > textarea,
-  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="text"],
-  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="email"],
-  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="tel"],
-  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="number"],
-  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="date"],
-  form#client-order-form fieldset .collapsible-panel > div:not([id$="-container"]) > textarea,
-  form#driver-profile-form > div:not([id$="-container"]) > input[type="text"],
-  form#driver-profile-form > div:not([id$="-container"]) > input[type="email"],
-  form#driver-profile-form > div:not([id$="-container"]) > input[type="tel"],
-  form#driver-profile-form > div:not([id$="-container"]) > input[type="number"],
-  form#driver-profile-form > div:not([id$="-container"]) > input[type="date"],
-  form#driver-profile-form > div:not([id$="-container"]) > textarea,
-  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="text"],
-  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="email"],
-  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="tel"],
-  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="number"],
-  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > input[type="date"],
-  form#driver-profile-form fieldset .collapsible-panel > div:not([id$="-container"]) > textarea {
+  .form-column > div:not([id$="-container"]) > input[type="text"],
+  .form-column > div:not([id$="-container"]) > input[type="email"],
+  .form-column > div:not([id$="-container"]) > input[type="tel"],
+  .form-column > div:not([id$="-container"]) > input[type="number"],
+  .form-column > div:not([id$="-container"]) > input[type="date"],
+  .form-column > div:not([id$="-container"]) > input[type="file"],
+  .form-column > div:not([id$="-container"]) > select,
+  .form-column > div:not([id$="-container"]) > textarea,
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="text"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="email"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="tel"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="number"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="date"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="file"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > select,
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > textarea {
     flex-grow: 1;
     width: auto; /* Let flexbox determine width */
     margin-bottom: 0; /* Handled by parent div's margin */
   }
 
   /* Refinements for specific complex groups */
+  /* .item-details-line-1, .item-details-line-2 are already display:flex; gap:8px */
   .item-details-line-1 input,
   .item-details-line-2 input {
-    flex-grow: 1;
-    flex-basis: 0; /* Allow them to share space equally */
-    width: auto; /* Override general input width for these specific cases */
+    /* flex-grow: 1; */ /* Already there */
+    /* flex-basis: 0; */ /* Already there */
+    /* width: auto; */ /* Already there */
   }
-  .item-details-line-2 > label { /* Label for Dimensions L W H */
-    flex-basis: auto !important; /* Override the general label flex-basis */
-    text-align: left !important;
-    margin-right: 5px;
-  }
+  /* .item-details-line-2 > label already adjusted */
 
   /* Vehicle entry: each div inside is a label-input pair */
-  .vehicle-entry > div {
+  /* .vehicle-entry > div is already display:flex; gap:10px; margin-bottom:10px */
+  .vehicle-entry > div > label {
+    flex-basis: 100px; /* Shorter labels for these sub-fields */
+    /* flex-shrink: 0; */ /* Already there */
+    /* text-align: right; */ /* Already there */
+    /* margin-bottom: 0; */ /* Already there */
+  }
+  /* .vehicle-entry > div > input already flex-grow:1; width:auto; margin-bottom:0 */
+
+  /* Certification entry: similar to vehicle entry */
+  /* .certification-entry > div is already display:flex; gap:10px; margin-bottom:10px */
+  .certification-entry > div > label {
+    flex-basis: 100px;
+    /* flex-shrink: 0; */
+    /* text-align: right; */
+    /* margin-bottom: 0; */
+  }
+  /* .certification-entry > div > input already flex-grow:1; width:auto; margin-bottom:0 */
+
+  /* Driver Contact entry (within driver form): div > div > label/input */
+  /* This structure form#driver-profile-form .driver-contact-entry > div > div is complex */
+  /* The direct div child of .form-column is .driver-contact-entry. Its child div contains label/input. */
+   .driver-contact-entry > div { /* This is the actual wrapper for label/input */
     display: flex;
     align-items: baseline;
     gap: 10px;
-    margin-bottom: 10px; /* Space between these pairs */
   }
-  .vehicle-entry > div > label {
-    flex-basis: 120px; /* Smaller basis for these sub-labels */
+  .driver-contact-entry > div > label {
+    flex-basis: 100px;
     flex-shrink: 0;
     text-align: right;
     margin-bottom: 0;
   }
-  .vehicle-entry > div > input {
+  .driver-contact-entry > div > input {
     flex-grow: 1;
     width: auto;
     margin-bottom: 0;
   }
 
-  /* Certification entry: similar to vehicle entry */
-  .certification-entry > div {
+  /* Driver Address entry: This is a group of inputs directly under .driver-address-entry  */
+  /* .driver-address-entry is a direct child of .form-column */
+  /* Make inputs in driver address entry take full width in their column context for now,
+     as multi-column for them within a main column is complex without HTML changes. */
+  .driver-address-entry > input[type="text"] {
+    width: calc(100% - 22px); /* Revert to full width within its column cell */
+    margin-bottom: 10px; /* Add back bottom margin for stacking */
+  }
+  /* If we want two addresses per line within the column on desktop:
+  .driver-address-entry {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .driver-address-entry > input[type="text"] {
+    flex-basis: calc(50% - 27px); // Accounting for gap and parent padding/border
+    flex-grow: 1;
+  }
+  */
+
+}
+
+
+/* Performance Insights Section */
+#performance-insights-section {
+/* Removed the old responsive form layout block as it's being re-integrated below with .form-column logic */
+}
+
+
+/* Wider Screen Form Layouts */
+@media (min-width: 769px) {
+  .form-section-columns {
+    display: flex;
+    gap: 30px; /* Space between columns */
+  }
+  .form-column {
+    flex: 1;
+    min-width: 0; /* Flex item fix */
+    margin-top: 0; /* Reset margin-top for side-by-side columns */
+  }
+  .form-column + .form-column {
+    margin-top: 0;
+  }
+
+  /* Target divs that are direct children of a .form-column,
+     or direct children of .collapsible-panel if not using .form-section-columns */
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]):not(.item-details-line-1):not(.item-details-line-2),
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]):not(.item-details-line-1):not(.item-details-line-2) {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 15px; /* Spacing between fields in a column */
+  }
+
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > label,
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > label {
+    flex-basis: 180px;
+    flex-shrink: 0;
+    text-align: right;
+    margin-bottom: 0;
+  }
+
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="text"],
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="email"],
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="tel"],
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="number"],
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="date"],
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="file"],
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > select,
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > textarea,
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="text"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="email"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="tel"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="number"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="date"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="file"],
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > select,
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > textarea {
+    flex-grow: 1;
+    width: auto;
+    margin-bottom: 0;
+  }
+
+  /* Refinements for specific complex groups already having display:flex */
+  .item-details-line-1,
+  .item-details-line-2 {
+     /* gap: 8px; /* Ensure this is still desired */
+  }
+  .item-details-line-1 input,
+  .item-details-line-2 input {
+    flex-grow: 1;
+    flex-basis: 0;
+  }
+  .item-details-line-2 > label {
+    flex-basis: auto !important;
+    text-align: left !important;
+    margin-right: 5px;
+  }
+
+  .vehicle-entry > div,
+  .certification-entry > div,
+  .driver-contact-entry > div { /* Assuming driver-contact-entry's direct child div is the flex wrapper */
     display: flex;
     align-items: baseline;
     gap: 10px;
     margin-bottom: 10px;
   }
-  .certification-entry > div > label {
-    flex-basis: 120px;
+  .vehicle-entry > div > label,
+  .certification-entry > div > label,
+  .driver-contact-entry > div > label {
+    flex-basis: 100px;
     flex-shrink: 0;
     text-align: right;
     margin-bottom: 0;
   }
-  .certification-entry > div > input {
+  .vehicle-entry > div > input,
+  .certification-entry > div > input,
+  .driver-contact-entry > div > input {
     flex-grow: 1;
     width: auto;
     margin-bottom: 0;
   }
 
-  /* Driver Contact entry (within driver form): div > div > label/input */
-   form#driver-profile-form .driver-contact-entry > div > div {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
+  /* Driver Address entry inputs - revert to stack within column for simplicity */
+  .driver-address-entry > input[type="text"] {
+    width: calc(100% - 22px);
+    margin-bottom: 10px;
   }
-  form#driver-profile-form .driver-contact-entry > div > div > label {
-    flex-basis: 120px;
-    flex-shrink: 0;
-    text-align: right;
-    margin-bottom: 0;
-  }
-  form#driver-profile-form .driver-contact-entry > div > div > input {
-    flex-grow: 1;
-    width: auto;
-    margin-bottom: 0;
-  }
-
-  /* Driver Address entry: similar to vehicle entry */
-  .driver-address-entry > input[type="text"] { /* Direct input children of this class */
-    width: calc(50% - 27px); /* Example: two inputs per line, accounting for gap and parent padding */
-    /* This might need more specific selectors if structure is more complex */
-  }
-  /* A more robust way for driver addresses might be to wrap pairs in divs and flex those */
-
 }
 
 
@@ -465,13 +589,19 @@ label {
   /* color: #212529; /* Inherited from body */
 }
 
-/* Spacing for direct children of forms (field containers and fieldsets) */
-form#client-order-form > div,
+/* Reset border/padding for fieldsets acting as collapsible section containers */
 form#client-order-form > fieldset,
-form#driver-profile-form > div,
 form#driver-profile-form > fieldset {
-  margin-bottom: 20px; /* Increased vertical spacing between form sections */
+  border: none;
+  padding: 0;
+  margin-bottom: 20px; /* Spacing between collapsible sections */
 }
+/* Retain margin for simple div wrappers if any are direct children of form */
+form#client-order-form > div,
+form#driver-profile-form > div {
+    margin-bottom: 20px;
+}
+
 
 legend {
   font-weight: bold; /* Ensure legends are bold as per typical styling */

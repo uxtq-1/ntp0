@@ -376,230 +376,138 @@
         >&times;</button>
         <h3>Driver Profile Menu</h3>
         <form id="driver-profile-form" autocomplete="off" novalidate>
-        <div>
-          <label for="driver-name-static">Driver Name:</label>
-          <input
-            type="text"
-            id="driver-name-static"
-            name="driver-name-static"
-            placeholder="Enter driver's full name"
-            maxlength="100"
-            required
-            aria-required="true"
-          />
-        </div>
-        <div>
-          <label for="driver-photo">Driver Photo:</label>
-          <input
-            type="file"
-            id="driver-photo"
-            name="driver-photo"
-            accept="image/*"
-            aria-describedby="driver-photo-desc"
-          />
-          <small id="driver-photo-desc">Upload a recent photo of the driver (optional).</small>
-        </div>
-
-        <fieldset>
-          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="vehicles-panel" data-target="vehicles-panel">
-            Vehicles <span class="collapsible-icon">►</span>
-          </legend>
-          <div id="vehicles-panel" class="collapsible-panel" hidden>
-            <div id="driver-vehicles-container" aria-live="polite" aria-relevant="additions removals">
-              <div class="vehicle-entry" role="group" aria-label="Vehicle 1">
-                <h5>Vehicle 1</h5>
-                <div>
-                <label for="vehicle-type-1">Type:</label>
-                <input
-                  type="text"
-                  id="vehicle-type-1"
-                  class="vehicle-type"
-                  name="vehicle-type-1"
-                  placeholder="e.g., Sedan, Truck"
-                  maxlength="50"
-                />
-              </div>
-              <div>
-                <label for="vehicle-make-1">Make:</label>
-                <input
-                  type="text"
-                  id="vehicle-make-1"
-                  class="vehicle-make"
-                  name="vehicle-make-1"
-                  placeholder="e.g., Toyota"
-                  maxlength="50"
-                />
-              </div>
-              <div>
-                <label for="vehicle-model-1">Model:</label>
-                <input
-                  type="text"
-                  id="vehicle-model-1"
-                  class="vehicle-model"
-                  name="vehicle-model-1"
-                  placeholder="e.g., Camry"
-                  maxlength="50"
-                />
-              </div>
-              <div>
-                <label for="vehicle-plate-1">Plate Number:</label>
-                <input
-                  type="text"
-                  id="vehicle-plate-1"
-                  class="vehicle-plate"
-                  name="vehicle-plate-1"
-                  placeholder="e.g., ABC-123"
-                  maxlength="20"
-                />
+          <fieldset>
+            <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="driver-details-panel" data-target="driver-details-panel">
+              Driver Details <span class="collapsible-icon">►</span>
+            </legend>
+            <div id="driver-details-panel" class="collapsible-panel" hidden>
+              <div class="form-section-columns">
+                <div class="form-column">
+                  <h4>Personal</h4>
+                  <div>
+                    <label for="driver-photo">Driver Photo:</label>
+                    <input type="file" id="driver-photo" name="driver-photo" accept="image/*" aria-describedby="driver-photo-desc"/>
+                    <small id="driver-photo-desc">Upload a recent photo of the driver (optional).</small>
+                  </div>
+                  <div>
+                    <label for="driver-name-static">First Name:</label>
+                    <input type="text" id="driver-name-static" name="driver-name-static" placeholder="Enter driver's first name" maxlength="100" required aria-required="true"/>
+                  </div>
+                  <div>
+                    <label for="driver-last-name">Last Name:</label>
+                    <input type="text" id="driver-last-name" name="driver-last-name" placeholder="Enter driver's last name" maxlength="100" required aria-required="true"/>
+                  </div>
+                  <div>
+                    <label for="driver-email">Email:</label>
+                    <input type="email" id="driver-email" name="driver-email" placeholder="Enter driver's email" maxlength="100" required aria-required="true"/>
+                  </div>
+                  <!-- Moved Contact Numbers Content Here -->
+                  <h5>Contact Numbers</h5>
+                  <div id="driver-contacts-container" aria-live="polite" aria-relevant="additions removals">
+                    <div class="driver-contact-entry" role="group" aria-label="Contact Number 1">
+                      <div>
+                        <label for="driver-contact-1">Contact Number 1:</label>
+                        <input type="tel" id="driver-contact-1" class="driver-contact" name="driver-contact-1" placeholder="e.g., 555-1234" pattern="[\d\s+\-()]+" title="Digits, spaces, plus, dash, parentheses" maxlength="20"/>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" id="add-driver-contact-btn" aria-label="Add Another Contact Number">Add Another Contact Number</button>
+                </div>
+                <div class="form-column">
+                  <h4>Main Address</h4>
+                  <!-- Moved Driver Addresses Content Here -->
+                  <div id="driver-addresses-container" aria-live="polite" aria-relevant="additions removals">
+                    <div class="driver-address-entry" role="group" aria-label="Address 1">
+                      <h5>Address 1</h5>
+                      <input type="text" class="driver-address-street" name="driver-address-street-1" placeholder="Street Address" maxlength="200"/>
+                      <input type="text" class="driver-address-city" name="driver-address-city-1" placeholder="City" maxlength="100"/>
+                      <input type="text" class="driver-address-state" name="driver-address-state-1" placeholder="State" maxlength="50"/>
+                      <input type="text" class="driver-address-zip" name="driver-address-zip-1" placeholder="Zip Code" maxlength="20" pattern="[0-9\-]+" title="Numbers and dashes only"/>
+                      <input type="text" class="driver-address-country" name="driver-address-country-1" placeholder="Country" maxlength="50"/>
+                    </div>
+                  </div>
+                  <button type="button" id="add-driver-address-btn" aria-label="Add Another Address">Add Another Address</button>
+                </div>
               </div>
             </div>
-            </div>
-            <button type="button" id="add-vehicle-btn" aria-label="Add Another Vehicle">Add Another Vehicle</button>
-          </div>
-        </fieldset>
-        <hr />
-
-        <fieldset>
-          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="certifications-panel" data-target="certifications-panel">
-            Certifications / Licenses <span class="collapsible-icon">►</span>
-          </legend>
-          <div id="certifications-panel" class="collapsible-panel" hidden>
-            <div id="driver-certifications-container" aria-live="polite" aria-relevant="additions removals">
-              <div class="certification-entry" role="group" aria-label="Certification 1">
-                <h5>Certification/License 1</h5>
-                <div>
-                <label for="certification-name-1">Name:</label>
-                <input
-                  type="text"
-                  id="certification-name-1"
-                  class="certification-name"
-                  name="certification-name-1"
-                  placeholder="e.g., Driver's License, Forklift"
-                  maxlength="100"
-                />
-              </div>
-              <div>
-                <label for="license-number-1">License Number:</label>
-                <input
-                  type="text"
-                  id="license-number-1"
-                  class="license-number"
-                  name="license-number-1"
-                  placeholder="e.g., DL12345"
-                  maxlength="50"
-                />
-              </div>
-              <div>
-                <label for="expiration-date-1">Expiration Date:</label>
-                <input
-                  type="date"
-                  id="expiration-date-1"
-                  class="expiration-date"
-                  name="expiration-date-1"
-                  pattern="\d{4}-\d{2}-\d{2}"
-                  title="Format: YYYY-MM-DD"
-                />
-              </div>
-            </div>
-            </div>
-            <button
-              type="button"
-              id="add-certification-btn"
-              aria-label="Add Another Certification or License"
-            >Add Another Certification/License</button>
-          </div>
-        </fieldset>
-        <hr />
-
-        <fieldset>
-          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="driver-form-contacts-panel" data-target="driver-form-contacts-panel">
-            Contact Numbers <span class="collapsible-icon">►</span>
-          </legend>
-          <div id="driver-form-contacts-panel" class="collapsible-panel" hidden>
-            <div id="driver-contacts-container" aria-live="polite" aria-relevant="additions removals">
-              <div class="driver-contact-entry" role="group" aria-label="Contact Number 1">
-                <div>
-                  <label for="driver-contact-1">Contact Number 1:</label>
-                  <input
-                  type="tel"
-                  id="driver-contact-1"
-                  class="driver-contact"
-                  name="driver-contact-1"
-                  placeholder="e.g., 555-1234"
-                  pattern="[\d\s+\-()]+"
-                  title="Digits, spaces, plus, dash, parentheses"
-                  maxlength="20"
-                />
+          </fieldset>
+          <hr />
+          <fieldset>
+            <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="driver-vehicle-credentials-panel" data-target="driver-vehicle-credentials-panel">
+              Vehicle & Credentials <span class="collapsible-icon">►</span>
+            </legend>
+            <div id="driver-vehicle-credentials-panel" class="collapsible-panel" hidden>
+              <div class="form-section-columns">
+                <div class="form-column">
+                  <h4>Vehicle</h4>
+                  <!-- Moved Vehicles Content Here -->
+                  <div id="driver-vehicles-container" aria-live="polite" aria-relevant="additions removals">
+                    <div class="vehicle-entry" role="group" aria-label="Vehicle 1">
+                      <h5>Vehicle 1</h5>
+                      <div>
+                        <label for="vehicle-type-1">Type:</label>
+                        <input type="text" id="vehicle-type-1" class="vehicle-type" name="vehicle-type-1" placeholder="e.g., Sedan, Truck" maxlength="50"/>
+                      </div>
+                      <div>
+                        <label for="vehicle-make-1">Make:</label>
+                        <input type="text" id="vehicle-make-1" class="vehicle-make" name="vehicle-make-1" placeholder="e.g., Toyota" maxlength="50"/>
+                      </div>
+                      <div>
+                        <label for="vehicle-model-1">Model:</label>
+                        <input type="text" id="vehicle-model-1" class="vehicle-model" name="vehicle-model-1" placeholder="e.g., Camry" maxlength="50"/>
+                      </div>
+                      <div>
+                        <label for="vehicle-plate-1">Plate Number:</label>
+                        <input type="text" id="vehicle-plate-1" class="vehicle-plate" name="vehicle-plate-1" placeholder="e.g., ABC-123" maxlength="20"/>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" id="add-vehicle-btn" aria-label="Add Another Vehicle">Add Another Vehicle</button>
+                </div>
+                <div class="form-column">
+                  <h4>License & Certifications</h4>
+                  <!-- Moved Certifications Content Here -->
+                  <div id="driver-certifications-container" aria-live="polite" aria-relevant="additions removals">
+                    <div class="certification-entry" role="group" aria-label="Certification 1">
+                      <h5>Certification/License 1</h5>
+                      <div>
+                        <label for="certification-name-1">Name:</label>
+                        <input type="text" id="certification-name-1" class="certification-name" name="certification-name-1" placeholder="e.g., Driver's License, Forklift" maxlength="100"/>
+                      </div>
+                      <div>
+                        <label for="license-number-1">License Number:</label>
+                        <input type="text" id="license-number-1" class="license-number" name="license-number-1" placeholder="e.g., DL12345" maxlength="50"/>
+                      </div>
+                      <div>
+                        <label for="expiration-date-1">Expiration Date:</label>
+                        <input type="date" id="expiration-date-1" class="expiration-date" name="expiration-date-1" pattern="\d{4}-\d{2}-\d{2}" title="Format: YYYY-MM-DD"/>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" id="add-certification-btn" aria-label="Add Another Certification or License">Add Another Certification/License</button>
+                  <hr>
+                  <div>
+                    <label for="driver-contractor-id">Independent Contractor Number [ID]:</label>
+                    <input type="text" id="driver-contractor-id" name="driver-contractor-id" placeholder="Enter ID" maxlength="50"/>
+                  </div>
+                </div>
               </div>
             </div>
+          </fieldset>
+          <hr />
+          <fieldset>
+            <legend>Job Order Management</legend>
+            <div>Drag & Drop New Job Orders (Placeholder)</div>
+            <div>
+                <h5>Today's Job Orders (Placeholder)</h5>
+                <div style="border:1px solid #ccc; padding:10px; text-align:center;">
+                    Visual representation of Pick Up / Delivery columns (Placeholder)
+                </div>
             </div>
-            <button
-              type="button"
-              id="add-driver-contact-btn"
-              aria-label="Add Another Contact Number"
-            >Add Another Contact Number</button>
-          </div>
-        </fieldset>
-        <hr />
-
-        <fieldset>
-          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="driver-addresses-panel" data-target="driver-addresses-panel">
-            Driver Addresses <span class="collapsible-icon">►</span>
-          </legend>
-          <div id="driver-addresses-panel" class="collapsible-panel" hidden>
-            <div id="driver-addresses-container" aria-live="polite" aria-relevant="additions removals">
-              <div class="driver-address-entry" role="group" aria-label="Address 1">
-                <h5>Address 1</h5>
-                <input
-                type="text"
-                class="driver-address-street"
-                name="driver-address-street-1"
-                placeholder="Street Address"
-                maxlength="200"
-              />
-              <input
-                type="text"
-                class="driver-address-city"
-                name="driver-address-city-1"
-                placeholder="City"
-                maxlength="100"
-              />
-              <input
-                type="text"
-                class="driver-address-state"
-                name="driver-address-state-1"
-                placeholder="State"
-                maxlength="50"
-              />
-              <input
-                type="text"
-                class="driver-address-zip"
-                name="driver-address-zip-1"
-                placeholder="Zip Code"
-                maxlength="20"
-                pattern="[0-9\-]+"
-                title="Numbers and dashes only"
-              />
-              <input
-                type="text"
-                class="driver-address-country"
-                name="driver-address-country-1"
-                placeholder="Country"
-                maxlength="50"
-              />
-            </div>
-            </div>
-            <button
-              type="button"
-              id="add-driver-address-btn"
-              aria-label="Add Another Address"
-            >Add Another Address</button>
-          </div>
-        </fieldset>
-
-        <hr />
-        <button type="submit" id="update-profile-btn">Update Profile</button>
-      </form>
+          </fieldset>
+          <hr />
+          <button type="submit" id="update-profile-btn">Update Profile</button>
+        </form>
       </div>
     </aside>
 
