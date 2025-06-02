@@ -77,9 +77,9 @@
               <div class="form-section-columns">
                 <div class="form-column">
                   <h4>Pick-up</h4>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="pickup-name" name="pickup-name" placeholder="Pick-up Name:" autocomplete="off" required aria-required="true" maxlength="100"/>
                     <label for="pickup-name">Pick-up Name:</label>
-                    <input type="text" id="pickup-name" name="pickup-name" autocomplete="off" required aria-required="true" maxlength="100"/>
                   </div>
                   <h5>Pick-up Addresses</h5>
                   <div id="pickup-addresses-container" aria-live="polite" aria-relevant="additions removals">
@@ -88,17 +88,17 @@
                     </div>
                   </div>
                   <button type="button" id="add-pickup-address-btn" aria-label="Add Another Pick-up Address">Add Another Pick-up Address</button>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="pickup-state" name="pickup-state" placeholder="Pick-up State:" autocomplete="off" maxlength="50"/>
                     <label for="pickup-state">Pick-up State:</label>
-                    <input type="text" id="pickup-state" name="pickup-state" autocomplete="off" maxlength="50"/>
                   </div>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="pickup-zip" name="pickup-zip" placeholder="Pick-up Zip Code:" autocomplete="off" maxlength="20" pattern="[0-9\-]+" title="Numbers and dashes only"/>
                     <label for="pickup-zip">Pick-up Zip Code:</label>
-                    <input type="text" id="pickup-zip" name="pickup-zip" autocomplete="off" maxlength="20" pattern="[0-9\-]+" title="Numbers and dashes only"/>
                   </div>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="pickup-country" name="pickup-country" placeholder="Pick-up Country:" autocomplete="off" maxlength="50"/>
                     <label for="pickup-country">Pick-up Country:</label>
-                    <input type="text" id="pickup-country" name="pickup-country" autocomplete="off" maxlength="50"/>
                   </div>
                   <h5>Pick-up Contact Numbers</h5>
                   <div id="pickup-contacts-container" aria-live="polite" aria-relevant="additions removals">
@@ -110,9 +110,9 @@
                 </div>
                 <div class="form-column">
                   <h4>Delivery</h4>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="delivery-name" name="delivery-name" placeholder="Delivery Name:" autocomplete="off" maxlength="100"/>
                     <label for="delivery-name">Delivery Name:</label>
-                    <input type="text" id="delivery-name" name="delivery-name" autocomplete="off" maxlength="100"/>
                   </div>
                   <h5>Delivery Addresses</h5>
                   <div id="delivery-addresses-container" aria-live="polite" aria-relevant="additions removals">
@@ -121,17 +121,17 @@
                     </div>
                   </div>
                   <button type="button" id="add-delivery-address-btn" aria-label="Add Another Delivery Address">Add Another Delivery Address</button>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="delivery-state" name="delivery-state" placeholder="Delivery State:" autocomplete="off" maxlength="50"/>
                     <label for="delivery-state">Delivery State:</label>
-                    <input type="text" id="delivery-state" name="delivery-state" autocomplete="off" maxlength="50"/>
                   </div>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="delivery-zip" name="delivery-zip" placeholder="Delivery Zip Code:" autocomplete="off" maxlength="20" pattern="[0-9\-]+" title="Numbers and dashes only"/>
                     <label for="delivery-zip">Delivery Zip Code:</label>
-                    <input type="text" id="delivery-zip" name="delivery-zip" autocomplete="off" maxlength="20" pattern="[0-9\-]+" title="Numbers and dashes only"/>
                   </div>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="delivery-country" name="delivery-country" placeholder="Delivery Country:" autocomplete="off" maxlength="50"/>
                     <label for="delivery-country">Delivery Country:</label>
-                    <input type="text" id="delivery-country" name="delivery-country" autocomplete="off" maxlength="50"/>
                   </div>
                   <h5>Delivery Contact Numbers</h5>
                   <div id="delivery-contacts-container" aria-live="polite" aria-relevant="additions removals">
@@ -156,7 +156,7 @@
                   <h5>Items (Description, Quantity, Weight, Dimensions)</h5>
                   <div id="item-descriptions-container" aria-live="polite" aria-relevant="additions removals">
                     <div class="item-description-entry" role="group" aria-label="Item 1">
-                      <h6>Item 1</h6> <!-- Changed from h5 to h6 for better hierarchy -->
+                      <h6>Item 1</h6>
                       <textarea class="item-description" name="item-description-1" placeholder="Item Description" maxlength="500"></textarea>
                       <div class="item-details-line-1">
                         <input type="number" class="item-qty" name="item-qty-1" placeholder="Qty" min="1" title="Quantity" aria-label="Quantity"/>
@@ -171,16 +171,17 @@
                     </div>
                   </div>
                   <button type="button" id="add-item-description-btn" aria-label="Add Another Item">Add Another Item</button>
-                  <div>
+
+                  <div class="form-field-float-label-group">
+                    <textarea id="special-instructions" name="special-instructions" placeholder="Special Instructions:" maxlength="1000" rows="3"></textarea>
                     <label for="special-instructions">Special Instructions:</label>
-                    <textarea id="special-instructions" name="special-instructions" maxlength="1000" placeholder="Enter any special instructions here..."></textarea>
                   </div>
                 </div>
                 <div class="form-column">
                   <h4>References & Tracking</h4>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="client-ref-number" name="client-ref-number" placeholder="Client Reference Number:" autocomplete="off" required aria-required="true" maxlength="50" pattern="[A-Za-z0-9\-]+" title="Alphanumeric and dashes only"/>
                     <label for="client-ref-number">Client Reference Number:</label>
-                    <input type="text" id="client-ref-number" name="client-ref-number" autocomplete="off" required aria-required="true" maxlength="50" pattern="[A-Za-z0-9\-]+" title="Alphanumeric and dashes only"/>
                   </div>
                   <h5>Email Addresses for Tracking</h5>
                   <div id="tracking-emails-container" aria-live="polite" aria-relevant="additions removals">
@@ -217,21 +218,21 @@
                 <div class="form-column">
                   <h4>Personal</h4>
                   <div>
-                    <label for="driver-photo">Driver Photo:</label>
+                    <label for="driver-photo">Driver Photo:</label> <!-- File input, no change to float label structure -->
                     <input type="file" id="driver-photo" name="driver-photo" accept="image/*" aria-describedby="driver-photo-desc"/>
                     <small id="driver-photo-desc">Upload a recent photo of the driver (optional).</small>
                   </div>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="driver-name-static" name="driver-name-static" placeholder="First Name:" maxlength="100" required aria-required="true"/>
                     <label for="driver-name-static">First Name:</label>
-                    <input type="text" id="driver-name-static" name="driver-name-static" placeholder="Enter driver's first name" maxlength="100" required aria-required="true"/>
                   </div>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="driver-last-name" name="driver-last-name" placeholder="Last Name:" maxlength="100" required aria-required="true"/>
                     <label for="driver-last-name">Last Name:</label>
-                    <input type="text" id="driver-last-name" name="driver-last-name" placeholder="Enter driver's last name" maxlength="100" required aria-required="true"/>
                   </div>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="email" id="driver-email" name="driver-email" placeholder="Email:" maxlength="100" required aria-required="true"/>
                     <label for="driver-email">Email:</label>
-                    <input type="email" id="driver-email" name="driver-email" placeholder="Enter driver's email" maxlength="100" required aria-required="true"/>
                   </div>
                   <!-- Moved Contact Numbers Content Here -->
                   <h5>Contact Numbers</h5>
@@ -318,9 +319,9 @@
                   </div>
                   <button type="button" id="add-certification-btn" aria-label="Add Another Certification or License">Add Another Certification/License</button>
                   <hr>
-                  <div>
+                  <div class="form-field-float-label-group">
+                    <input type="text" id="driver-contractor-id" name="driver-contractor-id" placeholder="Independent Contractor Number [ID]:" maxlength="50"/>
                     <label for="driver-contractor-id">Independent Contractor Number [ID]:</label>
-                    <input type="text" id="driver-contractor-id" name="driver-contractor-id" placeholder="Enter ID" maxlength="50"/>
                   </div>
                 </div>
               </div>

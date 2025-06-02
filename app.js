@@ -154,46 +154,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Field Creation Functions for Dynamic Entries ---
 
-  function createSingleField(entryNumber, fieldClass, placeholderPrefix, fieldElementType = 'input', inputElementType = 'text') {
+  function createSingleField(entryNumber, fieldClass, basePlaceholderText, fieldElementType = 'input', inputElementType = 'text') {
     const fragment = document.createDocumentFragment();
+    const wrapperDiv = document.createElement('div');
+    wrapperDiv.classList.add('form-field-float-label-group');
+
     let fieldElement;
     if (fieldElementType === 'textarea') {
       fieldElement = document.createElement('textarea');
+      fieldElement.rows = 3; // Set default rows for textarea
     } else {
       fieldElement = document.createElement('input');
       fieldElement.type = inputElementType;
     }
+
+    const fullLabelText = `${basePlaceholderText} ${entryNumber}`;
+    // Ensure a unique ID for each field for the label's 'for' attribute
+    const fieldId = `${fieldClass}-${entryNumber}`;
+
+    fieldElement.id = fieldId;
+    fieldElement.name = fieldId; // Often name and id are the same or similar
     fieldElement.classList.add(fieldClass);
-    // Placeholder for single fields already includes the number via addDynamicFieldEntry's old logic.
-    // The new addDynamicFieldEntry doesn't directly handle placeholder for single fields,
-    // so the create function or the call site must adapt.
-    // For single fields, the 'sectionTitlePrefix' in addDynamicFieldEntry can be the placeholderPrefix.
-    // And the h5 title might not be needed.
-    // Let's adjust: the placeholder is now set here.
-    fieldElement.placeholder = `${placeholderPrefix} ${entryNumber}`;
-    fragment.appendChild(fieldElement);
+    fieldElement.placeholder = fullLabelText; // Label text goes into placeholder
+
+    const labelElement = document.createElement('label');
+    labelElement.htmlFor = fieldId;
+    labelElement.textContent = fullLabelText;
+
+    wrapperDiv.appendChild(fieldElement); // Input first
+    wrapperDiv.appendChild(labelElement);   // Then label
+
+    fragment.appendChild(wrapperDiv);
     return fragment;
   }
 
   function createVehicleFields(entryNumber) {
     const fragment = document.createDocumentFragment();
     const fields = [
-      { label: 'Type:', type: 'text', class: 'vehicle-type', placeholder: 'e.g., Sedan, Truck' },
-      { label: 'Make:', type: 'text', class: 'vehicle-make', placeholder: 'e.g., Toyota' },
-      { label: 'Model:', type: 'text', class: 'vehicle-model', placeholder: 'e.g., Camry' },
-      { label: 'Plate Number:', type: 'text', class: 'vehicle-plate', placeholder: 'e.g., ABC-123' }
+      // Original placeholder from fieldInfo.placeholder is removed as label text is used.
+      { labelText: 'Type:', type: 'text', class: 'vehicle-type' },
+      { labelText: 'Make:', type: 'text', class: 'vehicle-make' },
+      { labelText: 'Model:', type: 'text', class: 'vehicle-model' },
+      { labelText: 'Plate Number:', type: 'text', class: 'vehicle-plate' }
     ];
     fields.forEach(fieldInfo => {
-      const div = document.createElement('div');
-      const label = document.createElement('label');
-      label.textContent = fieldInfo.label;
+      const wrapperDiv = document.createElement('div');
+      wrapperDiv.classList.add('form-field-float-label-group');
+      // This div might also need the class that .vehicle-entry > div had for styling label/input pairs side-by-side on desktop.
+      // For now, it's just a float-label group. The parent .vehicle-entry will handle overall layout.
+
+      const fieldId = `vehicle-${fieldInfo.class}-${entryNumber}`;
+
       const input = document.createElement('input');
       input.type = fieldInfo.type;
+      input.id = fieldId;
+      input.name = fieldId; // Or a more structured name like `vehicles[${entryNumber}][${fieldInfo.class}]` if submitting as array
       input.classList.add(fieldInfo.class);
-      input.placeholder = fieldInfo.placeholder;
-      div.appendChild(label);
-      div.appendChild(input);
-      fragment.appendChild(div);
+      input.placeholder = fieldInfo.labelText; // Use labelText for placeholder
+
+      const label = document.createElement('label');
+      label.htmlFor = fieldId;
+      label.textContent = fieldInfo.labelText;
+
+      wrapperDiv.appendChild(input); // Input first
+      wrapperDiv.appendChild(label);   // Then label
+      fragment.appendChild(wrapperDiv);
     });
     return fragment;
   }
@@ -201,21 +226,30 @@ document.addEventListener('DOMContentLoaded', () => {
   function createCertificationFields(entryNumber) {
     const fragment = document.createDocumentFragment();
     const fields = [
-      { label: 'Name:', type: 'text', class: 'certification-name', placeholder: 'e.g., Driver\'s License' },
-      { label: 'License Number:', type: 'text', class: 'license-number', placeholder: 'e.g., DL12345' },
-      { label: 'Expiration Date:', type: 'date', class: 'expiration-date', placeholder: '' }
+      { labelText: 'Name:', type: 'text', class: 'certification-name' },
+      { labelText: 'License Number:', type: 'text', class: 'license-number' },
+      { labelText: 'Expiration Date:', type: 'date', class: 'expiration-date' } // Date inputs might not show placeholder text visually in all browsers
     ];
     fields.forEach(fieldInfo => {
-      const div = document.createElement('div');
-      const label = document.createElement('label');
-      label.textContent = fieldInfo.label;
+      const wrapperDiv = document.createElement('div');
+      wrapperDiv.classList.add('form-field-float-label-group');
+
+      const fieldId = `cert-${fieldInfo.class}-${entryNumber}`;
+
       const input = document.createElement('input');
       input.type = fieldInfo.type;
+      input.id = fieldId;
+      input.name = fieldId; // Or structured name
       input.classList.add(fieldInfo.class);
-      if (fieldInfo.placeholder) input.placeholder = fieldInfo.placeholder;
-      div.appendChild(label);
-      div.appendChild(input);
-      fragment.appendChild(div);
+      input.placeholder = fieldInfo.labelText; // For date, placeholder might not show, but good for consistency
+
+      const label = document.createElement('label');
+      label.htmlFor = fieldId;
+      label.textContent = fieldInfo.labelText;
+
+      wrapperDiv.appendChild(input); // Input first
+      wrapperDiv.appendChild(label);   // Then label
+      fragment.appendChild(wrapperDiv);
     });
     return fragment;
   }
