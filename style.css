@@ -1,3 +1,7 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 /* Basic Styles */
 body {
   font-family: Arial, sans-serif;
@@ -8,6 +12,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  font-size: 14px; /* UPDATED base font size */
 }
 
 /* Typography */
@@ -142,6 +147,7 @@ h1, h2, h3, h4, h5, legend {
   max-height: 90vh; /* Fit on screen */
   overflow-y: auto; /* Scrollable content */
   position: relative; /* For absolute positioning of the close button inside */
+  opacity: 0.7; /* NEW: Set opacity */
 }
 
 
@@ -187,6 +193,8 @@ h1, h2, h3, h4, h5, legend {
 .form-column {
   /* Default: full width when stacked */
   width: 100%;
+  padding: 5px; /* 5px inset for content within the column */
+  /* box-sizing: border-box; /* Ensured by global rule */
 }
 .form-column + .form-column { /* Add space above subsequent columns when stacked */
   margin-top: 20px;
@@ -257,10 +265,16 @@ h1, h2, h3, h4, h5, legend {
   .form-column {
     flex: 1;
     min-width: 0; /* Flex item fix */
+    /* padding: 5px; /* Already applied in base .form-column style */
     /* margin-top is reset for side-by-side columns */
   }
   .form-column + .form-column {
     margin-top: 0;
+  }
+  .form-section-columns .form-column:first-child {
+    border-right: 1px solid #ced4da; /* Palette: Borders - Vertical divider */
+    /* The 'gap' on .form-section-columns provides space around this border.
+       The 5px padding on .form-column is inside this border. */
   }
 
 

@@ -614,58 +614,68 @@ function initMenuToggles() {
     return;
   }
 
-  clientMenuToggleBtn.addEventListener('click', () => {
-    const isClientMenuVisible = clientMenuPanel.style.display === 'block';
-    
-    // Toggle client menu
-    clientMenuPanel.style.display = isClientMenuVisible ? 'none' : 'block';
-    clientMenuPanel.hidden = isClientMenuVisible;
-    clientMenuToggleBtn.setAttribute('aria-expanded', !isClientMenuVisible);
-    
-    // If opening client menu, ensure driver menu is closed
-    if (!isClientMenuVisible) { // i.e., if client menu was hidden and is now being shown
-      driverMenuPanel.style.display = 'none';
-      driverMenuPanel.hidden = true;
-      driverMenuToggleBtn.setAttribute('aria-expanded', 'false');
-    }
-  });
-
-  driverMenuToggleBtn.addEventListener('click', () => {
-    const isDriverMenuVisible = driverMenuPanel.style.display === 'block';
-    
-    // Toggle driver menu
-    driverMenuPanel.style.display = isDriverMenuVisible ? 'none' : 'block';
-    driverMenuPanel.hidden = isDriverMenuVisible;
-    driverMenuToggleBtn.setAttribute('aria-expanded', !isDriverMenuVisible);
-    
-    // If opening driver menu, ensure client menu is closed
-    if (!isDriverMenuVisible) { // i.e., if driver menu was hidden and is now being shown
-      clientMenuPanel.style.display = 'none';
-      clientMenuPanel.hidden = true;
-      clientMenuToggleBtn.setAttribute('aria-expanded', 'false');
-    }
-  });
-
-  // Optional: Close menus if user clicks outside of them on the map or app container
-  // This is more advanced and might be added later if needed.
-  // For example, document.getElementById('app-container').addEventListener('click', (e) => { ... });
-
-  // Event listeners for the new close buttons
-  closeClientMenuBtn.addEventListener('click', () => {
+  function hideClientMenu() {
     if (clientMenuPanel) {
       clientMenuPanel.style.display = 'none';
       clientMenuPanel.hidden = true;
       clientMenuToggleBtn.setAttribute('aria-expanded', 'false');
     }
-  });
+  }
 
-  closeDriverMenuBtn.addEventListener('click', () => {
+  function hideDriverMenu() {
     if (driverMenuPanel) {
       driverMenuPanel.style.display = 'none';
       driverMenuPanel.hidden = true;
       driverMenuToggleBtn.setAttribute('aria-expanded', 'false');
     }
+  }
+
+  clientMenuToggleBtn.addEventListener('click', () => {
+    const isClientMenuVisible = clientMenuPanel.style.display === 'block';
+    
+    if (isClientMenuVisible) {
+      hideClientMenu();
+    } else {
+      clientMenuPanel.style.display = 'block'; // Or 'flex' if CSS uses that for the overlay
+      clientMenuPanel.hidden = false;
+      clientMenuToggleBtn.setAttribute('aria-expanded', 'true');
+      hideDriverMenu(); // Ensure other menu is closed
+    }
   });
+
+  driverMenuToggleBtn.addEventListener('click', () => {
+    const isDriverMenuVisible = driverMenuPanel.style.display === 'block';
+
+    if (isDriverMenuVisible) {
+      hideDriverMenu();
+    } else {
+      driverMenuPanel.style.display = 'block'; // Or 'flex'
+      driverMenuPanel.hidden = false;
+      driverMenuToggleBtn.setAttribute('aria-expanded', 'true');
+      hideClientMenu(); // Ensure other menu is closed
+    }
+  });
+
+  // Event listeners for close buttons
+  closeClientMenuBtn.addEventListener('click', hideClientMenu);
+  closeDriverMenuBtn.addEventListener('click', hideDriverMenu);
+
+  // Add close on overlay click
+  if (clientMenuPanel) {
+    clientMenuPanel.addEventListener('click', function(event) {
+      if (event.target === clientMenuPanel) {
+        hideClientMenu();
+      }
+    });
+  }
+
+  if (driverMenuPanel) {
+    driverMenuPanel.addEventListener('click', function(event) {
+      if (event.target === driverMenuPanel) {
+        hideDriverMenu();
+      }
+    });
+  }
 }
 
 
