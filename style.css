@@ -278,45 +278,46 @@ h1, h2, h3, h4, h5, legend {
   }
 
 
-  /* Target divs that are direct children of form or collapsible panel, and likely wrap a single label-input pair.
-     Exclude divs that are themselves containers for dynamic fields or complex groups. */
-  /* New simpler selector: Target divs directly inside .form-column or .collapsible-panel (if not using columns) */
-  .form-column > div:not([id$="-container"]):not(.item-details-line-1):not(.item-details-line-2):not(.vehicle-entry):not(.certification-entry):not(.driver-contact-entry):not(.driver-address-entry),
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not(.item-details-line-1):not(.item-details-line-2) {
-    display: flex;
-    align-items: baseline; /* Align label text with input text */
-    gap: 10px;
-    margin-bottom: 15px; /* Spacing between fields in a column */
+  /* Original rules for side-by-side generic labels/inputs are now mostly superseded by floating label mechanism.
+     The .form-field-float-label-group itself will typically be a block within its parent (.form-column > div or .collapsible-panel > div).
+     If a div directly under .form-column was intended to hold multiple fields side-by-side (not just one label-input pair),
+     it would need to remain display:flex, and its children (e.g., multiple .form-field-float-label-group) would be flex items.
+     For now, assuming each .form-field-float-label-group takes the full width available in its column cell or parent div.
+  */
+
+  /* Ensure the wrapper divs for .form-field-float-label-group have appropriate spacing.
+     The .form-column > div already has margin-bottom: 15px; from previous rules.
+     This might need to be applied to .form-field-float-label-group if it's a direct child of .form-column.
+     Let's assume the structure .form-column > div > .form-field-float-label-group is not always the case,
+     and sometimes it's .form-column > .form-field-float-label-group.
+  */
+  .form-column > .form-field-float-label-group,
+  .collapsible-panel > .form-field-float-label-group {
+    margin-bottom: 15px; /* Spacing between floating label fields */
   }
 
-  .form-column > div:not([id$="-container"]) > label,
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > label {
-    flex-basis: 180px; /* Adjust as needed */
+  /* Remove or comment out conflicting label styles for floating label setup */
+  /*
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > label,
+  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > label {
+    flex-basis: 180px;
     flex-shrink: 0;
     text-align: right;
-    margin-bottom: 0; /* Override default */
+    margin-bottom: 0;
   }
+  */
 
-  .form-column > div:not([id$="-container"]) > input[type="text"],
-  .form-column > div:not([id$="-container"]) > input[type="email"],
-  .form-column > div:not([id$="-container"]) > input[type="tel"],
-  .form-column > div:not([id$="-container"]) > input[type="number"],
-  .form-column > div:not([id$="-container"]) > input[type="date"],
-  .form-column > div:not([id$="-container"]) > input[type="file"],
-  .form-column > div:not([id$="-container"]) > select,
-  .form-column > div:not([id$="-container"]) > textarea,
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="text"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="email"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="tel"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="number"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="date"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > input[type="file"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > select,
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]) > textarea {
+  /* Inputs within .form-field-float-label-group already have width: 100% (via modal form styles)
+     and their parent .form-field-float-label-group will take available space.
+     The flex-grow:1 and width:auto for inputs from the old side-by-side setup is not needed here.
+  */
+  /*
+  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="text"], ... {
     flex-grow: 1;
-    width: auto; /* Let flexbox determine width */
-    margin-bottom: 0; /* Handled by parent div's margin */
+    width: auto;
+    margin-bottom: 0;
   }
+  */
 
   /* Refinements for specific complex groups */
   /* .item-details-line-1, .item-details-line-2 are already display:flex; gap:8px */
@@ -399,57 +400,24 @@ h1, h2, h3, h4, h5, legend {
 
 /* Wider Screen Form Layouts */
 @media (min-width: 769px) {
-  .form-section-columns {
-    display: flex;
-    gap: 30px; /* Space between columns */
-  }
-  .form-column {
-    flex: 1;
-    min-width: 0; /* Flex item fix */
-    margin-top: 0; /* Reset margin-top for side-by-side columns */
-  }
-  .form-column + .form-column {
-    margin-top: 0;
-  }
+  /* .form-section-columns, .form-column, and .form-section-columns .form-column:first-child (divider)
+     are already defined above this media query block correctly.
+     The .form-column > .form-field-float-label-group margin is also defined above.
+  */
 
-  /* Target divs that are direct children of a .form-column,
-     or direct children of .collapsible-panel if not using .form-section-columns */
-  .form-column > div:not([id$="-container"]):not([class*="-entry"]):not(.item-details-line-1):not(.item-details-line-2),
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]):not(.item-details-line-1):not(.item-details-line-2) {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-bottom: 15px; /* Spacing between fields in a column */
-  }
-
-  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > label,
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > label {
-    flex-basis: 180px;
-    flex-shrink: 0;
-    text-align: right;
-    margin-bottom: 0;
-  }
-
-  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="text"],
-  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="email"],
-  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="tel"],
-  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="number"],
-  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="date"],
-  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > input[type="file"],
-  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > select,
-  .form-column > div:not([id$="-container"]):not([class*="-entry"]) > textarea,
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="text"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="email"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="tel"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="number"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="date"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > input[type="file"],
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > select,
-  .collapsible-panel > div:not(.form-section-columns):not([id$="-container"]):not([class*="-entry"]) > textarea {
-    flex-grow: 1;
-    width: auto;
-    margin-bottom: 0;
-  }
+  /* The old rules for side-by-side generic label/input pairs are now commented out or removed,
+     as floating label handles this differently.
+     The selectors like:
+     .form-column > div:not([id$="-container"]):not([class*="-entry"]):not(.item-details-line-1):not(.item-details-line-2)
+     and their direct children label/input rules for flex behavior are now superseded.
+     The parent div (if it's not .form-field-float-label-group itself) might still need margin-bottom: 15px.
+     This is covered by the:
+      .form-column > div:not(.form-field-float-label-group):not([id$="-container"]):not([class*="-entry"]),
+      .collapsible-panel > div:not(.form-section-columns):not(.form-field-float-label-group):not([id$="-container"]):not([class*="-entry"]) {
+        margin-bottom: 15px;
+      }
+     This rule ensures spacing for divs that *contain* field groups or other elements.
+  */
 
   /* Refinements for specific complex groups already having display:flex */
   .item-details-line-1,
@@ -606,12 +574,58 @@ h1, h2, h3, h4, h5, legend {
 }
 
 /* Form Elements */
-label {
+label { /* General label styling */
   display: block;
-  margin-bottom: 5px; /* Space between label and its input */
+  margin-bottom: 5px;
   font-weight: bold;
-  /* color: #212529; /* Inherited from body */
 }
+
+/* Styles for form elements specifically within modal dialogs */
+.menu-modal-content form label,
+.menu-modal-content form legend { /* Legends inside forms also get smaller font */
+  font-size: 12px;
+}
+
+.menu-modal-content form input[type="text"],
+.menu-modal-content form input[type="email"],
+.menu-modal-content form input[type="tel"],
+.menu-modal-content form input[type="number"],
+.menu-modal-content form input[type="date"],
+.menu-modal-content form input[type="file"],
+.menu-modal-content form textarea,
+.menu-modal-content form select {
+  font-size: 12px;
+  padding: 8px; /* Adjusted padding for smaller font */
+  width: 100%;   /* Rely on global box-sizing: border-box */
+  margin-bottom: 10px; /* Retain consistent bottom margin */
+  border: 1px solid #ced4da; /* Palette: Borders */
+  border-radius: 4px;
+  background-color: #FFFFFF; /* Palette: Main Background */
+  color: #212529; /* Palette: Text */
+}
+
+.menu-modal-content form textarea {
+  resize: vertical;
+  min-height: 60px; /* Keep or adjust based on new font size */
+}
+
+.menu-modal-content form input[type="text"].input-error,
+.menu-modal-content form input[type="email"].input-error,
+.menu-modal-content form input[type="tel"].input-error,
+.menu-modal-content form input[type="number"].input-error,
+.menu-modal-content form input[type="date"].input-error,
+.menu-modal-content form textarea.input-error {
+  border-color: #dc3545; /* Standard error red */
+}
+
+.menu-modal-content form .error-message {
+  font-size: 11px; /* Slightly smaller than the input's 12px */
+  color: #dc3545;
+  display: block;
+  margin-top: -5px;
+  margin-bottom: 5px;
+}
+
 
 /* Reset border/padding for fieldsets acting as collapsible section containers */
 form#client-order-form > fieldset,
@@ -669,6 +683,54 @@ textarea.input-error {
   margin-top: -5px;
   margin-bottom: 5px;
 }
+
+/* Floating Label Specific Styles */
+.form-field-float-label-group {
+  position: relative; /* Establishes positioning context for the label */
+  /* margin-bottom for spacing between fields is handled by its parent div or general form > div rules */
+}
+
+.form-field-float-label-group label {
+  position: absolute;
+  left: 8px; /* Corresponds to input padding */
+  top: 8px;  /* Corresponds to input padding */
+  font-size: 12px; /* Initial size, same as input in modal */
+  color: #6c757d; /* Placeholder color */
+  pointer-events: none; /* Clicks pass through to the input */
+  transition: all 0.15s ease-out;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: calc(100% - 16px); /* (Input padding * 2) to stay within input bounds */
+  line-height: 1.5; /* Adjust if needed for vertical centering with input text */
+  padding-top: 1px; /* Minor visual adjustment for vertical alignment */
+  padding-bottom: 1px;
+}
+
+/* State when input is focused or has content (placeholder not shown) */
+.form-field-float-label-group input:focus + label,
+.form-field-float-label-group input:not(:placeholder-shown) + label,
+.form-field-float-label-group textarea:focus + label,
+.form-field-float-label-group textarea:not(:placeholder-shown) + label {
+  top: -10px; /* Moves label up above the input field's top border */
+  left: 6px;  /* Slight adjustment for better visual alignment */
+  font-size: 10px; /* Smaller font size for the floated label */
+  color: #007bff; /* Primary color when floated/active */
+  background-color: #f8f9fa; /* Modal content BG to "cut out" the border */
+  padding: 0 4px; /* Horizontal padding for the background effect */
+  width: auto; /* Allow label to be only as wide as its text */
+  height: auto;
+  text-overflow: initial;
+  overflow: initial;
+  line-height: normal;
+}
+
+/* Hide the actual placeholder text as the label will act as the placeholder */
+.form-field-float-label-group input::placeholder,
+.form-field-float-label-group textarea::placeholder {
+  color: transparent;
+}
+
 
 /* Buttons */
 button,
