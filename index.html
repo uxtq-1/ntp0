@@ -64,306 +64,138 @@
         >&times;</button>
         <h3>Client Order Menu</h3>
         <form id="client-order-form" autocomplete="off" novalidate>
-        <div>
-          <label for="order-number">Order Number:</label>
-          <input
-            type="text"
-            id="order-number"
-            name="order-number"
-            readonly
-            aria-readonly="true"
-          />
-        </div>
-        <div>
-          <label for="client-ref-number">Client Reference Number:</label>
-          <input
-            type="text"
-            id="client-ref-number"
-            name="client-ref-number"
-            autocomplete="off"
-            required
-            aria-required="true"
-            maxlength="50"
-            pattern="[A-Za-z0-9\-]+"
-            title="Alphanumeric and dashes only"
-          />
-        </div>
-        <div>
-          <label for="pickup-name">Pick-up Name:</label>
-          <input
-            type="text"
-            id="pickup-name"
-            name="pickup-name"
-            autocomplete="off"
-            required
-            aria-required="true"
-            maxlength="100"
-          />
-        </div>
-        <fieldset>
-          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="pickup-addresses-panel" data-target="pickup-addresses-panel">
-            Pick-up Addresses <span class="collapsible-icon">►</span>
-          </legend>
-          <div id="pickup-addresses-panel" class="collapsible-panel" hidden>
-            <div id="pickup-addresses-container" aria-live="polite" aria-relevant="additions removals">
-              <div class="pickup-address-entry">
-                <input
-                type="text"
-                class="pickup-address"
-                name="pickup-address-1"
-                placeholder="Pick-up Address 1"
-                required
-                aria-required="true"
-                autocomplete="off"
-                maxlength="200"
-              />
-            </div>
-            </div>
-            <button type="button" id="add-pickup-address-btn" aria-label="Add Another Pick-up Address">Add Another Pick-up Address</button>
+          <div>
+            <label for="order-number">Order Number:</label>
+            <input type="text" id="order-number" name="order-number" readonly aria-readonly="true"/>
           </div>
-        </fieldset>
-        <div>
-          <label for="pickup-state">Pick-up State:</label>
-          <input
-            type="text"
-            id="pickup-state"
-            name="pickup-state"
-            autocomplete="off"
-            maxlength="50"
-          />
-        </div>
-        <div>
-          <label for="pickup-zip">Pick-up Zip Code:</label>
-          <input
-            type="text"
-            id="pickup-zip"
-            name="pickup-zip"
-            autocomplete="off"
-            maxlength="20"
-            pattern="[0-9\-]+"
-            title="Numbers and dashes only"
-          />
-        </div>
-        <div>
-          <label for="pickup-country">Pick-up Country:</label>
-          <input
-            type="text"
-            id="pickup-country"
-            name="pickup-country"
-            autocomplete="off"
-            maxlength="50"
-          />
-        </div>
 
-        <fieldset>
-          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="pickup-contacts-panel" data-target="pickup-contacts-panel">
-            Pick-up Contact Numbers <span class="collapsible-icon">►</span>
-          </legend>
-          <div id="pickup-contacts-panel" class="collapsible-panel" hidden>
-            <div id="pickup-contacts-container" aria-live="polite" aria-relevant="additions removals">
-              <div class="pickup-contact-entry">
-                <input
-                type="tel"
-                class="pickup-contact"
-                name="pickup-contact-1"
-                placeholder="Pick-up Contact 1"
-                pattern="[\d\s+\-()]+"
-                title="Digits, spaces, plus, dash, parentheses"
-                autocomplete="off"
-                maxlength="20"
-              />
-            </div>
-            </div>
-            <button type="button" id="add-pickup-contact-btn" aria-label="Add Another Pick-up Contact">Add Another Pick-up Contact</button>
-          </div>
-        </fieldset>
-
-        <div>
-          <label for="delivery-name">Delivery Name:</label>
-          <input
-            type="text"
-            id="delivery-name"
-            name="delivery-name"
-            autocomplete="off"
-            maxlength="100"
-          />
-        </div>
-
-        <fieldset>
-          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="delivery-addresses-panel" data-target="delivery-addresses-panel">
-            Delivery Addresses <span class="collapsible-icon">►</span>
-          </legend>
-          <div id="delivery-addresses-panel" class="collapsible-panel" hidden>
-            <div id="delivery-addresses-container" aria-live="polite" aria-relevant="additions removals">
-              <div class="delivery-address-entry">
-                <input
-                type="text"
-                class="delivery-address"
-                name="delivery-address-1"
-                placeholder="Delivery Address 1"
-                autocomplete="off"
-                maxlength="200"
-              />
-            </div>
-            </div>
-            <button type="button" id="add-delivery-address-btn" aria-label="Add Another Delivery Address">Add Another Delivery Address</button>
-          </div>
-        </fieldset>
-        <div>
-          <label for="delivery-state">Delivery State:</label>
-          <input
-            type="text"
-            id="delivery-state"
-            name="delivery-state"
-            autocomplete="off"
-            maxlength="50"
-          />
-        </div>
-        <div>
-          <label for="delivery-zip">Delivery Zip Code:</label>
-          <input
-            type="text"
-            id="delivery-zip"
-            name="delivery-zip"
-            autocomplete="off"
-            maxlength="20"
-            pattern="[0-9\-]+"
-            title="Numbers and dashes only"
-          />
-        </div>
-        <div>
-          <label for="delivery-country">Delivery Country:</label>
-          <input
-            type="text"
-            id="delivery-country"
-            name="delivery-country"
-            autocomplete="off"
-            maxlength="50"
-          />
-        </div>
-
-        <fieldset>
-          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="delivery-contacts-panel" data-target="delivery-contacts-panel">
-            Delivery Contact Numbers <span class="collapsible-icon">►</span>
-          </legend>
-          <div id="delivery-contacts-panel" class="collapsible-panel" hidden>
-            <div id="delivery-contacts-container" aria-live="polite" aria-relevant="additions removals">
-              <div class="delivery-contact-entry">
-                <input
-                type="tel"
-                class="delivery-contact"
-                name="delivery-contact-1"
-                placeholder="Delivery Contact 1"
-                pattern="[\d\s+\-()]+"
-                title="Digits, spaces, plus, dash, parentheses"
-                autocomplete="off"
-                maxlength="20"
-              />
-            </div>
-            </div>
-            <button type="button" id="add-delivery-contact-btn" aria-label="Add Another Delivery Contact">Add Another Delivery Contact</button>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="tracking-emails-panel" data-target="tracking-emails-panel">
-            Email Addresses for Tracking <span class="collapsible-icon">►</span>
-          </legend>
-          <div id="tracking-emails-panel" class="collapsible-panel" hidden>
-            <div id="tracking-emails-container" aria-live="polite" aria-relevant="additions removals">
-              <div class="tracking-email-entry">
-                <input
-                type="email"
-                class="tracking-email"
-                name="tracking-email-1"
-                placeholder="Tracking Email 1"
-                autocomplete="off"
-                maxlength="100"
-              />
-            </div>
-            </div>
-            <button type="button" id="add-tracking-email-btn" aria-label="Add Another Email">Add Another Email</button>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="items-panel" data-target="items-panel">
-            Items (Description, Quantity, Weight, Dimensions) <span class="collapsible-icon">►</span>
-          </legend>
-          <div id="items-panel" class="collapsible-panel" hidden>
-            <div id="item-descriptions-container" aria-live="polite" aria-relevant="additions removals">
-              <div class="item-description-entry" role="group" aria-label="Item 1">
-                <h5>Item 1</h5>
-                <textarea
-                class="item-description"
-                name="item-description-1"
-                placeholder="Item Description"
-                maxlength="500"
-              ></textarea>
-              <div class="item-details-line-1">
-                <input
-                  type="number"
-                  class="item-qty"
-                  name="item-qty-1"
-                  placeholder="Qty"
-                  min="1"
-                  title="Quantity"
-                  aria-label="Quantity"
-                />
-                <input
-                  type="text"
-                  class="item-weight"
-                  name="item-weight-1"
-                  placeholder="Weight (e.g., 5kg)"
-                  title="Weight"
-                  maxlength="20"
-                />
-              </div>
-              <div class="item-details-line-2">
-                <label>Dimensions (LxWxH):</label>
-                <input
-                  type="text"
-                  class="item-length"
-                  name="item-length-1"
-                  placeholder="L"
-                  title="Length"
-                  maxlength="10"
-                />
-                <input
-                  type="text"
-                  class="item-width"
-                  name="item-width-1"
-                  placeholder="W"
-                  title="Width"
-                  maxlength="10"
-                />
-                <input
-                  type="text"
-                  class="item-height"
-                  name="item-height-1"
-                  placeholder="H"
-                  title="Height"
-                  maxlength="10"
-                />
+          <fieldset>
+            <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="client-locations-panel" data-target="client-locations-panel">
+              Shipment Parties & Locations <span class="collapsible-icon">►</span>
+            </legend>
+            <div id="client-locations-panel" class="collapsible-panel" hidden>
+              <div class="form-section-columns">
+                <div class="form-column">
+                  <h4>Pick-up</h4>
+                  <div>
+                    <label for="pickup-name">Pick-up Name:</label>
+                    <input type="text" id="pickup-name" name="pickup-name" autocomplete="off" required aria-required="true" maxlength="100"/>
+                  </div>
+                  <h5>Pick-up Addresses</h5>
+                  <div id="pickup-addresses-container" aria-live="polite" aria-relevant="additions removals">
+                    <div class="pickup-address-entry">
+                      <input type="text" class="pickup-address" name="pickup-address-1" placeholder="Pick-up Address 1" required aria-required="true" autocomplete="off" maxlength="200"/>
+                    </div>
+                  </div>
+                  <button type="button" id="add-pickup-address-btn" aria-label="Add Another Pick-up Address">Add Another Pick-up Address</button>
+                  <div>
+                    <label for="pickup-state">Pick-up State:</label>
+                    <input type="text" id="pickup-state" name="pickup-state" autocomplete="off" maxlength="50"/>
+                  </div>
+                  <div>
+                    <label for="pickup-zip">Pick-up Zip Code:</label>
+                    <input type="text" id="pickup-zip" name="pickup-zip" autocomplete="off" maxlength="20" pattern="[0-9\-]+" title="Numbers and dashes only"/>
+                  </div>
+                  <div>
+                    <label for="pickup-country">Pick-up Country:</label>
+                    <input type="text" id="pickup-country" name="pickup-country" autocomplete="off" maxlength="50"/>
+                  </div>
+                  <h5>Pick-up Contact Numbers</h5>
+                  <div id="pickup-contacts-container" aria-live="polite" aria-relevant="additions removals">
+                    <div class="pickup-contact-entry">
+                      <input type="tel" class="pickup-contact" name="pickup-contact-1" placeholder="Pick-up Contact 1" pattern="[\d\s+\-()]+" title="Digits, spaces, plus, dash, parentheses" autocomplete="off" maxlength="20"/>
+                    </div>
+                  </div>
+                  <button type="button" id="add-pickup-contact-btn" aria-label="Add Another Pick-up Contact">Add Another Pick-up Contact</button>
+                </div>
+                <div class="form-column">
+                  <h4>Delivery</h4>
+                  <div>
+                    <label for="delivery-name">Delivery Name:</label>
+                    <input type="text" id="delivery-name" name="delivery-name" autocomplete="off" maxlength="100"/>
+                  </div>
+                  <h5>Delivery Addresses</h5>
+                  <div id="delivery-addresses-container" aria-live="polite" aria-relevant="additions removals">
+                    <div class="delivery-address-entry">
+                      <input type="text" class="delivery-address" name="delivery-address-1" placeholder="Delivery Address 1" autocomplete="off" maxlength="200"/>
+                    </div>
+                  </div>
+                  <button type="button" id="add-delivery-address-btn" aria-label="Add Another Delivery Address">Add Another Delivery Address</button>
+                  <div>
+                    <label for="delivery-state">Delivery State:</label>
+                    <input type="text" id="delivery-state" name="delivery-state" autocomplete="off" maxlength="50"/>
+                  </div>
+                  <div>
+                    <label for="delivery-zip">Delivery Zip Code:</label>
+                    <input type="text" id="delivery-zip" name="delivery-zip" autocomplete="off" maxlength="20" pattern="[0-9\-]+" title="Numbers and dashes only"/>
+                  </div>
+                  <div>
+                    <label for="delivery-country">Delivery Country:</label>
+                    <input type="text" id="delivery-country" name="delivery-country" autocomplete="off" maxlength="50"/>
+                  </div>
+                  <h5>Delivery Contact Numbers</h5>
+                  <div id="delivery-contacts-container" aria-live="polite" aria-relevant="additions removals">
+                    <div class="delivery-contact-entry">
+                      <input type="tel" class="delivery-contact" name="delivery-contact-1" placeholder="Delivery Contact 1" pattern="[\d\s+\-()]+" title="Digits, spaces, plus, dash, parentheses" autocomplete="off" maxlength="20"/>
+                    </div>
+                  </div>
+                  <button type="button" id="add-delivery-contact-btn" aria-label="Add Another Delivery Contact">Add Another Delivery Contact</button>
+                </div>
               </div>
             </div>
+          </fieldset>
+
+          <fieldset>
+            <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="client-details-notifications-panel" data-target="client-details-notifications-panel">
+              Order Details & Notifications <span class="collapsible-icon">►</span>
+            </legend>
+            <div id="client-details-notifications-panel" class="collapsible-panel" hidden>
+              <div class="form-section-columns">
+                <div class="form-column">
+                  <h4>Items & Instructions</h4>
+                  <h5>Items (Description, Quantity, Weight, Dimensions)</h5>
+                  <div id="item-descriptions-container" aria-live="polite" aria-relevant="additions removals">
+                    <div class="item-description-entry" role="group" aria-label="Item 1">
+                      <h6>Item 1</h6> <!-- Changed from h5 to h6 for better hierarchy -->
+                      <textarea class="item-description" name="item-description-1" placeholder="Item Description" maxlength="500"></textarea>
+                      <div class="item-details-line-1">
+                        <input type="number" class="item-qty" name="item-qty-1" placeholder="Qty" min="1" title="Quantity" aria-label="Quantity"/>
+                        <input type="text" class="item-weight" name="item-weight-1" placeholder="Weight (e.g., 5kg)" title="Weight" maxlength="20"/>
+                      </div>
+                      <div class="item-details-line-2">
+                        <label>Dimensions (LxWxH):</label>
+                        <input type="text" class="item-length" name="item-length-1" placeholder="L" title="Length" maxlength="10"/>
+                        <input type="text" class="item-width" name="item-width-1" placeholder="W" title="Width" maxlength="10"/>
+                        <input type="text" class="item-height" name="item-height-1" placeholder="H" title="Height" maxlength="10"/>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" id="add-item-description-btn" aria-label="Add Another Item">Add Another Item</button>
+                  <div>
+                    <label for="special-instructions">Special Instructions:</label>
+                    <textarea id="special-instructions" name="special-instructions" maxlength="1000" placeholder="Enter any special instructions here..."></textarea>
+                  </div>
+                </div>
+                <div class="form-column">
+                  <h4>References & Tracking</h4>
+                  <div>
+                    <label for="client-ref-number">Client Reference Number:</label>
+                    <input type="text" id="client-ref-number" name="client-ref-number" autocomplete="off" required aria-required="true" maxlength="50" pattern="[A-Za-z0-9\-]+" title="Alphanumeric and dashes only"/>
+                  </div>
+                  <h5>Email Addresses for Tracking</h5>
+                  <div id="tracking-emails-container" aria-live="polite" aria-relevant="additions removals">
+                    <div class="tracking-email-entry">
+                      <input type="email" class="tracking-email" name="tracking-email-1" placeholder="Tracking Email 1" autocomplete="off" maxlength="100"/>
+                    </div>
+                  </div>
+                  <button type="button" id="add-tracking-email-btn" aria-label="Add Another Email">Add Another Email</button>
+                </div>
+              </div>
             </div>
-            <button type="button" id="add-item-description-btn" aria-label="Add Another Item">Add Another Item</button>
-          </div>
-        </fieldset>
+          </fieldset>
 
-        <div>
-          <label for="special-instructions">Special Instructions:</label>
-          <textarea
-            id="special-instructions"
-            name="special-instructions"
-            maxlength="1000"
-            placeholder="Enter any special instructions here..."
-          ></textarea>
-        </div>
-
-        <button type="submit" id="create-order-btn">Create Order</button>
-      </form>
+          <button type="submit" id="create-order-btn">Create Order</button>
+        </form>
       </div>
     </aside>
 

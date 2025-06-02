@@ -199,6 +199,16 @@ h1, h2, h3, h4, h5, legend {
   border-bottom: 1px solid #dee2e6; /* Palette: Borders (or #ced4da) */
   padding-bottom: 5px;
 }
+.form-column h5 { /* New style for sub-headings within columns */
+  font-size: 1.0em;
+  color: #343a40; /* Dark grey, less prominent than h4 */
+  margin-top: 15px; /* Space above if following other fields/elements */
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+.form-column h5:first-child { /* If an h5 is the very first element in a column */
+    margin-top: 0;
+}
 
 
 @media (max-width: 768px) { /* Consolidate mobile-first/default form styles here */
