@@ -3,8 +3,13 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   // --- Order Number Generation ---
-  let lastOrderDate = '';
-  let orderSequence = 1;
+  // Attempt to load lastOrderDate and orderSequence from sessionStorage.
+  // Initialize to defaults if not found.
+  // Note: This client-side approach to order number generation has limitations.
+  // A robust, unique order number generation system typically requires a backend component
+  // to ensure uniqueness across all clients and sessions, and to prevent tampering.
+  let lastOrderDate = sessionStorage.getItem('lastOrderDate') || '';
+  let orderSequence = parseInt(sessionStorage.getItem('orderSequence')) || 1;
 
   function generateOrderNumber() {
     const now = new Date();
@@ -25,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const sequenceStr = String(orderSequence).padStart(3, '0');
     orderSequence++;
 
+    // Save the updated values to sessionStorage
+    sessionStorage.setItem('lastOrderDate', lastOrderDate);
+    sessionStorage.setItem('orderSequence', orderSequence.toString());
+
     return `${currentDate}-${hours}${minutes}${seconds}-${sequenceStr}`;
   }
 
@@ -33,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (orderNumberField) {
       orderNumberField.value = generateOrderNumber();
     } else {
-      alert('Error: Order number field not found.');
+      console.error('Error: Order number field not found.');
     }
   }
 
@@ -50,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function addDynamicFieldEntry(containerId, entryClass, createEntryFieldsFn, removeButtonClassPrefix, sectionTitlePrefix) {
     const container = document.getElementById(containerId);
     if (!container) {
-      alert(`Error: Container ${containerId} not found.`);
+      console.warn(`Warning: Container ${containerId} not found for dynamic fields.`);
       return;
     }
 
@@ -141,14 +150,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addButton) {
       addButton.addEventListener('click', () => addDynamicFieldEntry(containerId, entryClass, createEntryFieldsFn, removeButtonClassPrefix, sectionTitlePrefix));
     } else {
-      alert(`Warning: Add button ${addButtonId} not found.`);
+      console.warn(`Warning: Add button ${addButtonId} not found.`);
     }
 
     const container = document.getElementById(containerId);
     if (container) {
       container.addEventListener('click', (event) => handleDynamicFieldRemove(event, entryClass, removeButtonClassPrefix, sectionTitlePrefix));
     } else {
-      alert(`Warning: Container ${containerId} not found for event delegation.`);
+      console.warn(`Warning: Container ${containerId} not found for event delegation.`);
     }
   }
 
@@ -257,47 +266,46 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Initialize Dynamic Field Sections ---
 
   // --- Collapsible Section Logic ---
-  function toggleCollapsibleSection(triggerElement) {
-    const targetId = triggerElement.getAttribute('data-target');
-    const panel = document.getElementById(targetId);
-
-    if (panel) {
-      triggerElement.classList.toggle('active');
-      panel.hidden = !panel.hidden;
-      const isExpanded = !panel.hidden;
-      triggerElement.setAttribute('aria-expanded', isExpanded.toString());
-
-      const icon = triggerElement.querySelector('.collapsible-icon');
-      if (icon) {
-        icon.classList.toggle('icon-open', isExpanded);
-        // Assuming CSS will rotate/change the icon based on .icon-open
-      }
-    } else {
-      alert(`Error: Collapsible panel with ID ${targetId} not found.`);
-    }
-  }
-
-  function initCollapsibleSections() {
-    const triggers = document.querySelectorAll('.collapsible-trigger');
-    triggers.forEach(trigger => {
-      // Set initial aria-expanded state based on panel's hidden attribute
-      const targetId = trigger.getAttribute('data-target');
+  const CollapsibleManager = {
+    toggleCollapsibleSection: function(triggerElement) {
+      const targetId = triggerElement.getAttribute('data-target');
       const panel = document.getElementById(targetId);
+
       if (panel) {
+        triggerElement.classList.toggle('active');
+        panel.hidden = !panel.hidden;
         const isExpanded = !panel.hidden;
-        trigger.setAttribute('aria-expanded', isExpanded.toString());
-        const icon = trigger.querySelector('.collapsible-icon');
+        triggerElement.setAttribute('aria-expanded', isExpanded.toString());
+
+        const icon = triggerElement.querySelector('.collapsible-icon');
         if (icon) {
           icon.classList.toggle('icon-open', isExpanded);
         }
+      } else {
+        console.warn(`Warning: Collapsible panel with ID ${targetId} not found.`);
       }
+    },
 
-      trigger.addEventListener('click', (event) => {
-        toggleCollapsibleSection(event.currentTarget);
+    initCollapsibleSections: function() {
+      const triggers = document.querySelectorAll('.collapsible-trigger');
+      triggers.forEach(trigger => {
+        const targetId = trigger.getAttribute('data-target');
+        const panel = document.getElementById(targetId);
+        if (panel) {
+          const isExpanded = !panel.hidden;
+          trigger.setAttribute('aria-expanded', isExpanded.toString());
+          const icon = trigger.querySelector('.collapsible-icon');
+          if (icon) {
+            icon.classList.toggle('icon-open', isExpanded);
+          }
+        }
+
+        trigger.addEventListener('click', (event) => {
+          CollapsibleManager.toggleCollapsibleSection(event.currentTarget);
+        });
       });
-    });
-  }
-
+    }
+  };
 
   // --- Validation Helper ---
   /**
@@ -541,7 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
         populateOrderNumber();
       });
     } else {
-      alert('Error: Client order form not found.');
+      console.error('Error: Client order form not found. Cannot attach submit listener.');
     }
   }
 
@@ -608,7 +616,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resetDynamicSection('driver-contacts-container', 'driver-contact-entry', { firstEntryFieldSelector: '.driver-contact', placeholderPrefix: 'Contact Number', sectionTitlePrefix: 'Contact Number' }); // Assuming H5 for driver contacts too
       });
     } else {
-      alert('Error: Driver profile form not found.');
+      console.error('Error: Driver profile form not found. Cannot attach submit listener.');
     }
   }
 
@@ -618,7 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMap(); // Initialize the map
   populateOrderNumber(); // Populate initial order number on load
   initMenuToggles(); // Initialize menu toggle functionality
-  initCollapsibleSections(); // Initialize collapsible sections
+  CollapsibleManager.initCollapsibleSections(); // Initialize collapsible sections
 
   // Expose functions for testing purposes
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
@@ -627,8 +635,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.handleDynamicFieldRemove = handleDynamicFieldRemove;
     window.validateField = validateField;
     window.Validators = Validators;
-    window.toggleCollapsibleSection = toggleCollapsibleSection; // Expose for testing
-    window.initCollapsibleSections = initCollapsibleSections; // Expose for testing
+    window.CollapsibleManager = CollapsibleManager; // Expose the manager
+    window.collectDynamicValues = collectDynamicValues; // Expose for testing
     // initMenuToggles is already global
     // addDynamicFieldEntry and other helpers could also be exposed if direct unit tests are needed
   }
@@ -644,7 +652,7 @@ function initMenuToggles() {
   const closeDriverMenuBtn = document.getElementById('close-driver-menu-btn');
 
   if (!clientMenuToggleBtn || !driverMenuToggleBtn || !clientMenuPanel || !driverMenuPanel || !closeClientMenuBtn || !closeDriverMenuBtn) {
-    alert('Error: One or more menu elements (toggle buttons, panels, or close buttons) not found. Ensure all IDs are correct.');
+    console.error('Error: One or more menu elements (toggle buttons, panels, or close buttons) not found. Ensure all IDs are correct.');
     return;
   }
 
@@ -718,13 +726,13 @@ function initMap() {
   const mapPlaceholder = document.getElementById('map-placeholder');
 
   if (!mapPlaceholder) {
-    alert('Error: Map placeholder element not found.');
+    console.error('Error: Map placeholder element not found.');
     return;
   }
 
   // Check if map is already initialized
   if (mapPlaceholder._leaflet_id) {
-    alert('Warning: Map already initialized.');
+    console.warn('Warning: Map already initialized.');
     return;
   }
 
@@ -741,7 +749,7 @@ function initMap() {
       
     console.log('Map initialized successfully.');
   } catch (error) {
-    alert('Error: Error initializing Leaflet map: ' + error.message);
+    console.error('Error: Error initializing Leaflet map: ' + error.message);
     mapPlaceholder.innerHTML = '<p style="color:red; text-align:center; font-weight:bold;">Map Error: Could not initialize the map. ' + error.message + '</p>';
   }
 }
