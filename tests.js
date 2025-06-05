@@ -93,6 +93,132 @@ function testInitMenuToggles() {
   logTestResult(testSuiteName, true, "Skipping actual execution in this combined step for brevity, assumed OK from previous step.");
 }
 
+function testCollectDynamicValues() {
+  const testSuiteName = 'testCollectDynamicValues';
+  let overallSuitePassed = true;
+  mockAlert(); // In case any unexpected alerts are triggered by the function
+
+  // Scenario 1: Empty Container
+  let testName1 = `${testSuiteName} - Empty Container`;
+  setupDOM('<div id="test-empty-container"></div>');
+  let result1 = [];
+  try {
+    result1 = window.collectDynamicValues('test-empty-container', '.item', false);
+    if (Array.isArray(result1) && result1.length === 0) {
+      logTestResult(testName1, true);
+    } else {
+      overallSuitePassed = false;
+      logTestResult(testName1, false, `Expected [], got ${JSON.stringify(result1)}`);
+    }
+  } catch (e) {
+    overallSuitePassed = false;
+    logTestResult(testName1, false, `Error during execution: ${e.message}`);
+  }
+  cleanupDOM();
+
+  // Scenario 2: Single Fields
+  let testName2 = `${testSuiteName} - Single Fields`;
+  setupDOM('<div id="test-single-fields"><input class="item" value="Apple"><input class="item" value="  "><input class="item" value="Banana"><input class="item" value="Orange "></div>');
+  let result2 = [];
+  const expected2 = ['Apple', 'Banana', 'Orange'];
+  try {
+    result2 = window.collectDynamicValues('test-single-fields', '.item', false);
+    if (JSON.stringify(result2) === JSON.stringify(expected2)) {
+      logTestResult(testName2, true);
+    } else {
+      overallSuitePassed = false;
+      logTestResult(testName2, false, `Expected ${JSON.stringify(expected2)}, got ${JSON.stringify(result2)}`);
+    }
+  } catch (e) {
+    overallSuitePassed = false;
+    logTestResult(testName2, false, `Error during execution: ${e.message}`);
+  }
+  cleanupDOM();
+
+  // Scenario 3: Grouped Fields with fieldsMap
+  let testName3 = `${testSuiteName} - Grouped Fields with fieldsMap`;
+  const html3 = `
+    <div id="test-grouped-fields">
+      <div class="entry">
+        <input class="field-name" value="John Doe">
+        <input class="field-email" value="john@example.com">
+      </div>
+      <div class="entry"> <!-- Empty entry -->
+        <input class="field-name" value="  ">
+        <input class="field-email" value="">
+      </div>
+      <div class="entry">
+        <input class="field-name" value="Jane Doe ">
+        <input class="field-email" value="  "> <!-- Intentionally empty string after trim -->
+      </div>
+      <div class="entry"> <!-- Entry with only one field filled -->
+        <input class="field-name" value="Peter Pan">
+        <input class="field-email" value="">
+      </div>
+    </div>`;
+  setupDOM(html3);
+  const fieldsMap3 = { name: 'field-name', email: 'field-email' };
+  const expected3 = [
+    { name: 'John Doe', email: 'john@example.com' },
+    { name: 'Jane Doe', email: '' },
+    { name: 'Peter Pan', email: '' }
+  ];
+  let result3 = [];
+  try {
+    result3 = window.collectDynamicValues('test-grouped-fields', 'entry', true, fieldsMap3);
+    if (JSON.stringify(result3) === JSON.stringify(expected3)) {
+      logTestResult(testName3, true);
+    } else {
+      overallSuitePassed = false;
+      logTestResult(testName3, false, `Expected ${JSON.stringify(expected3)}, got ${JSON.stringify(result3)}`);
+    }
+  } catch (e) {
+    overallSuitePassed = false;
+    logTestResult(testName3, false, `Error during execution: ${e.message}`);
+  }
+  cleanupDOM();
+
+  // Scenario 4: Grouped Fields - All fields in an entry are empty
+  let testName4 = `${testSuiteName} - Grouped Fields - All Empty in Entry`;
+  const html4 = `
+    <div id="test-grouped-empty-entry">
+      <div class="entry">
+        <input class="field-a" value=" ">
+        <input class="field-b" value="">
+      </div>
+      <div class="entry">
+        <input class="field-a" value="ValueA">
+        <input class="field-b" value="  ">
+      </div>
+       <div class="entry"> <!-- Another completely empty -->
+        <input class="field-a" value="">
+        <input class="field-b" value="">
+      </div>
+    </div>`;
+  setupDOM(html4);
+  const fieldsMap4 = { a: 'field-a', b: 'field-b' };
+  const expected4 = [{ a: 'ValueA', b: '' }];
+  let result4 = [];
+  try {
+    result4 = window.collectDynamicValues('test-grouped-empty-entry', 'entry', true, fieldsMap4);
+    if (JSON.stringify(result4) === JSON.stringify(expected4)) {
+      logTestResult(testName4, true);
+    } else {
+      overallSuitePassed = false;
+      logTestResult(testName4, false, `Expected ${JSON.stringify(expected4)}, got ${JSON.stringify(result4)}`);
+    }
+  } catch (e) {
+    overallSuitePassed = false;
+    logTestResult(testName4, false, `Error during execution: ${e.message}`);
+  }
+  cleanupDOM();
+
+  restoreAlert();
+  if (!overallSuitePassed) {
+    console.warn(`${testSuiteName} has one or more failures.`);
+  }
+}
+
 // --- NEW TEST FUNCTIONS ---
 
 function testErrorAlerts() {
@@ -336,12 +462,16 @@ function runTests() {
   if (typeof window.setupDynamicFieldSectionListeners !== 'function' ||
       typeof window.handleDynamicFieldRemove !== 'function' ||
       typeof window.validateField !== 'function' ||
-      typeof window.Validators !== 'object') {
+      typeof window.Validators !== 'object' ||
+      typeof window.collectDynamicValues !== 'function' ||
+      typeof window.CollapsibleManager !== 'object' ||
+      typeof window.CollapsibleManager.initCollapsibleSections !== 'function' ||
+      typeof window.CollapsibleManager.toggleCollapsibleSection !== 'function') {
     functionsAvailable = false;
-    logTestResult('Global Setup Check', false, 'Required functions (setupDynamicFieldSectionListeners, handleDynamicFieldRemove, validateField, Validators) not exposed by app.js.');
+    logTestResult('Global Setup Check', false, 'One or more required functions or CollapsibleManager methods are not exposed by app.js.');
   }
 
-  if (typeof initMenuToggles !== 'function') {
+  if (typeof initMenuToggles !== 'function') { // This check can remain if initMenuToggles is indeed still global and used
     functionsAvailable = false;
     logTestResult('Global Setup Check for Menus', false, 'initMenuToggles not global.');
   }
@@ -349,8 +479,12 @@ function runTests() {
   if (functionsAvailable) {
     testHandleDynamicFieldRemove(); // Assumed OK from previous steps
     testInitMenuToggles();          // Assumed OK from previous steps
+    // Note: If testInitMenuToggles or other tests were using the *old* global collapsible functions,
+    // those test implementations would need to be updated to call window.CollapsibleManager.method().
+    // Based on previous views, they were placeholders, so no internal changes to them are made here.
     testErrorAlerts();
     testInputValidation();
+    testCollectDynamicValues(); // Added new test function call
   } else {
     logTestResult('Core Tests Skipped', false, 'Due to missing global functions, core application tests were skipped.');
   }
