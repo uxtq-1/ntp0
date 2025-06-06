@@ -749,7 +749,9 @@ function initMap() {
       
     console.log('Map initialized successfully.');
   } catch (error) {
-    console.error('Error: Error initializing Leaflet map: ' + error.message);
+    const msg = 'Error initializing Leaflet map: ' + error.message;
+    console.error('Error: ' + msg);
+    alert(msg);
     mapPlaceholder.innerHTML = '<p style="color:red; text-align:center; font-weight:bold;">Map Error: Could not initialize the map. ' + error.message + '</p>';
   }
 }
