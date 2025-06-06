@@ -88,9 +88,116 @@ function testHandleDynamicFieldRemove() {
 
 function testInitMenuToggles() {
   const testSuiteName = 'testInitMenuToggles';
-  // ... (previous implementation of testInitMenuToggles - assumed to be correct)
-  // Similar to above, assumed OK.
-  logTestResult(testSuiteName, true, "Skipping actual execution in this combined step for brevity, assumed OK from previous step.");
+  const html = `
+   <div id="vertical-menu-toggles">
+     <button id="vertical-client-toggle" aria-label="Open Client Menu" aria-expanded="false" aria-controls="client-menu-container">Client</button>
+     <button id="vertical-driver-toggle" aria-label="Open Driver Menu" aria-expanded="false" aria-controls="driver-menu-container">Driver</button>
+   </div>
+   <aside id="client-menu-container" hidden style="display: none;">
+     <div class="menu-modal-content">
+       <button class="close-menu-btn" id="close-client-menu-btn" aria-label="Close Client Menu">&times;</button>
+       <h3>Client Order Menu</h3>
+     </div>
+   </aside>
+   <aside id="driver-menu-container" hidden style="display: none;">
+     <div class="menu-modal-content">
+       <button class="close-menu-btn" id="close-driver-menu-btn" aria-label="Close Driver Menu">&times;</button>
+       <h3>Driver Profile Menu</h3>
+     </div>
+   </aside>`;
+
+  // --- Client Menu Tests ---
+  let dom = setupDOM(html);
+  window.initMenuToggles(); // Initialize listeners for the new DOM
+
+  const clientToggle = dom.querySelector('#vertical-client-toggle');
+  const clientMenu = dom.querySelector('#client-menu-container');
+  const closeClientBtn = dom.querySelector('#close-client-menu-btn');
+  const driverToggle = dom.querySelector('#vertical-driver-toggle');
+  const driverMenu = dom.querySelector('#driver-menu-container');
+  const closeDriverBtn = dom.querySelector('#close-driver-menu-btn');
+
+  // Initial State Checks (Client)
+  logTestResult(testSuiteName + ' - Client Menu Initial State Hidden', clientMenu.hidden && clientMenu.style.display === 'none');
+  logTestResult(testSuiteName + ' - Client Toggle Initial State aria-expanded', clientToggle.getAttribute('aria-expanded') === 'false');
+
+  // Test Open Client Menu
+  clientToggle.click();
+  let clientIsOpen = !clientMenu.hidden && clientMenu.style.display === 'block' && clientToggle.getAttribute('aria-expanded') === 'true';
+  logTestResult(testSuiteName + ' - Client Menu Opens', clientIsOpen, `Expected: not hidden, display=block, aria-expanded=true. Got: hidden=${clientMenu.hidden}, display=${clientMenu.style.display}, aria=${clientToggle.getAttribute('aria-expanded')}`);
+
+  // Test Close Client Menu via Close Button
+  closeClientBtn.click();
+  let clientIsClosedBtn = clientMenu.hidden && clientMenu.style.display === 'none' && clientToggle.getAttribute('aria-expanded') === 'false';
+  logTestResult(testSuiteName + ' - Client Menu Closes via Button', clientIsClosedBtn, `Expected: hidden, display=none, aria-expanded=false. Got: hidden=${clientMenu.hidden}, display=${clientMenu.style.display}, aria=${clientToggle.getAttribute('aria-expanded')}`);
+
+  // Test Close Client Menu via Overlay Click
+  clientToggle.click(); // Reopen
+  clientMenu.click(); // Click on panel itself (overlay)
+  let clientIsClosedOverlay = clientMenu.hidden && clientMenu.style.display === 'none' && clientToggle.getAttribute('aria-expanded') === 'false';
+  logTestResult(testSuiteName + ' - Client Menu Closes via Overlay', clientIsClosedOverlay, `Expected: hidden, display=none, aria-expanded=false. Got: hidden=${clientMenu.hidden}, display=${clientMenu.style.display}, aria=${clientToggle.getAttribute('aria-expanded')}`);
+  cleanupDOM();
+
+
+  // --- Driver Menu Tests ---
+  dom = setupDOM(html);
+  window.initMenuToggles();
+
+  // Re-query elements from the new DOM
+  const clientToggle_d = dom.querySelector('#vertical-client-toggle');
+  const clientMenu_d = dom.querySelector('#client-menu-container');
+  const driverToggle_d = dom.querySelector('#vertical-driver-toggle');
+  const driverMenu_d = dom.querySelector('#driver-menu-container');
+  const closeDriverBtn_d = dom.querySelector('#close-driver-menu-btn');
+
+  // Initial State Checks (Driver)
+  logTestResult(testSuiteName + ' - Driver Menu Initial State Hidden', driverMenu_d.hidden && driverMenu_d.style.display === 'none');
+  logTestResult(testSuiteName + ' - Driver Toggle Initial State aria-expanded', driverToggle_d.getAttribute('aria-expanded') === 'false');
+
+  // Test Open Driver Menu
+  driverToggle_d.click();
+  let driverIsOpen = !driverMenu_d.hidden && driverMenu_d.style.display === 'block' && driverToggle_d.getAttribute('aria-expanded') === 'true';
+  logTestResult(testSuiteName + ' - Driver Menu Opens', driverIsOpen, `Expected: not hidden, display=block, aria-expanded=true. Got: hidden=${driverMenu_d.hidden}, display=${driverMenu_d.style.display}, aria=${driverToggle_d.getAttribute('aria-expanded')}`);
+
+  // Test Close Driver Menu via Close Button
+  closeDriverBtn_d.click();
+  let driverIsClosedBtn = driverMenu_d.hidden && driverMenu_d.style.display === 'none' && driverToggle_d.getAttribute('aria-expanded') === 'false';
+  logTestResult(testSuiteName + ' - Driver Menu Closes via Button', driverIsClosedBtn, `Expected: hidden, display=none, aria-expanded=false. Got: hidden=${driverMenu_d.hidden}, display=${driverMenu_d.style.display}, aria=${driverToggle_d.getAttribute('aria-expanded')}`);
+
+  // Test Close Driver Menu via Overlay Click
+  driverToggle_d.click(); // Reopen
+  driverMenu_d.click(); // Click on panel itself (overlay)
+  let driverIsClosedOverlay = driverMenu_d.hidden && driverMenu_d.style.display === 'none' && driverToggle_d.getAttribute('aria-expanded') === 'false';
+  logTestResult(testSuiteName + ' - Driver Menu Closes via Overlay', driverIsClosedOverlay, `Expected: hidden, display=none, aria-expanded=false. Got: hidden=${driverMenu_d.hidden}, display=${driverMenu_d.style.display}, aria=${driverToggle_d.getAttribute('aria-expanded')}`);
+  cleanupDOM();
+
+  // --- Mutual Exclusivity Tests ---
+  dom = setupDOM(html);
+  window.initMenuToggles();
+
+  const clientToggle_m = dom.querySelector('#vertical-client-toggle');
+  const clientMenu_m = dom.querySelector('#client-menu-container');
+  const driverToggle_m = dom.querySelector('#vertical-driver-toggle');
+  const driverMenu_m = dom.querySelector('#driver-menu-container');
+
+  // Open Client, then open Driver
+  clientToggle_m.click(); // Open client
+  driverToggle_m.click(); // Open driver
+  let clientClosed_excl1 = clientMenu_m.hidden && clientMenu_m.style.display === 'none' && clientToggle_m.getAttribute('aria-expanded') === 'false';
+  let driverOpen_excl1 = !driverMenu_m.hidden && driverMenu_m.style.display === 'block' && driverToggle_m.getAttribute('aria-expanded') === 'true';
+  logTestResult(testSuiteName + ' - Mutual Exclusivity (Client then Driver): Client Closed', clientClosed_excl1);
+  logTestResult(testSuiteName + ' - Mutual Exclusivity (Client then Driver): Driver Open', driverOpen_excl1);
+
+  // Open Driver, then open Client (reset state by clicking driver toggle again to close it first)
+  driverToggle_m.click(); // Close driver to reset for next part
+  driverToggle_m.click(); // Open driver
+  clientToggle_m.click(); // Open client
+  let driverClosed_excl2 = driverMenu_m.hidden && driverMenu_m.style.display === 'none' && driverToggle_m.getAttribute('aria-expanded') === 'false';
+  let clientOpen_excl2 = !clientMenu_m.hidden && clientMenu_m.style.display === 'block' && clientToggle_m.getAttribute('aria-expanded') === 'true';
+  logTestResult(testSuiteName + ' - Mutual Exclusivity (Driver then Client): Driver Closed', driverClosed_excl2);
+  logTestResult(testSuiteName + ' - Mutual Exclusivity (Driver then Client): Client Open', clientOpen_excl2);
+
+  cleanupDOM();
 }
 
 function testCollectDynamicValues() {

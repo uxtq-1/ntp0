@@ -644,8 +644,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Function to initialize menu toggle buttons
 function initMenuToggles() {
-  const clientMenuToggleBtn = document.getElementById('client-menu-toggle-btn');
-  const driverMenuToggleBtn = document.getElementById('driver-menu-toggle-btn');
+  const clientMenuToggleBtn = document.getElementById('vertical-client-toggle'); // Updated ID
+  const driverMenuToggleBtn = document.getElementById('vertical-driver-toggle'); // Updated ID
   const clientMenuPanel = document.getElementById('client-menu-container');
   const driverMenuPanel = document.getElementById('driver-menu-container');
   const closeClientMenuBtn = document.getElementById('close-client-menu-btn');
@@ -749,9 +749,7 @@ function initMap() {
       
     console.log('Map initialized successfully.');
   } catch (error) {
-    const msg = 'Error initializing Leaflet map: ' + error.message;
-    console.error('Error: ' + msg);
-    alert(msg);
+    console.error('Error: Error initializing Leaflet map: ' + error.message);
     mapPlaceholder.innerHTML = '<p style="color:red; text-align:center; font-weight:bold;">Map Error: Could not initialize the map. ' + error.message + '</p>';
   }
 }

@@ -32,21 +32,13 @@
   <link rel="stylesheet" href="style.css" nonce="abc123" />
 </head>
 <body>
+  <div id="vertical-menu-toggles">
+    <button id="vertical-client-toggle" aria-label="Open Client Menu" aria-expanded="false" aria-controls="client-menu-container">Client</button>
+    <button id="vertical-driver-toggle" aria-label="Open Driver Menu" aria-expanded="false" aria-controls="driver-menu-container">Driver</button>
+  </div>
   <div id="app-container" role="main">
     <header id="app-header">
       <h1 id="app-title">Dispatch Management Logistics App</h1>
-      <button
-        id="client-menu-toggle-btn"
-        aria-label="Toggle Client Menu"
-        aria-expanded="false"
-        aria-controls="client-menu-container"
-      >&#9776;</button>
-      <button
-        id="driver-menu-toggle-btn"
-        aria-label="Toggle Driver Menu"
-        aria-expanded="false"
-        aria-controls="driver-menu-container"
-      >&#9776;</button>
     </header>
 
     <!-- Menu panels remain direct children of app-container for positioning context -->
@@ -353,8 +345,28 @@
         <div id="map-placeholder" tabindex="0" aria-live="polite" aria-atomic="true"></div>
       </section>
       <aside id="heatmap-sidebar-placeholder">
-        <h2>Heatmap Insights</h2>
-        <p>Performance percentages will be shown here. Clickable for details. (Placeholder)</p>
+        <div class="heatmap-title">Today</div>
+        <div class="heatmap-title">Performance</div>
+        <div class="heatmap-metric">
+          <span class="heatmap-label">Pick Up</span>
+          <span class="heatmap-value">%</span>
+        </div>
+        <div class="heatmap-metric">
+          <span class="heatmap-label">Delivery</span>
+          <span class="heatmap-value">%</span>
+        </div>
+        <div class="heatmap-metric">
+          <span class="heatmap-label">Delays</span>
+          <span class="heatmap-value">%</span>
+        </div>
+        <div class="heatmap-metric">
+          <span class="heatmap-label">Late Pick Up</span>
+          <span class="heatmap-value">%</span>
+        </div>
+        <div class="heatmap-metric">
+          <span class="heatmap-label">Late Delivery</span>
+          <span class="heatmap-value">%</span>
+        </div>
       </aside>
     </div>
 

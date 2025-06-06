@@ -50,13 +50,14 @@ h1, h2, h3, h4, h5, legend {
   color: #212529; /* Palette: Text (explicit) */
 }
 
-/* Toggle Buttons (Now in Header) */
+/* Old Toggle Buttons Styles (commented out or removed) */
+/*
 #client-menu-toggle-btn,
 #driver-menu-toggle-btn {
   z-index: 1000;
-  background-color: #FFFFFF; /* Palette: Main Background (button itself) */
-  border: 1px solid #ced4da; /* Palette: Borders */
-  color: #007bff; /* Palette: Primary (for icon color) */
+  background-color: #FFFFFF;
+  border: 1px solid #ced4da;
+  color: #007bff;
   padding: 8px 12px;
   cursor: pointer;
   font-size: 1.2em;
@@ -65,10 +66,39 @@ h1, h2, h3, h4, h5, legend {
 }
 #client-menu-toggle-btn:hover,
 #driver-menu-toggle-btn:hover {
-  background-color: #e9ecef; /* Slightly darker than white, or a light primary tint */
-  border-color: #adb5bd; /* Darker border on hover */
+  background-color: #e9ecef;
+  border-color: #adb5bd;
 }
-/* Order can be used if space-between on header is not enough, e.g. #client-menu-toggle-btn { order: -1; } */
+*/
+
+/* Vertical Menu Toggles */
+#vertical-menu-toggles {
+  position: fixed;
+  top: 70px; /* Adjusted below typical header height */
+  left: 0;
+  z-index: 1005;
+  background-color: #f0f0f0;
+  padding: 5px;
+  border-radius: 0 5px 5px 0;
+  box-shadow: 2px 0px 5px rgba(0,0,0,0.1);
+}
+
+#vertical-menu-toggles button {
+  display: block;
+  margin: 5px 0;
+  padding: 8px 12px;
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  text-align: left;
+  cursor: pointer; /* Ensure cursor changes to pointer */
+}
+
+#vertical-menu-toggles button:hover {
+  background-color: #0056b3;
+}
 
 
 /* Main Content Area */
@@ -98,15 +128,44 @@ h1, h2, h3, h4, h5, legend {
 
 /* Heatmap Sidebar Placeholder */
 #heatmap-sidebar-placeholder {
-  width: 250px;
+  width: 50px; /* Narrow width */
   flex-shrink: 0;
-  margin-left: 5px;
+  /* margin-left: 5px; /* Removed as it might not be relevant for new design */
   background-color: #f8f9fa; /* Palette: Light Section BG */
   color: #212529; /* Palette: Text */
-  padding: 10px;
+  padding: 10px 5px; /* Minimal padding */
   border: 1px solid #dee2e6; /* Palette: Borders (or slightly darker) */
   border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden; /* Hide content that doesn't fit, or use overflow-y: auto if scroll desired */
 }
+
+.heatmap-title {
+  font-weight: bold;
+  font-size: 0.8em; /* Smaller font for narrow bar */
+  margin-bottom: 8px;
+  writing-mode: vertical-rl; /* Attempt to make text vertical */
+  transform: rotate(180deg); /* Correct orientation for vertical-rl */
+  white-space: nowrap;
+}
+
+.heatmap-metric {
+  font-size: 0.75em; /* Smaller font */
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column; /* Stack label and value vertically */
+  align-items: center;
+}
+
+.heatmap-label, .heatmap-value {
+  display: block;
+  white-space: normal; /* Allow wrapping if text is too long for a single vertical line */
+  /* For very narrow bar, individual words/letters might need their own spans and transforms if this isn't enough */
+}
+
 
 /* Menu Containers - Full Screen Overlay Styling */
 #client-menu-container,
@@ -156,13 +215,29 @@ h1, h2, h3, h4, h5, legend {
   #app-header {
     /* flex-direction: column; /* Optional: if title and buttons need to stack */
     /* align-items: flex-start; */
+    padding: 10px 15px; /* Adjust padding */
   }
   #app-title {
-    font-size: 1.2em; /* Reduce title size on mobile */
+    font-size: 1.1em; /* Slightly smaller title on mobile */
   }
+  /* Styles for old toggles in mobile view (commented out or removed) */
+  /*
   #client-menu-toggle-btn, #driver-menu-toggle-btn {
     padding: 6px 10px;
     font-size: 1em;
+  }
+  */
+
+  #vertical-menu-toggles {
+    /* top: 10px; /* Example: Adjust if header height changes or is removed on mobile */
+    /* left: 5px; */
+    /* Consider if its 'top: 70px' from desktop view is okay or needs adjustment
+       if header height changes significantly on mobile. For now, assume 70px is fine
+       or that header height doesn't change enough to cause issues. */
+  }
+  #vertical-menu-toggles button {
+    padding: 6px 10px; /* Slightly smaller padding */
+    font-size: 0.9em;   /* Slightly smaller font */
   }
 
   #main-content-area {
@@ -170,12 +245,27 @@ h1, h2, h3, h4, h5, legend {
   }
   #map-container{
     /* max-width: 100%; /* Allow map to use full width available in column */
+    /* Ensure map still has a reasonable height when stacked */
+    min-height: 300px; /* Example minimum height for map on mobile */
   }
   #heatmap-sidebar-placeholder {
-    width: auto; /* Full width */
+    width: 50px; /* Keep it narrow as per new design */
     margin-left: 0;
-    margin-top: 10px;
+    margin-top: 10px; /* Ensure space when stacked */
+    /* Ensure flex properties are correctly applied or inherited for mobile stacking */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* overflow-y: auto; /* If content might scroll within the narrow bar */
+    /* max-height: 200px; /* Example if it needs a max height to prevent pushing content too far */
   }
+  .heatmap-title {
+    font-size: 0.7em; /* Further reduce if needed for mobile */
+  }
+  .heatmap-metric {
+    font-size: 0.65em; /* Further reduce if needed for mobile */
+  }
+
 
   #client-menu-container,
   #driver-menu-container {
