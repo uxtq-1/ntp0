@@ -627,6 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
   populateOrderNumber(); // Populate initial order number on load
   initMenuToggles(); // Initialize menu toggle functionality
   CollapsibleManager.initCollapsibleSections(); // Initialize collapsible sections
+  enableDraggableForms();
 
   // Expose functions for testing purposes
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
@@ -661,6 +662,7 @@ function initMenuToggles() {
       clientMenuPanel.style.display = 'none';
       clientMenuPanel.hidden = true;
       clientMenuToggleBtn.setAttribute('aria-expanded', 'false');
+      resetModalPosition(clientMenuPanel.querySelector('.menu-modal-content'));
     }
   }
 
@@ -669,31 +671,34 @@ function initMenuToggles() {
       driverMenuPanel.style.display = 'none';
       driverMenuPanel.hidden = true;
       driverMenuToggleBtn.setAttribute('aria-expanded', 'false');
+      resetModalPosition(driverMenuPanel.querySelector('.menu-modal-content'));
     }
   }
 
   clientMenuToggleBtn.addEventListener('click', () => {
-    const isClientMenuVisible = clientMenuPanel.style.display === 'block';
+    const isClientMenuVisible = clientMenuPanel.style.display === 'flex';
     
     if (isClientMenuVisible) {
       hideClientMenu();
     } else {
-      clientMenuPanel.style.display = 'block'; // Or 'flex' if CSS uses that for the overlay
+      clientMenuPanel.style.display = 'flex';
       clientMenuPanel.hidden = false;
       clientMenuToggleBtn.setAttribute('aria-expanded', 'true');
+      resetModalPosition(clientMenuPanel.querySelector('.menu-modal-content'));
       hideDriverMenu(); // Ensure other menu is closed
     }
   });
 
   driverMenuToggleBtn.addEventListener('click', () => {
-    const isDriverMenuVisible = driverMenuPanel.style.display === 'block';
+    const isDriverMenuVisible = driverMenuPanel.style.display === 'flex';
 
     if (isDriverMenuVisible) {
       hideDriverMenu();
     } else {
-      driverMenuPanel.style.display = 'block'; // Or 'flex'
+      driverMenuPanel.style.display = 'flex';
       driverMenuPanel.hidden = false;
       driverMenuToggleBtn.setAttribute('aria-expanded', 'true');
+      resetModalPosition(driverMenuPanel.querySelector('.menu-modal-content'));
       hideClientMenu(); // Ensure other menu is closed
     }
   });
@@ -752,4 +757,51 @@ function initMap() {
     console.error('Error: Error initializing Leaflet map: ' + error.message);
     mapPlaceholder.innerHTML = '<p style="color:red; text-align:center; font-weight:bold;">Map Error: Could not initialize the map. ' + error.message + '</p>';
   }
+}
+
+// --- Draggable Modal Forms ---
+function resetModalPosition(modal) {
+  if (modal) {
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+  }
+}
+
+function makeElementDraggable(el) {
+  const handle = el.querySelector('h3') || el;
+  handle.classList.add('drag-handle');
+  let startX = 0, startY = 0, origX = 0, origY = 0;
+
+  function onPointerDown(e) {
+    e.preventDefault();
+    const rect = el.getBoundingClientRect();
+    startX = e.clientX;
+    startY = e.clientY;
+    origX = rect.left;
+    origY = rect.top;
+    el.style.transform = 'none';
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerup', onPointerUp);
+  }
+
+  function onPointerMove(e) {
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    el.style.left = origX + dx + 'px';
+    el.style.top = origY + dy + 'px';
+  }
+
+  function onPointerUp() {
+    document.removeEventListener('pointermove', onPointerMove);
+    document.removeEventListener('pointerup', onPointerUp);
+  }
+
+  handle.addEventListener('pointerdown', onPointerDown);
+}
+
+function enableDraggableForms() {
+  document.querySelectorAll('.menu-modal-content').forEach(modal => {
+    makeElementDraggable(modal);
+  });
 }

@@ -205,8 +205,16 @@ h1, h2, h3, h4, h5, legend {
   width: 90%; /* Responsive width */
   max-height: 90vh; /* Fit on screen */
   overflow-y: auto; /* Scrollable content */
-  position: relative; /* For absolute positioning of the close button inside */
+  position: fixed; /* Allows dragging around the viewport */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   opacity: 1; /* NEW: Set opacity */
+  cursor: move; /* Indicate draggable */
+}
+
+.drag-handle {
+  cursor: move;
 }
 
 
