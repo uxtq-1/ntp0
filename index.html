@@ -49,13 +49,15 @@
       hidden
     >
       <div class="menu-modal-content">
-        <button
-          class="close-menu-btn"
-          id="close-client-menu-btn"
-          aria-label="Close Client Menu"
-        >&times;</button>
-        <h3>Client Order Menu</h3>
-        <form id="client-order-form" autocomplete="off" novalidate>
+        <div class="modal-header">
+          <h3>Client Order Menu</h3>
+          <button
+            class="close-menu-btn"
+            id="close-client-menu-btn"
+            aria-label="Close Client Menu"
+          >&times;</button>
+        </div>
+        <form id="client-order-form" class="modal-form-content" autocomplete="off" novalidate>
           <div>
             <label for="order-number">Order Number:</label>
             <input type="text" id="order-number" name="order-number" readonly aria-readonly="true"/>
@@ -194,13 +196,15 @@
 
     <aside id="driver-menu-container" aria-label="Driver Profile Menu" role="region" hidden>
       <div class="menu-modal-content">
-        <button
-          class="close-menu-btn"
-          id="close-driver-menu-btn"
-          aria-label="Close Driver Menu"
-        >&times;</button>
-        <h3>Driver Profile Menu</h3>
-        <form id="driver-profile-form" autocomplete="off" novalidate>
+        <div class="modal-header">
+          <h3>Driver Profile Menu</h3>
+          <button
+            class="close-menu-btn"
+            id="close-driver-menu-btn"
+            aria-label="Close Driver Menu"
+          >&times;</button>
+        </div>
+        <form id="driver-profile-form" class="modal-form-content" autocomplete="off" novalidate>
           <fieldset>
             <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="driver-details-panel" data-target="driver-details-panel">
               Driver Details <span class="collapsible-icon">►</span>
