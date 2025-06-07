@@ -32,21 +32,13 @@
   <link rel="stylesheet" href="style.css" nonce="abc123" />
 </head>
 <body>
+  <div id="vertical-menu-toggles">
+    <button id="vertical-client-toggle" aria-label="Open Client Menu" aria-expanded="false" aria-controls="client-menu-container">Client</button>
+    <button id="vertical-driver-toggle" aria-label="Open Driver Menu" aria-expanded="false" aria-controls="driver-menu-container">Driver</button>
+  </div>
   <div id="app-container" role="main">
     <header id="app-header">
       <h1 id="app-title">Dispatch Management Logistics App</h1>
-      <button
-        id="client-menu-toggle-btn"
-        aria-label="Toggle Client Menu"
-        aria-expanded="false"
-        aria-controls="client-menu-container"
-      >&#9776;</button>
-      <button
-        id="driver-menu-toggle-btn"
-        aria-label="Toggle Driver Menu"
-        aria-expanded="false"
-        aria-controls="driver-menu-container"
-      >&#9776;</button>
     </header>
 
     <!-- Menu panels remain direct children of app-container for positioning context -->
@@ -57,13 +49,15 @@
       hidden
     >
       <div class="menu-modal-content">
-        <button
-          class="close-menu-btn"
-          id="close-client-menu-btn"
-          aria-label="Close Client Menu"
-        >&times;</button>
-        <h3>Client Order Menu</h3>
-        <form id="client-order-form" autocomplete="off" novalidate>
+        <div class="modal-header">
+          <h3>Client Order Menu</h3>
+          <button
+            class="close-menu-btn"
+            id="close-client-menu-btn"
+            aria-label="Close Client Menu"
+          >&times;</button>
+        </div>
+        <form id="client-order-form" class="modal-form-content" autocomplete="off" novalidate>
           <div>
             <label for="order-number">Order Number:</label>
             <input type="text" id="order-number" name="order-number" readonly aria-readonly="true"/>
@@ -202,13 +196,15 @@
 
     <aside id="driver-menu-container" aria-label="Driver Profile Menu" role="region" hidden>
       <div class="menu-modal-content">
-        <button
-          class="close-menu-btn"
-          id="close-driver-menu-btn"
-          aria-label="Close Driver Menu"
-        >&times;</button>
-        <h3>Driver Profile Menu</h3>
-        <form id="driver-profile-form" autocomplete="off" novalidate>
+        <div class="modal-header">
+          <h3>Driver Profile Menu</h3>
+          <button
+            class="close-menu-btn"
+            id="close-driver-menu-btn"
+            aria-label="Close Driver Menu"
+          >&times;</button>
+        </div>
+        <form id="driver-profile-form" class="modal-form-content" autocomplete="off" novalidate>
           <fieldset>
             <legend class="collapsible-trigger" role="button" tabindex="0" aria-expanded="false" aria-controls="driver-details-panel" data-target="driver-details-panel">
               Driver Details <span class="collapsible-icon">►</span>
@@ -353,8 +349,28 @@
         <div id="map-placeholder" tabindex="0" aria-live="polite" aria-atomic="true"></div>
       </section>
       <aside id="heatmap-sidebar-placeholder">
-        <h2>Heatmap Insights</h2>
-        <p>Performance percentages will be shown here. Clickable for details. (Placeholder)</p>
+        <div class="heatmap-title">Today</div>
+        <div class="heatmap-title">Performance</div>
+        <div class="heatmap-metric">
+          <span class="heatmap-label">Pick Up</span>
+          <span class="heatmap-value">%</span>
+        </div>
+        <div class="heatmap-metric">
+          <span class="heatmap-label">Delivery</span>
+          <span class="heatmap-value">%</span>
+        </div>
+        <div class="heatmap-metric">
+          <span class="heatmap-label">Delays</span>
+          <span class="heatmap-value">%</span>
+        </div>
+        <div class="heatmap-metric">
+          <span class="heatmap-label">Late Pick Up</span>
+          <span class="heatmap-value">%</span>
+        </div>
+        <div class="heatmap-metric">
+          <span class="heatmap-label">Late Delivery</span>
+          <span class="heatmap-value">%</span>
+        </div>
       </aside>
     </div>
 

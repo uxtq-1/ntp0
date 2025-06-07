@@ -88,10 +88,194 @@ function testHandleDynamicFieldRemove() {
 
 function testInitMenuToggles() {
   const testSuiteName = 'testInitMenuToggles';
-  // ... (previous implementation of testInitMenuToggles - assumed to be correct)
-  // Similar to above, assumed OK.
-  logTestResult(testSuiteName, true, "Skipping actual execution in this combined step for brevity, assumed OK from previous step.");
+  const html = `
+   <div id="vertical-menu-toggles">
+     <button id="vertical-client-toggle" aria-label="Open Client Menu" aria-expanded="false" aria-controls="client-menu-container">Client</button>
+     <button id="vertical-driver-toggle" aria-label="Open Driver Menu" aria-expanded="false" aria-controls="driver-menu-container">Driver</button>
+   </div>
+   <aside id="client-menu-container" hidden style="display: none;">
+     <div class="menu-modal-content">
+       <div class="modal-header">
+         <h3>Client Order Menu</h3>
+         <button class="close-menu-btn" id="close-client-menu-btn" aria-label="Close Client Menu">&times;</button>
+       </div>
+       <form id="client-order-form" class="modal-form-content">
+         <!-- Minimal content -->
+       </form>
+     </div>
+   </aside>
+   <aside id="driver-menu-container" hidden style="display: none;">
+     <div class="menu-modal-content">
+       <div class="modal-header">
+         <h3>Driver Profile Menu</h3>
+         <button class="close-menu-btn" id="close-driver-menu-btn" aria-label="Close Driver Menu">&times;</button>
+       </div>
+       <form id="driver-profile-form" class="modal-form-content">
+         <!-- Minimal content -->
+       </form>
+     </div>
+   </aside>`;
+
+  // --- Client Menu Tests ---
+  let dom = setupDOM(html);
+  window.initMenuToggles(); // Initialize listeners for the new DOM
+
+  const clientToggle = dom.querySelector('#vertical-client-toggle');
+  const clientMenu = dom.querySelector('#client-menu-container');
+  const clientModalContent = clientMenu.querySelector('.menu-modal-content');
+  const clientModalHeader = clientModalContent ? clientModalContent.querySelector('.modal-header') : null;
+  const closeClientBtn = clientMenu.querySelector('#close-client-menu-btn'); //Scoped within clientMenu
+
+  const driverToggle = dom.querySelector('#vertical-driver-toggle');
+  const driverMenu = dom.querySelector('#driver-menu-container');
+  const driverModalContent = driverMenu.querySelector('.menu-modal-content');
+  const driverModalHeader = driverModalContent ? driverModalContent.querySelector('.modal-header') : null;
+  const closeDriverBtn = driverMenu.querySelector('#close-driver-menu-btn'); //Scoped within driverMenu
+
+
+  // Initial State Checks (Client)
+  logTestResult(testSuiteName + ' - Client Menu Initial State Hidden', clientMenu.hidden && clientMenu.style.display === 'none');
+  logTestResult(testSuiteName + ' - Client Toggle Initial State aria-expanded', clientToggle.getAttribute('aria-expanded') === 'false');
+  logTestResult(testSuiteName + ' - Client Modal has .modal-header', !!clientModalHeader);
+
+
+  // Test Open Client Menu
+  clientToggle.click();
+  let clientIsOpen = !clientMenu.hidden && clientMenu.style.display === 'block' && clientToggle.getAttribute('aria-expanded') === 'true';
+  logTestResult(testSuiteName + ' - Client Menu Opens', clientIsOpen, `Expected: not hidden, display=block, aria-expanded=true. Got: hidden=${clientMenu.hidden}, display=${clientMenu.style.display}, aria=${clientToggle.getAttribute('aria-expanded')}`);
+
+  // Test Close Client Menu via Close Button
+  closeClientBtn.click();
+  let clientIsClosedBtn = clientMenu.hidden && clientMenu.style.display === 'none' && clientToggle.getAttribute('aria-expanded') === 'false';
+  logTestResult(testSuiteName + ' - Client Menu Closes via Button', clientIsClosedBtn, `Expected: hidden, display=none, aria-expanded=false. Got: hidden=${clientMenu.hidden}, display=${clientMenu.style.display}, aria=${clientToggle.getAttribute('aria-expanded')}`);
+
+  // Test Close Client Menu via Overlay Click
+  clientToggle.click(); // Reopen
+  clientMenu.click(); // Click on panel itself (overlay)
+  let clientIsClosedOverlay = clientMenu.hidden && clientMenu.style.display === 'none' && clientToggle.getAttribute('aria-expanded') === 'false';
+  logTestResult(testSuiteName + ' - Client Menu Closes via Overlay', clientIsClosedOverlay, `Expected: hidden, display=none, aria-expanded=false. Got: hidden=${clientMenu.hidden}, display=${clientMenu.style.display}, aria=${clientToggle.getAttribute('aria-expanded')}`);
+  cleanupDOM();
+
+
+  // --- Driver Menu Tests ---
+  dom = setupDOM(html);
+  window.initMenuToggles();
+
+  // Re-query elements from the new DOM
+  const clientToggle_d = dom.querySelector('#vertical-client-toggle');
+  const clientMenu_d = dom.querySelector('#client-menu-container');
+  const driverToggle_d_re = dom.querySelector('#vertical-driver-toggle'); // re-query after potential DOM changes if any test failed badly
+  const driverMenu_d_re = dom.querySelector('#driver-menu-container');
+  const driverModalContent_re = driverMenu_d_re.querySelector('.menu-modal-content');
+  const driverModalHeader_re = driverModalContent_re ? driverModalContent_re.querySelector('.modal-header') : null;
+  const closeDriverBtn_d_re = driverMenu_d_re.querySelector('#close-driver-menu-btn');
+
+
+  // Initial State Checks (Driver)
+  logTestResult(testSuiteName + ' - Driver Menu Initial State Hidden', driverMenu_d_re.hidden && driverMenu_d_re.style.display === 'none');
+  logTestResult(testSuiteName + ' - Driver Toggle Initial State aria-expanded', driverToggle_d_re.getAttribute('aria-expanded') === 'false');
+  logTestResult(testSuiteName + ' - Driver Modal has .modal-header', !!driverModalHeader_re);
+
+
+  // Test Open Driver Menu
+  driverToggle_d_re.click();
+  let driverIsOpen = !driverMenu_d_re.hidden && driverMenu_d_re.style.display === 'block' && driverToggle_d_re.getAttribute('aria-expanded') === 'true';
+  logTestResult(testSuiteName + ' - Driver Menu Opens', driverIsOpen, `Expected: not hidden, display=block, aria-expanded=true. Got: hidden=${driverMenu_d_re.hidden}, display=${driverMenu_d_re.style.display}, aria=${driverToggle_d_re.getAttribute('aria-expanded')}`);
+
+  // Test Close Driver Menu via Close Button
+  closeDriverBtn_d_re.click();
+  let driverIsClosedBtn = driverMenu_d_re.hidden && driverMenu_d_re.style.display === 'none' && driverToggle_d_re.getAttribute('aria-expanded') === 'false';
+  logTestResult(testSuiteName + ' - Driver Menu Closes via Button', driverIsClosedBtn, `Expected: hidden, display=none, aria-expanded=false. Got: hidden=${driverMenu_d_re.hidden}, display=${driverMenu_d_re.style.display}, aria=${driverToggle_d_re.getAttribute('aria-expanded')}`);
+
+  // Test Close Driver Menu via Overlay Click
+  driverToggle_d_re.click(); // Reopen
+  driverMenu_d_re.click(); // Click on panel itself (overlay)
+  let driverIsClosedOverlay = driverMenu_d_re.hidden && driverMenu_d_re.style.display === 'none' && driverToggle_d_re.getAttribute('aria-expanded') === 'false';
+  logTestResult(testSuiteName + ' - Driver Menu Closes via Overlay', driverIsClosedOverlay, `Expected: hidden, display=none, aria-expanded=false. Got: hidden=${driverMenu_d_re.hidden}, display=${driverMenu_d_re.style.display}, aria=${driverToggle_d_re.getAttribute('aria-expanded')}`);
+  cleanupDOM();
+
+  // --- Mutual Exclusivity Tests ---
+  dom = setupDOM(html);
+  window.initMenuToggles();
+
+  const clientToggle_m_re = dom.querySelector('#vertical-client-toggle');
+  const clientMenu_m_re = dom.querySelector('#client-menu-container');
+  const driverToggle_m_re = dom.querySelector('#vertical-driver-toggle');
+  const driverMenu_m_re = dom.querySelector('#driver-menu-container');
+
+  // Open Client, then open Driver
+  clientToggle_m_re.click();
+  driverToggle_m_re.click();
+  let clientClosed_excl1 = clientMenu_m_re.hidden && clientMenu_m_re.style.display === 'none' && clientToggle_m_re.getAttribute('aria-expanded') === 'false';
+  let driverOpen_excl1 = !driverMenu_m_re.hidden && driverMenu_m_re.style.display === 'block' && driverToggle_m_re.getAttribute('aria-expanded') === 'true';
+  logTestResult(testSuiteName + ' - Mutual Exclusivity (Client then Driver): Client Closed', clientClosed_excl1);
+  logTestResult(testSuiteName + ' - Mutual Exclusivity (Client then Driver): Driver Open', driverOpen_excl1);
+
+  // Open Driver, then open Client
+  driverToggle_m_re.click(); // This will close driver menu (it's already open)
+  driverToggle_m_re.click(); // This will re-open driver menu
+  clientToggle_m_re.click(); // This should close driver and open client
+  let driverClosed_excl2 = driverMenu_m_re.hidden && driverMenu_m_re.style.display === 'none' && driverToggle_m_re.getAttribute('aria-expanded') === 'false';
+  let clientOpen_excl2 = !clientMenu_m_re.hidden && clientMenu_m_re.style.display === 'block' && clientToggle_m_re.getAttribute('aria-expanded') === 'true';
+  logTestResult(testSuiteName + ' - Mutual Exclusivity (Driver then Client): Driver Closed', driverClosed_excl2);
+  logTestResult(testSuiteName + ' - Mutual Exclusivity (Driver then Client): Client Open', clientOpen_excl2);
+
+  cleanupDOM();
 }
+
+
+function testModalDragInitiation() {
+  const testSuiteName = 'testModalDragInitiation';
+  const html = `
+   <div id="client-menu-container" style="display: block;" hidden="false"> <!-- Ensure parent is visible for test -->
+     <div class="menu-modal-content" style="top: 100px; left: 100px; transform: none;"> <!-- Mock position, no transform -->
+       <div class="modal-header"><h3>Client Menu</h3></div>
+       <form class="modal-form-content"></form>
+     </div>
+   </div>`;
+
+  let dom = setupDOM(html);
+  if (typeof window.initDraggableModals === 'function') {
+    window.initDraggableModals();
+  } else {
+    logTestResult(testSuiteName, false, "initDraggableModals is not defined on window.");
+    cleanupDOM();
+    return;
+  }
+
+  const header = dom.querySelector('.modal-header');
+  const modalContent = dom.querySelector('.menu-modal-content');
+
+  if (header && modalContent) {
+    // Simulate a mousedown event
+    const mousedownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientX: 110, clientY: 110 }); // clientX/Y for offset calculation
+    header.dispatchEvent(mousedownEvent);
+
+    let dragClassAppliedCorrectly;
+    if (window.innerWidth >= 768) {
+      dragClassAppliedCorrectly = modalContent.classList.contains('modal-dragging');
+      logTestResult(testSuiteName + ' - Drag class added on mousedown (desktop)', dragClassAppliedCorrectly);
+    } else {
+      dragClassAppliedCorrectly = !modalContent.classList.contains('modal-dragging');
+      logTestResult(testSuiteName + ' - Drag class NOT added on mousedown (mobile)', dragClassAppliedCorrectly);
+    }
+
+    // Manually call onDragEnd to clean up listeners if any were added by onDragStart
+    // This is important for test hygiene.
+    if (typeof window.onDragEnd === 'function') {
+       window.onDragEnd(); // Assumes onDragEnd correctly nullifies activeModal and removes listeners
+    } else {
+        console.warn('window.onDragEnd not found for cleanup in testModalDragInitiation');
+    }
+    // Verify activeModal is null after onDragEnd (if onDragEnd is testable, or trust its internal logic)
+    // This part is tricky if activeModal is not exposed from app.js. For now, we trust onDragEnd.
+
+  } else {
+    logTestResult(testSuiteName, false, 'Modal header or content not found in DOM for drag test.');
+  }
+  cleanupDOM();
+}
+
 
 function testCollectDynamicValues() {
   const testSuiteName = 'testCollectDynamicValues';
@@ -466,9 +650,12 @@ function runTests() {
       typeof window.collectDynamicValues !== 'function' ||
       typeof window.CollapsibleManager !== 'object' ||
       typeof window.CollapsibleManager.initCollapsibleSections !== 'function' ||
-      typeof window.CollapsibleManager.toggleCollapsibleSection !== 'function') {
+      typeof window.CollapsibleManager.toggleCollapsibleSection !== 'function' ||
+      typeof window.initDraggableModals !== 'function' || // Added
+      typeof window.onDragStart !== 'function' ||       // Added
+      typeof window.onDragEnd !== 'function') {         // Added
     functionsAvailable = false;
-    logTestResult('Global Setup Check', false, 'One or more required functions or CollapsibleManager methods are not exposed by app.js.');
+    logTestResult('Global Setup Check', false, 'One or more required functions, CollapsibleManager methods, or Drag methods are not exposed by app.js.');
   }
 
   if (typeof initMenuToggles !== 'function') { // This check can remain if initMenuToggles is indeed still global and used
@@ -477,14 +664,12 @@ function runTests() {
   }
 
   if (functionsAvailable) {
-    testHandleDynamicFieldRemove(); // Assumed OK from previous steps
-    testInitMenuToggles();          // Assumed OK from previous steps
-    // Note: If testInitMenuToggles or other tests were using the *old* global collapsible functions,
-    // those test implementations would need to be updated to call window.CollapsibleManager.method().
-    // Based on previous views, they were placeholders, so no internal changes to them are made here.
+    testHandleDynamicFieldRemove();
+    testInitMenuToggles();
     testErrorAlerts();
     testInputValidation();
-    testCollectDynamicValues(); // Added new test function call
+    testCollectDynamicValues();
+    testModalDragInitiation(); // Added new test
   } else {
     logTestResult('Core Tests Skipped', false, 'Due to missing global functions, core application tests were skipped.');
   }
