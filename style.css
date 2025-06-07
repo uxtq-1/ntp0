@@ -128,7 +128,7 @@ h1, h2, h3, h4, h5, legend {
 
 /* Heatmap Sidebar Placeholder */
 #heatmap-sidebar-placeholder {
-  width: 50px; /* Narrow width */
+  width: 40px; /* Adjusted width */
   flex-shrink: 0;
   /* margin-left: 5px; /* Removed as it might not be relevant for new design */
   background-color: #f8f9fa; /* Palette: Light Section BG */
@@ -145,7 +145,7 @@ h1, h2, h3, h4, h5, legend {
 
 .heatmap-title {
   font-weight: bold;
-  font-size: 0.8em; /* Smaller font for narrow bar */
+  font-size: 0.75em; /* Adjusted font size */
   margin-bottom: 8px;
   writing-mode: vertical-rl; /* Attempt to make text vertical */
   transform: rotate(180deg); /* Correct orientation for vertical-rl */
@@ -153,7 +153,7 @@ h1, h2, h3, h4, h5, legend {
 }
 
 .heatmap-metric {
-  font-size: 0.75em; /* Smaller font */
+  font-size: 0.7em; /* Adjusted font size */
   margin-bottom: 10px;
   display: flex;
   flex-direction: column; /* Stack label and value vertically */
@@ -301,7 +301,7 @@ h1, h2, h3, h4, h5, legend {
     min-height: 300px; /* Example minimum height for map on mobile */
   }
   #heatmap-sidebar-placeholder {
-    width: 50px; /* Keep it narrow as per new design */
+    /* width: 50px; /* Removed to inherit global 40px */
     margin-left: 0;
     margin-top: 10px; /* Ensure space when stacked */
     /* Ensure flex properties are correctly applied or inherited for mobile stacking */
@@ -312,10 +312,10 @@ h1, h2, h3, h4, h5, legend {
     /* max-height: 200px; /* Example if it needs a max height to prevent pushing content too far */
   }
   .heatmap-title {
-    font-size: 0.7em; /* Further reduce if needed for mobile */
+    font-size: 0.65em; /* Adjusted font size for mobile */
   }
   .heatmap-metric {
-    font-size: 0.65em; /* Further reduce if needed for mobile */
+    font-size: 0.6em; /* Adjusted font size for mobile */
   }
 
 
