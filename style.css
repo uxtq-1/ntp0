@@ -35,8 +35,9 @@ h1, h2, h3, h4, h5, legend {
 /* Header Area */
 #app-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column; /* Stack title and divider vertically */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically if header has fixed height, or for alignment */
   padding: 10px 20px;
   background-color: #f8f9fa; /* Palette: Light Section BG */
   border-bottom: 1px solid #dee2e6; /* Palette: Borders (or slightly darker for definition) */
@@ -44,10 +45,38 @@ h1, h2, h3, h4, h5, legend {
 
 #app-title {
   text-align: center;
-  flex-grow: 1;
-  margin: 0;
-  font-size: 1.5em;
+  /* flex-grow: 1; /* Not needed if header is column and title is centered */
+  margin: 0; /* Keep margin 0 */
+  font-size: 1.8em; /* Adjusted font size */
   color: #212529; /* Palette: Text (explicit) */
+}
+
+#title-divider {
+  width: 60%;
+  max-width: 400px;
+  height: 1px;
+  background-color: #ced4da;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+#header-performance-metrics {
+  text-align: center;
+  padding: 8px 0;
+  width: 100%;
+}
+
+.metrics-title {
+  font-weight: bold;
+  margin-right: 10px;
+  font-size: 0.9em;
+}
+
+.metric-item { /* This class is for header metrics, distinct from .metric-item in #performance-insights-section */
+  display: inline-block;
+  margin: 0 8px;
+  font-size: 0.9em;
+  color: #212529;
 }
 
 /* Old Toggle Buttons Styles (commented out or removed) */
@@ -125,47 +154,6 @@ h1, h2, h3, h4, h5, legend {
   box-sizing: border-box;
   outline: none; /* Remove focus outline, but accessible focus managed in JS */
 }
-
-/* Heatmap Sidebar Placeholder */
-#heatmap-sidebar-placeholder {
-  width: 40px; /* Adjusted width */
-  flex-shrink: 0;
-  /* margin-left: 5px; /* Removed as it might not be relevant for new design */
-  background-color: #f8f9fa; /* Palette: Light Section BG */
-  color: #212529; /* Palette: Text */
-  padding: 10px 5px; /* Minimal padding */
-  border: 1px solid #dee2e6; /* Palette: Borders (or slightly darker) */
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  overflow: hidden; /* Hide content that doesn't fit, or use overflow-y: auto if scroll desired */
-}
-
-.heatmap-title {
-  font-weight: bold;
-  font-size: 0.75em; /* Adjusted font size */
-  margin-bottom: 8px;
-  writing-mode: vertical-rl; /* Attempt to make text vertical */
-  transform: rotate(180deg); /* Correct orientation for vertical-rl */
-  white-space: nowrap;
-}
-
-.heatmap-metric {
-  font-size: 0.7em; /* Adjusted font size */
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column; /* Stack label and value vertically */
-  align-items: center;
-}
-
-.heatmap-label, .heatmap-value {
-  display: block;
-  white-space: normal; /* Allow wrapping if text is too long for a single vertical line */
-  /* For very narrow bar, individual words/letters might need their own spans and transforms if this isn't enough */
-}
-
 
 /* Menu Containers - Full Screen Overlay Styling */
 #client-menu-container,
@@ -270,7 +258,7 @@ h1, h2, h3, h4, h5, legend {
     padding: 10px 15px; /* Adjust padding */
   }
   #app-title {
-    font-size: 1.1em; /* Slightly smaller title on mobile */
+    font-size: 1.3em; /* Adjusted font size for mobile */
   }
   /* Styles for old toggles in mobile view (commented out or removed) */
   /*
@@ -300,23 +288,7 @@ h1, h2, h3, h4, h5, legend {
     /* Ensure map still has a reasonable height when stacked */
     min-height: 300px; /* Example minimum height for map on mobile */
   }
-  #heatmap-sidebar-placeholder {
-    /* width: 50px; /* Removed to inherit global 40px */
-    margin-left: 0;
-    margin-top: 10px; /* Ensure space when stacked */
-    /* Ensure flex properties are correctly applied or inherited for mobile stacking */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* overflow-y: auto; /* If content might scroll within the narrow bar */
-    /* max-height: 200px; /* Example if it needs a max height to prevent pushing content too far */
-  }
-  .heatmap-title {
-    font-size: 0.65em; /* Adjusted font size for mobile */
-  }
-  .heatmap-metric {
-    font-size: 0.6em; /* Adjusted font size for mobile */
-  }
+  /* Mobile rules for heatmap-sidebar-placeholder and its content are removed */
 
 
   #client-menu-container,
@@ -325,6 +297,18 @@ h1, h2, h3, h4, h5, legend {
     /* The overlay is full screen, modal content handles its own width */
   }
   /* .menu-modal-content max-width and width:90% will handle responsiveness */
+
+  #header-performance-metrics {
+    line-height: 1.4; /* Improve spacing if items wrap */
+  }
+  #header-performance-metrics .metrics-title,
+  #header-performance-metrics .metric-item {
+    font-size: 0.8em; /* Reduce from 0.9em */
+    margin: 0 5px; /* Slightly reduce horizontal margins for .metric-item */
+  }
+  #header-performance-metrics .metrics-title {
+     margin-right: 8px; /* Ensure .metrics-title still has enough margin-right */
+  }
 }
 
 /* Responsive adjustments for modal dragging */
@@ -334,6 +318,19 @@ h1, h2, h3, h4, h5, legend {
   }
   .modal-header:active {
       cursor: default; /* Disable grabbing cursor */
+  }
+}
+
+@media (max-width: 400px) {
+  #header-performance-metrics .metrics-title,
+  #header-performance-metrics .metric-item {
+    display: block; /* Stack them vertically */
+    margin: 3px auto; /* Adjust margin for block display and center them */
+    text-align: center;
+  }
+  #header-performance-metrics .metrics-title {
+    margin-right: 0; /* Reset margin-right when stacked */
+    margin-bottom: 5px; /* Add some space below the title */
   }
 }
 

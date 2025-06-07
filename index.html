@@ -39,6 +39,15 @@
   <div id="app-container" role="main">
     <header id="app-header">
       <h1 id="app-title">Dispatch Management Logistics App</h1>
+      <div id="title-divider"></div>
+      <div id="header-performance-metrics">
+        <span class="metrics-title">Performance Today:</span>
+        <span class="metric-item">Pick Up %</span>
+        <span class="metric-item">Delivery %</span>
+        <span class="metric-item">Delays %</span>
+        <span class="metric-item">Late Pick Up %</span>
+        <span class="metric-item">Late Delivery %</span>
+      </div>
     </header>
 
     <!-- Menu panels remain direct children of app-container for positioning context -->
@@ -348,30 +357,6 @@
       >
         <div id="map-placeholder" tabindex="0" aria-live="polite" aria-atomic="true"></div>
       </section>
-      <aside id="heatmap-sidebar-placeholder">
-        <div class="heatmap-title">Today</div>
-        <div class="heatmap-title">Performance</div>
-        <div class="heatmap-metric">
-          <span class="heatmap-label">Pick Up</span>
-          <span class="heatmap-value">%</span>
-        </div>
-        <div class="heatmap-metric">
-          <span class="heatmap-label">Delivery</span>
-          <span class="heatmap-value">%</span>
-        </div>
-        <div class="heatmap-metric">
-          <span class="heatmap-label">Delays</span>
-          <span class="heatmap-value">%</span>
-        </div>
-        <div class="heatmap-metric">
-          <span class="heatmap-label">Late Pick Up</span>
-          <span class="heatmap-value">%</span>
-        </div>
-        <div class="heatmap-metric">
-          <span class="heatmap-label">Late Delivery</span>
-          <span class="heatmap-value">%</span>
-        </div>
-      </aside>
     </div>
 
     <section id="performance-insights-section">
