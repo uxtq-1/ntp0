@@ -60,25 +60,6 @@ h1, h2, h3, h4, h5, legend {
   margin-bottom: 8px;
 }
 
-#header-performance-metrics {
-  text-align: center;
-  padding: 8px 0;
-  width: 100%;
-}
-
-.metrics-title {
-  font-weight: bold;
-  margin-right: 10px;
-  font-size: 0.9em;
-}
-
-.metric-item { /* This class is for header metrics, distinct from .metric-item in #performance-insights-section */
-  display: inline-block;
-  margin: 0 8px;
-  font-size: 0.9em;
-  color: #212529;
-}
-
 /* Old Toggle Buttons Styles (commented out or removed) */
 /*
 #client-menu-toggle-btn,
@@ -298,16 +279,36 @@ h1, h2, h3, h4, h5, legend {
   }
   /* .menu-modal-content max-width and width:90% will handle responsiveness */
 
-  #header-performance-metrics {
-    line-height: 1.4; /* Improve spacing if items wrap */
+  /* Performance Display Area Responsive */
+  #performance-display-area {
+    flex-direction: column; /* Stack label and cards container vertically */
+    align-items: center;   /* Center them horizontally when stacked */
+    gap: 15px;             /* Space between label and cards container when stacked */
+    padding: 15px 10px;    /* Adjust padding for mobile if needed */
   }
-  #header-performance-metrics .metrics-title,
-  #header-performance-metrics .metric-item {
-    font-size: 0.8em; /* Reduce from 0.9em */
-    margin: 0 5px; /* Slightly reduce horizontal margins for .metric-item */
+  #performance-today-label {
+    margin-right: 0;     /* Remove right margin as it's stacked */
+    text-align: center;  /* Center the label text */
+    /* margin-bottom: 10px; /* Covered by parent gap */
+    font-size: 1.1em;    /* Slightly smaller font if needed */
   }
-  #header-performance-metrics .metrics-title {
-     margin-right: 8px; /* Ensure .metrics-title still has enough margin-right */
+  #stat-cards-container {
+    gap: 15px; /* Slight reduction for mobile */
+    width: 100%; /* Ensure it takes full width to center its content properly */
+  }
+  .stat-card {
+    width: 85%;        /* Allow cards to be wider on mobile */
+    max-width: 340px;  /* Max width for a single card on mobile */
+    padding: 15px;     /* Slightly reduce padding */
+  }
+  .stat-card .stat-card-title {
+    font-size: 1.3em;
+  }
+  .stat-card .stat-card-sublabel {
+    font-size: 0.9em;
+  }
+  .stat-card .stat-card-percentages .percentage-item {
+    font-size: 0.95em;
   }
 }
 
@@ -321,18 +322,7 @@ h1, h2, h3, h4, h5, legend {
   }
 }
 
-@media (max-width: 400px) {
-  #header-performance-metrics .metrics-title,
-  #header-performance-metrics .metric-item {
-    display: block; /* Stack them vertically */
-    margin: 3px auto; /* Adjust margin for block display and center them */
-    text-align: center;
-  }
-  #header-performance-metrics .metrics-title {
-    margin-right: 0; /* Reset margin-right when stacked */
-    margin-bottom: 5px; /* Add some space below the title */
-  }
-}
+/* Styles for #header-performance-metrics and its children within max-width: 400px media query are also removed. */
 
 
 /* Form Column Layouts (New) */
@@ -1086,3 +1076,80 @@ legend.collapsible-trigger.active .collapsible-icon {
   display: block;
   max-width: calc(100% - 22px);
 }
+
+/* Performance Display Area (Below Header) */
+#performance-display-area {
+  display: flex;
+  padding: 20px 15px;
+  align-items: flex-start;
+  /* background-color: #f0f0f0; /* Optional: for visual debugging */
+}
+
+#performance-today-label {
+  flex-shrink: 0;
+  margin-right: 25px;
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #333;
+  /* padding-top: 10px; /* Adjust if needed for card alignment */
+}
+
+#stat-cards-container {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Stat Card Styling */
+.stat-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  width: 230px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  text-align: left;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+.stat-card-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #007bff;
+}
+
+.stat-card-sublabel {
+  font-size: 1em;
+  color: #dc3545;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.stat-card-percentages {
+  /* No specific styles needed for the container itself unless for spacing */
+}
+.stat-card-percentages .percentage-item {
+  display: block;
+  font-size: 1em;
+  color: #495057;
+  margin-bottom: 8px;
+}
+.stat-card-percentages .percentage-item:last-child {
+  margin-bottom: 0;
+}
+
+/*
+.stat-card-icon {
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 15px auto 5px auto;
+}
+*/

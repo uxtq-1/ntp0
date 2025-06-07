@@ -38,17 +38,34 @@
   </div>
   <div id="app-container" role="main">
     <header id="app-header">
-      <h1 id="app-title">Dispatch Management Logistics App</h1>
+      <h1 id="app-title">Dispatch Management Logistics</h1>
       <div id="title-divider"></div>
-      <div id="header-performance-metrics">
-        <span class="metrics-title">Performance Today:</span>
-        <span class="metric-item">Pick Up %</span>
-        <span class="metric-item">Delivery %</span>
-        <span class="metric-item">Delays %</span>
-        <span class="metric-item">Late Pick Up %</span>
-        <span class="metric-item">Late Delivery %</span>
-      </div>
     </header>
+
+    <section id="performance-display-area">
+      <div id="performance-today-label">Performance Today</div>
+      <div id="stat-cards-container">
+        <div class="stat-card" id="pickup-card">
+          <div class="stat-card-title">Pick Up</div>
+          <div class="stat-card-sublabel">Late</div>
+          <div class="stat-card-percentages">
+            <span class="percentage-item">On Time: 90%</span> <!-- Placeholder -->
+            <span class="percentage-item">Late: 10%</span>   <!-- Placeholder -->
+          </div>
+          <!-- Optional icon placeholder: <img class="stat-card-icon" src="path/to/icon.svg" alt="Pick Up Icon"> -->
+        </div>
+
+        <div class="stat-card" id="delivery-card">
+          <div class="stat-card-title">Delivery</div>
+          <div class="stat-card-sublabel">Late</div>
+          <div class="stat-card-percentages">
+            <span class="percentage-item">On Time: 92%</span> <!-- Placeholder -->
+            <span class="percentage-item">Late: 8%</span>    <!-- Placeholder -->
+          </div>
+          <!-- Optional icon placeholder: <img class="stat-card-icon" src="path/to/icon.svg" alt="Delivery Icon"> -->
+        </div>
+      </div>
+    </section>
 
     <!-- Menu panels remain direct children of app-container for positioning context -->
     <aside
