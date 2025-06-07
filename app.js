@@ -2,6 +2,10 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // --- Global Drag State Variables ---
+  let activeModal = null;
+  let offsetX = 0, offsetY = 0;
+
   // --- Order Number Generation ---
   // Attempt to load lastOrderDate and orderSequence from sessionStorage.
   // Initialize to defaults if not found.
@@ -627,7 +631,7 @@ document.addEventListener('DOMContentLoaded', () => {
   populateOrderNumber(); // Populate initial order number on load
   initMenuToggles(); // Initialize menu toggle functionality
   CollapsibleManager.initCollapsibleSections(); // Initialize collapsible sections
-  enableDraggableForms();
+  initDraggableModals(); // Initialize modal dragging
 
   // Expose functions for testing purposes
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
@@ -638,6 +642,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.Validators = Validators;
     window.CollapsibleManager = CollapsibleManager; // Expose the manager
     window.collectDynamicValues = collectDynamicValues; // Expose for testing
+    window.initDraggableModals = initDraggableModals; // Expose for testing
+    window.onDragStart = onDragStart; // Expose for testing (or direct test via dispatch)
+    window.onDragEnd = onDragEnd;     // Expose for testing (manual cleanup if needed)
     // initMenuToggles is already global
     // addDynamicFieldEntry and other helpers could also be exposed if direct unit tests are needed
   }
@@ -645,61 +652,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Function to initialize menu toggle buttons
 function initMenuToggles() {
-  const clientMenuToggleBtn = document.getElementById('vertical-client-toggle'); // Updated ID
-  const driverMenuToggleBtn = document.getElementById('vertical-driver-toggle'); // Updated ID
-  const clientMenuPanel = document.getElementById('client-menu-container');
-  const driverMenuPanel = document.getElementById('driver-menu-container');
+  const clientMenuToggleBtn = document.getElementById('vertical-client-toggle');
+  const driverMenuToggleBtn = document.getElementById('vertical-driver-toggle');
+  const clientMenuContainer = document.getElementById('client-menu-container'); // Renamed for clarity
+  const driverMenuContainer = document.getElementById('driver-menu-container'); // Renamed for clarity
   const closeClientMenuBtn = document.getElementById('close-client-menu-btn');
   const closeDriverMenuBtn = document.getElementById('close-driver-menu-btn');
 
-  if (!clientMenuToggleBtn || !driverMenuToggleBtn || !clientMenuPanel || !driverMenuPanel || !closeClientMenuBtn || !closeDriverMenuBtn) {
-    console.error('Error: One or more menu elements (toggle buttons, panels, or close buttons) not found. Ensure all IDs are correct.');
+  if (!clientMenuToggleBtn || !driverMenuToggleBtn || !clientMenuContainer || !driverMenuContainer || !closeClientMenuBtn || !closeDriverMenuBtn) {
+    console.error('Error: One or more menu elements (toggle buttons, containers, or close buttons) not found. Ensure all IDs are correct.');
     return;
   }
 
+  function resetModalPosition(modalContentElement) {
+    if (modalContentElement) {
+      modalContentElement.style.left = '';
+      modalContentElement.style.top = '';
+      modalContentElement.style.transform = ''; // Reset transform for CSS centering
+    }
+  }
+
   function hideClientMenu() {
-    if (clientMenuPanel) {
-      clientMenuPanel.style.display = 'none';
-      clientMenuPanel.hidden = true;
+    if (clientMenuContainer) {
+      clientMenuContainer.style.display = 'none';
+      clientMenuContainer.hidden = true;
       clientMenuToggleBtn.setAttribute('aria-expanded', 'false');
-      resetModalPosition(clientMenuPanel.querySelector('.menu-modal-content'));
     }
   }
 
   function hideDriverMenu() {
-    if (driverMenuPanel) {
-      driverMenuPanel.style.display = 'none';
-      driverMenuPanel.hidden = true;
+    if (driverMenuContainer) {
+      driverMenuContainer.style.display = 'none';
+      driverMenuContainer.hidden = true;
       driverMenuToggleBtn.setAttribute('aria-expanded', 'false');
-      resetModalPosition(driverMenuPanel.querySelector('.menu-modal-content'));
     }
   }
 
   clientMenuToggleBtn.addEventListener('click', () => {
-    const isClientMenuVisible = clientMenuPanel.style.display === 'flex';
+    const isClientMenuVisible = clientMenuContainer.style.display === 'block';
     
     if (isClientMenuVisible) {
       hideClientMenu();
     } else {
-      clientMenuPanel.style.display = 'flex';
-      clientMenuPanel.hidden = false;
+      const modalContent = clientMenuContainer.querySelector('.menu-modal-content');
+      resetModalPosition(modalContent);
+      clientMenuContainer.style.display = 'block';
+      clientMenuContainer.hidden = false;
       clientMenuToggleBtn.setAttribute('aria-expanded', 'true');
-      resetModalPosition(clientMenuPanel.querySelector('.menu-modal-content'));
-      hideDriverMenu(); // Ensure other menu is closed
+      hideDriverMenu();
     }
   });
 
   driverMenuToggleBtn.addEventListener('click', () => {
-    const isDriverMenuVisible = driverMenuPanel.style.display === 'flex';
+    const isDriverMenuVisible = driverMenuContainer.style.display === 'block';
 
     if (isDriverMenuVisible) {
       hideDriverMenu();
     } else {
-      driverMenuPanel.style.display = 'flex';
-      driverMenuPanel.hidden = false;
+      const modalContent = driverMenuContainer.querySelector('.menu-modal-content');
+      resetModalPosition(modalContent);
+      driverMenuContainer.style.display = 'block';
+      driverMenuContainer.hidden = false;
       driverMenuToggleBtn.setAttribute('aria-expanded', 'true');
-      resetModalPosition(driverMenuPanel.querySelector('.menu-modal-content'));
-      hideClientMenu(); // Ensure other menu is closed
+      hideClientMenu();
     }
   });
 
@@ -708,23 +723,85 @@ function initMenuToggles() {
   closeDriverMenuBtn.addEventListener('click', hideDriverMenu);
 
   // Add close on overlay click
-  if (clientMenuPanel) {
-    clientMenuPanel.addEventListener('click', function(event) {
-      if (event.target === clientMenuPanel) {
+  if (clientMenuContainer) {
+    clientMenuContainer.addEventListener('click', function(event) {
+      // event.target is the #client-menu-container (the overlay)
+      // NOT clientMenuContainer.querySelector('.menu-modal-content')
+      if (event.target === clientMenuContainer) {
         hideClientMenu();
       }
     });
   }
 
-  if (driverMenuPanel) {
-    driverMenuPanel.addEventListener('click', function(event) {
-      if (event.target === driverMenuPanel) {
+  if (driverMenuContainer) {
+    driverMenuContainer.addEventListener('click', function(event) {
+      if (event.target === driverMenuContainer) {
         hideDriverMenu();
       }
     });
   }
 }
 
+// --- Modal Dragging Functions ---
+function onDragStart(event) {
+  const header = event.target.closest('.modal-header');
+  if (!header) return;
+
+  activeModal = header.closest('.menu-modal-content');
+  if (!activeModal) return;
+
+  if (window.innerWidth < 768) { // Check screen width *before* preventDefault and listener attachment
+    // For small screens, don't initiate drag.
+    return;
+  }
+
+  event.preventDefault(); // Prevent text selection, etc., *only if dragging*
+
+  // Ensure transform is cleared so left/top work as absolute pixel values for dragging
+  // The initial centering is done by CSS transform. Once dragged, we switch to top/left.
+  activeModal.style.transform = 'none';
+
+  offsetX = event.clientX - activeModal.getBoundingClientRect().left;
+  offsetY = event.clientY - activeModal.getBoundingClientRect().top;
+
+  document.addEventListener('mousemove', onDrag);
+  document.addEventListener('mouseup', onDragEnd);
+  activeModal.classList.add('modal-dragging');
+}
+
+function onDrag(event) {
+  if (!activeModal) return;
+
+  let newLeft = event.clientX - offsetX;
+  let newTop = event.clientY - offsetY;
+
+  const header = activeModal.querySelector('.modal-header'); // For boundary check
+  if(header){
+    // Basic boundary check to keep modal header roughly in view
+    newLeft = Math.max(-activeModal.offsetWidth + header.offsetWidth, Math.min(newLeft, window.innerWidth - header.offsetWidth));
+    newTop = Math.max(0, Math.min(newTop, window.innerHeight - header.offsetHeight));
+  }
+
+
+  activeModal.style.left = newLeft + 'px';
+  activeModal.style.top = newTop + 'px';
+}
+
+function onDragEnd() {
+  if (!activeModal) return;
+
+  document.removeEventListener('mousemove', onDrag);
+  document.removeEventListener('mouseup', onDragEnd);
+  activeModal.classList.remove('modal-dragging');
+  activeModal = null;
+}
+
+function initDraggableModals() {
+  const modalHeaders = document.querySelectorAll('.modal-header');
+  modalHeaders.forEach(header => {
+    header.addEventListener('mousedown', onDragStart);
+  });
+}
 
 // Function to initialize the Leaflet map
 function initMap() {
@@ -757,51 +834,4 @@ function initMap() {
     console.error('Error: Error initializing Leaflet map: ' + error.message);
     mapPlaceholder.innerHTML = '<p style="color:red; text-align:center; font-weight:bold;">Map Error: Could not initialize the map. ' + error.message + '</p>';
   }
-}
-
-// --- Draggable Modal Forms ---
-function resetModalPosition(modal) {
-  if (modal) {
-    modal.style.top = '50%';
-    modal.style.left = '50%';
-    modal.style.transform = 'translate(-50%, -50%)';
-  }
-}
-
-function makeElementDraggable(el) {
-  const handle = el.querySelector('h3') || el;
-  handle.classList.add('drag-handle');
-  let startX = 0, startY = 0, origX = 0, origY = 0;
-
-  function onPointerDown(e) {
-    e.preventDefault();
-    const rect = el.getBoundingClientRect();
-    startX = e.clientX;
-    startY = e.clientY;
-    origX = rect.left;
-    origY = rect.top;
-    el.style.transform = 'none';
-    document.addEventListener('pointermove', onPointerMove);
-    document.addEventListener('pointerup', onPointerUp);
-  }
-
-  function onPointerMove(e) {
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    el.style.left = origX + dx + 'px';
-    el.style.top = origY + dy + 'px';
-  }
-
-  function onPointerUp() {
-    document.removeEventListener('pointermove', onPointerMove);
-    document.removeEventListener('pointerup', onPointerUp);
-  }
-
-  handle.addEventListener('pointerdown', onPointerDown);
-}
-
-function enableDraggableForms() {
-  document.querySelectorAll('.menu-modal-content').forEach(modal => {
-    makeElementDraggable(modal);
-  });
 }
