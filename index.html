@@ -2,21 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- IMPORTANT: The CSP nonce 'abc123' is for development purposes only. In a production environment, a unique, cryptographically strong nonce should be generated and supplied by the server for each request to ensure proper Content Security Policy protection. -->
-  <meta http-equiv="Content-Security-Policy"
-    content="
-      default-src 'self';
-      script-src 'self' https://unpkg.com 'nonce-abc123';
-      style-src 'self' https://unpkg.com 'nonce-abc123' 'unsafe-inline';
-      img-src 'self' data: https://*.tile.openstreetmap.org;
-      connect-src 'self';
-      font-src 'self';
-      object-src 'none';
-      base-uri 'self';
-      form-action 'self';
-      frame-ancestors 'none';
-    "
-  />
+  <!-- The nonce value "abc123" will be dynamically replaced by server.js. -->
+  <!-- Content Security Policy is provided via an HTTP header. -->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>OPS Logistics Map App</title>
 
