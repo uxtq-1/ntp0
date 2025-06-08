@@ -750,10 +750,7 @@ function onDragStart(event) {
   activeModal = header.closest('.menu-modal-content');
   if (!activeModal) return;
 
-  if (window.innerWidth < 768) { // Check screen width *before* preventDefault and listener attachment
-    // For small screens, don't initiate drag.
-    return;
-  }
+  // Allow dragging on all screen sizes
 
   event.preventDefault(); // Prevent text selection, etc., *only if dragging*
 
