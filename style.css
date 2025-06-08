@@ -1080,26 +1080,28 @@ legend.collapsible-trigger.active .collapsible-icon {
 /* Performance Display Area (Below Header) */
 #performance-display-area {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 20px 15px;
-  align-items: flex-start;
+  gap: 20px;
   /* background-color: #f0f0f0; /* Optional: for visual debugging */
 }
 
 #performance-today-label {
-  flex-shrink: 0;
-  margin-right: 25px;
+  margin: 0;
   font-weight: bold;
   font-size: 1.2em;
   color: #333;
+  text-align: center;
   /* padding-top: 10px; /* Adjust if needed for card alignment */
 }
 
 #stat-cards-container {
-  flex-grow: 1;
   display: flex;
   justify-content: center;
   gap: 20px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 /* Stat Card Styling */
