@@ -24,3 +24,7 @@ Open <http://localhost:3000> in your browser.
 
 The server generates a cryptographically strong nonce for each response. `server.js` uses `crypto.randomBytes` to create a 16‑byte value, inserts the nonce into the HTML, and sets a `Content-Security-Policy` header referencing it. User data is handled entirely on the client; in production consider adding server-side validation and storage.
 
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on creating issues, opening pull requests, coding style, and running tests.
