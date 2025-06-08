@@ -1,0 +1,31 @@
+/* Map Container */
+#map-container {
+  flex-grow: 1;
+  border: 1px solid #ced4da; /* Palette: Borders */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: transparent;
+  display: flex;
+}
+#map-placeholder {
+  flex-grow: 1; /* Takes full space of map-container if parent is column flex, or full width if row flex */
+  height: 500px; /* Explicit height for Leaflet initialization */
+  width: 100%;
+  box-sizing: border-box;
+  outline: none; /* Remove focus outline, but accessible focus managed in JS */
+}
+  #vertical-menu-toggles button {
+    padding: 6px 10px; /* Slightly smaller padding */
+    font-size: 0.9em;   /* Slightly smaller font */
+  }
+
+  #main-content-area {
+    flex-direction: column;
+  }
+  #map-container{
+    /* max-width: 100%; /* Allow map to use full width available in column */
+    /* Ensure map still has a reasonable height when stacked */
+    min-height: 300px; /* Example minimum height for map on mobile */
+  }
+  /* Mobile rules for heatmap-sidebar-placeholder and its content are removed */
+
