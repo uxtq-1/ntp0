@@ -150,7 +150,8 @@ h1, h2, h3, h4, h5, legend {
   /* justify-content: center; /* Removed */
   z-index: 1001; /* This z-index is for the container itself, modal content will be higher */
   /* Visibility is controlled by 'hidden' attribute and direct style.display in JS */
-  pointer-events: none; /* Allow clicks to pass through the container if it's covering the screen but invisible */
+  /* Allow overlay to capture clicks so modals can be closed by clicking outside */
+  pointer-events: auto;
 }
 
 /* menu-modal-content will be visible/interactive based on its parent's display style */
