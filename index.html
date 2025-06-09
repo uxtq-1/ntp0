@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://maps.gstatic.com https://maps.googleapis.com *.googleusercontent.com; font-src 'self' https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; connect-src 'self' https://maps.googleapis.com;">
     <title>Logistics Console</title>
     <link rel="stylesheet" href="style.css">
+    <!-- TODO: Replace YOUR_API_KEY_HERE with your actual Google Maps API key -->
+    <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&callback=initMap"></script>
 </head>
 <body>
     <div id="app-header-wireframe" class="wireframe-section">
@@ -14,12 +16,45 @@
 
     <div id="main-console-area" class="wireframe-section" style="display: flex; flex-grow: 1; min-height: 400px; align-items: stretch;">
         <div id="left-panel-wireframe" class="wireframe-section" style="flex-basis: 250px; flex-shrink: 0; margin-right: 10px; display: flex; flex-direction: column;">
-            <div id="shipment-list-controls-wireframe" class="wireframe-section" style="margin-bottom:10px; padding:5px;">Filters / Search</div>
-            <div id="shipment-list-display-wireframe" class="wireframe-section" style="flex-grow:1; padding:5px;">Shipment List Area</div>
+            <div id="shipment-list-controls-wireframe" style="margin-bottom:10px; padding:5px;">
+                <input type="text" id="shipment-search" placeholder="Search shipments..." style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <select id="status-filter" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    <option value="">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="in-transit">In Transit</option>
+                    <option value="delivered">Delivered</option>
+                </select>
+            </div>
+            <div id="shipment-list-display-wireframe" style="flex-grow:1;">
+                <ul id="shipment-list" style="list-style: none; padding: 0; margin: 0; height: 100%; overflow-y: auto;">
+                    <li style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;">
+                        <strong>Order #123</strong><br>
+                        <small>Status: In Transit</small><br>
+                        <small>To: New York, NY</small>
+                    </li>
+                    <li style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;">
+                        <strong>Order #124</strong><br>
+                        <small>Status: Delivered</small><br>
+                        <small>To: Boston, MA</small>
+                    </li>
+                    <li style="padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;">
+                        <strong>Order #125</strong><br>
+                        <small>Status: Pending</small><br>
+                        <small>To: Chicago, IL</small>
+                    </li>
+                    <li style="padding: 10px; cursor: pointer;">
+                        <strong>Order #126</strong><br>
+                        <small>Status: Delayed</small><br>
+                        <small>To: Miami, FL</small>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div id="center-panel-wireframe" class="wireframe-section" style="flex-grow: 1; margin-right: 10px; display:flex; flex-direction:column;">
-            <div id="map-view-wireframe" class="wireframe-section" style="flex-grow: 1;">Map Area (for Google Maps)</div>
+            <div id="map-view-wireframe" style="flex-grow: 1; /* Removed wireframe-section class */">
+                <div id="google-map-canvas" style="height: 100%; width: 100%;"></div>
+            </div>
              <div id="timeline-view-wireframe" class="wireframe-section" style="min-height:100px;">Timeline/Event Log Area</div>
         </div>
 
