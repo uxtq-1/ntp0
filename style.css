@@ -20,3 +20,7 @@ body {
   text-align: center;
   min-height: 50px; /* Ensure visibility even if empty */
 }
+
+#shipment-list li:hover {
+  background-color: #f0f0f0; /* Light grey hover */
+}
